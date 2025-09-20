@@ -1,31 +1,13 @@
-import { useState } from "react";
-
-function Agenda() {
-  const [horarios, setHorarios] = useState([
-    { hora: "10:00", disponible: true },
-    { hora: "11:00", disponible: true },
-    { hora: "12:00", disponible: true },
-  ]);
-
-  const reservar = (index: number) => {
-    const nuevos = [...horarios];
-    nuevos[index].disponible = false; // simula la seña
-    setHorarios(nuevos);
-  };
+export const Agenda = () => {
+  const horarios = ["09:00", "10:00", "11:00", "14:00", "15:00"];
 
   return (
-    <div>
-      <h1>Agenda</h1>
-      <ul>
-        {horarios.map((h, i) => (
-          <li key={i}>
-            {h.hora} - {h.disponible ? "Libre" : "Reservado"}{" "}
-            {h.disponible && <button onClick={() => reservar(i)}>Reservar</button>}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {horarios.map(h => (
+        <li key={h}>
+          {h} <button>Reservar</button>
+        </li>
+      ))}
+    </ul>
   );
-}
-
-export default Agenda;
+};
