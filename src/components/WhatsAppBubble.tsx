@@ -7,7 +7,7 @@ type WhatsAppBubbleProps = {
 
 export default function WhatsAppBubble({
   phoneNumber = "5491170264456",
-  message = "¡Hola Guadalupe! Quisiera consultar sobre tu plan nutricional 😊",
+  message = "¡Hola Guadalupe! Quisiera consultar sobre tu plan nutricional",
 }: WhatsAppBubbleProps) {
   const encodedMessage = encodeURIComponent(message);
   const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
