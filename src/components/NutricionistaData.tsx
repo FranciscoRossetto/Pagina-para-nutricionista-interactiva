@@ -5,6 +5,7 @@ export const NutricionistaData = () => {
       <p>Especialista en nutrición y dietética</p>
       <p>Email: gnaveyra@gmail.com</p>
       <p>Tel: 123-456-789</p>
+      <h1>Aporte Coco</h1>
     </div>
   );
 };
