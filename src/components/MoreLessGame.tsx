@@ -6,6 +6,7 @@ export const MoreLessGame = () => {
       <button>🍎 Manzana</button>
       <button>🍫 Chocolate</button>
       <p>Puntos: 0</p>
+      <h1>aporte juanma</h1>
     </div>
   );
 };
