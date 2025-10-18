@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
+import { Home } from "./pages/Home";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { NutricionistaData } from "./components/NutricionistaData";
@@ -22,34 +23,15 @@ export default function App() {
       <Navbar setSection={setSection} />
 
       <div className="container">
-        {section === "home" && (
-          <div>
-            <h1>Bienvenido a NutriApp</h1>
-            <NutricionistaData />
-            <Bonos />
-          </div>
-        )}
-
-        {section === "recetas" && (
-          <div>
-            <h1>Recetas</h1>
-            {recetas.map((r, i) => <RecipeCard key={i} {...r} />)}
-          </div>
-        )}
-
-        {section === "agenda" && (
-          <div>
-            <h1>Agenda</h1>
-            <Agenda />
-          </div>
-        )}
-
-        {section === "juego" && (
-          <div>
-            <MoreLessGame />
-          </div>
-        )}
+        {section === "home" && <Home setSection={setSection} />}
+        
+        {section === "recetas" && <Recetas />}
+        
+        {section === "agenda" && <Agenda />}
+        
+        {section === "juego" && <MoreLessGame />}
       </div>
+
 
       <Footer />
     </div>
