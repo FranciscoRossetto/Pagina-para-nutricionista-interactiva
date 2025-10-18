@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Food = {
   name: string;
@@ -12,105 +13,233 @@ const foods: Food[] = [
   { name: "Pizza de muzzarella", calories: 285, image: "https://cdn-icons-png.flaticon.com/512/1404/1404945.png" },
   { name: "Banana", calories: 89, image: "https://cdn-icons-png.flaticon.com/512/415/415733.png" },
   { name: "Helado de chocolate", calories: 210, image: "https://cdn-icons-png.flaticon.com/512/813/813860.png" },
+  { name: "Taco", calories: 300, image: "https://cdn-icons-png.flaticon.com/512/1046/1046786.png" },
+  { name: "Sushi", calories: 200, image: "https://cdn-icons-png.flaticon.com/512/1046/1046787.png" },
+  { name: "Papas fritas", calories: 365, image: "https://cdn-icons-png.flaticon.com/512/1046/1046785.png" },
+  { name: "Hot Dog", calories: 400, image: "https://cdn-icons-png.flaticon.com/512/1046/1046788.png" },
+  { name: "Manzana", calories: 52, image: "https://cdn-icons-png.flaticon.com/512/415/415734.png" },
+  { name: "Brownie", calories: 320, image: "https://cdn-icons-png.flaticon.com/512/1046/1046789.png" },
+  { name: "Donut", calories: 250, image: "https://cdn-icons-png.flaticon.com/512/1046/1046790.png" },
+  { name: "Espagueti", calories: 220, image: "https://cdn-icons-png.flaticon.com/512/1046/1046791.png" },
+  { name: "Pollo frito", calories: 450, image: "https://cdn-icons-png.flaticon.com/512/1046/1046792.png" },
 ];
 
-function getRandomFood(exclude?: Food): Food {
-  let f: Food;
-  do {
-    f = foods[Math.floor(Math.random() * foods.length)];
-  } while (exclude && f.name === exclude.name);
-  return f;
+// 🔹 Versión segura de getRandomFood
+function getRandomFood(excludeList: Food[] = []): Food {
+  while (true) {
+    const f = foods[Math.floor(Math.random() * foods.length)];
+    if (!excludeList.some(food => food.name === f.name)) return f;
+  }
 }
 
 export function MoreLessGame() {
-  const [currentFood, setCurrentFood] = useState<Food>(getRandomFood());
-  const [nextFood, setNextFood] = useState<Food>(getRandomFood());
+  const [leftFood, setLeftFood] = useState<Food>(getRandomFood());
+  const [rightFood, setRightFood] = useState<Food>(getRandomFood([leftFood]));
+  const [lastRight, setLastRight] = useState<Food | null>(null);
   const [score, setScore] = useState(0);
-  const [message, setMessage] = useState("");
   const [revealed, setRevealed] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
-  const handleGuess = (guess: "more" | "less") => {
-    if (gameOver || revealed) return;
+  const handleClick = (selected: "left" | "right") => {
+    if (revealed || gameOver) return;
+
+    const correct = leftFood.calories >= rightFood.calories ? "left" : "right";
     setRevealed(true);
 
-    const correct =
-      (guess === "more" && nextFood.calories >= currentFood.calories) ||
-      (guess === "less" && nextFood.calories < currentFood.calories);
+    if (selected === correct) setScore(prev => prev + 1);
+    else setGameOver(true);
 
-    if (correct) {
-      setMessage("✅ ¡Correcto!");
-      setTimeout(() => {
-        setScore((prev) => prev + 1);
-        setCurrentFood(nextFood);
-        setNextFood(getRandomFood(nextFood));
-        setRevealed(false);
-        setMessage("");
-      }, 1200);
-    } else {
-      setMessage(`❌ ${nextFood.name} tiene ${nextFood.calories} cal.`);
-      setGameOver(true);
-    }
+    setTimeout(() => {
+      const newLeft = rightFood; // siempre mover la derecha a la izquierda
+      setLeftFood(newLeft);
+
+      const newRight = getRandomFood([newLeft, ...(lastRight ? [lastRight] : [])]);
+      setRightFood(newRight);
+      setLastRight(newRight);
+
+      setRevealed(false);
+    }, 1200);
   };
 
   const handleRestart = () => {
-    setGameOver(false);
+    const newLeft = getRandomFood();
+    const newRight = getRandomFood([newLeft]);
+    setLeftFood(newLeft);
+    setRightFood(newRight);
+    setLastRight(newRight);
     setScore(0);
     setRevealed(false);
-    setMessage("");
-    setCurrentFood(getRandomFood());
-    setNextFood(getRandomFood());
+    setGameOver(false);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">¿Más o Menos Calorías?</h1>
+    <div className="container">
+      <h1>¿Cuál tiene más calorías?</h1>
+      <p className="score">Puntaje: {score}</p>
 
-      <div className="grid grid-cols-2 gap-6 w-full max-w-4xl">
-        {/* Comida actual */}
-        <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <img src={currentFood.image} alt={currentFood.name} className="w-40 h-40 object-contain mb-4" />
-          <p className="font-semibold text-lg">{currentFood.name}</p>
-          <p className="text-gray-500">{currentFood.calories} cal</p>
-        </div>
+      <div className="cards">
+        {!gameOver && (
+          <>
+            <motion.div
+              key={leftFood.name}
+              className="card"
+              onClick={() => handleClick("left")}
+              initial={{ x: -200, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -200, opacity: 0 }}
+              whileHover={{ scale: 1.1 }}
+            >
+              <img src={leftFood.image} alt={leftFood.name} />
+              <p className="food-name">{leftFood.name}</p>
+              {revealed && <p className="calories">{leftFood.calories} cal</p>}
+            </motion.div>
 
-        {/* Comida siguiente */}
-        <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <img src={nextFood.image} alt={nextFood.name} className="w-40 h-40 object-contain mb-4" />
-          <p className="font-semibold text-lg">{nextFood.name}</p>
-          {revealed && <p className="text-gray-600 mt-2">{nextFood.calories} cal</p>}
-
-          {!gameOver && (
-            <div className="flex gap-4 mt-4">
-              <button
-                onClick={() => handleGuess("less")}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium"
-              >
-                Menos 🔽
-              </button>
-              <button
-                onClick={() => handleGuess("more")}
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium"
-              >
-                Más 🔼
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-8 text-center">
-        <p className="text-xl mb-2">{message}</p>
-        <p className="font-bold text-green-600 text-lg">Puntaje: {score}</p>
-        {gameOver && (
-          <button
-            onClick={handleRestart}
-            className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium"
-          >
-            Jugar de nuevo 🔄
-          </button>
+            <motion.div
+              key={rightFood.name}
+              className="card"
+              onClick={() => handleClick("right")}
+              initial={{ x: 300, opacity: 0, rotate: 20 }}
+              animate={{ x: 0, opacity: 1, rotate: 0 }}
+              exit={{ x: 300, opacity: 0 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+            >
+              <img src={rightFood.image} alt={rightFood.name} />
+              <p className="food-name">{rightFood.name}</p>
+              {revealed && <p className="calories">{rightFood.calories} cal</p>}
+            </motion.div>
+          </>
         )}
       </div>
+
+      {gameOver && (
+        <motion.div
+          className="gameover-wrapper"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.div
+            className="gameover"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <h2>¡Game Over!</h2>
+            <p className="final-score">Tu puntaje: {score}</p>
+            <button onClick={handleRestart}>Jugar de nuevo 🔄</button>
+          </motion.div>
+        </motion.div>
+      )}
+
+      <style>{`
+        .container {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #ffecd2, #fcb69f);
+          padding: 20px;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          text-align: center;
+          position: relative;
+        }
+        h1 {
+          font-size: 2.8rem;
+          margin-bottom: 20px;
+          color: #333;
+          text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+        }
+        .score {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #27ae60;
+          margin-bottom: 20px;
+        }
+        .cards {
+          display: flex;
+          gap: 30px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 20px;
+        }
+        .card {
+          background: white;
+          border-radius: 20px;
+          padding: 20px;
+          width: 220px;
+          box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          transition: transform 0.3s, border 0.3s;
+        }
+        .card:hover {
+          transform: scale(1.1);
+          box-shadow: 0 16px 30px rgba(0,0,0,0.25);
+        }
+        img {
+          width: 120px;
+          height: 120px;
+          object-fit: contain;
+          margin-bottom: 15px;
+        }
+        .food-name {
+          font-weight: bold;
+          font-size: 1.2rem;
+          margin-bottom: 5px;
+        }
+        .calories {
+          color: #666;
+          font-size: 1rem;
+        }
+
+        /* Game Over */
+        .gameover-wrapper {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          background: rgba(0,0,0,0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+        }
+        .gameover {
+          background: white;
+          padding: 40px 60px;
+          border-radius: 25px;
+          box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .gameover h2 {
+          font-size: 2.5rem;
+          margin-bottom: 15px;
+          color: #e74c3c;
+        }
+        .gameover .final-score {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 25px;
+        }
+        .gameover button {
+          padding: 12px 25px;
+          font-size: 1rem;
+          font-weight: bold;
+          border-radius: 15px;
+          border: none;
+          background: #27ae60;
+          color: white;
+          cursor: pointer;
+          transition: background 0.3s, transform 0.2s;
+        }
+        .gameover button:hover {
+          background: #2ecc71;
+          transform: scale(1.05);
+        }
+      `}</style>
     </div>
   );
 }
