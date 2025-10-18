@@ -46,10 +46,16 @@
   transition: all 0.3s ease;
 }
 
+.linkItem {
+  position: relative;
+}
+
 .link {
   text-decoration: none;
   color: #17252a;
   font-weight: 500;
+  position: relative;
+  padding-bottom: 4px;
   transition: color 0.2s ease;
 }
 
@@ -57,9 +63,19 @@
   color: #2b7a78;
 }
 
+/* Subrayado animado */
+.underline {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background-color: #2b7a78;
+  border-radius: 2px;
+}
+
 .active {
-  border-bottom: 2px solid #2b7a78;
-  padding-bottom: 2px;
+  color: #2b7a78;
 }
 
 /* Mobile */
@@ -81,6 +97,7 @@
     padding: 1rem;
     gap: 1rem;
     transform: translateX(100%);
+    transition: transform 0.3s ease;
   }
 
   .open {

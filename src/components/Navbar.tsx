@@ -23,7 +23,7 @@ export default function Navbar() {
       className={styles.navbar}
     >
       <div className={styles.container}>
-        {/* Logo que lleva al Home */}
+        {/* Logo */}
         <motion.h1
           whileHover={{ scale: 1.05 }}
           className={styles.logo}
@@ -35,30 +35,46 @@ export default function Navbar() {
           NutriApp 🥗
         </motion.h1>
 
-        {/* Botón menú móvil */}
+        {/* Menú móvil */}
         <button className={styles.toggle} onClick={() => setOpen(!open)}>
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
 
         {/* Links */}
         <ul className={`${styles.links} ${open ? styles.open : ""}`}>
-          {links.map((link) => (
-            <motion.li
-              key={link.to}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link
-                to={link.to}
-                className={`${styles.link} ${
-                  location.pathname === link.to ? styles.active : ""
-                }`}
-                onClick={() => setOpen(false)}
+          {links.map((link) => {
+            const isActive = location.pathname === link.to;
+            return (
+              <motion.li
+                key={link.to}
+                className={styles.linkItem}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {link.label}
-              </Link>
-            </motion.li>
-          ))}
+                <Link
+                  to={link.to}
+                  className={`${styles.link} ${
+                    isActive ? styles.active : ""
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                  {/* Animación subrayado */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="underline"
+                      className={styles.underline}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                </Link>
+              </motion.li>
+            );
+          })}
         </ul>
       </div>
     </motion.nav>
