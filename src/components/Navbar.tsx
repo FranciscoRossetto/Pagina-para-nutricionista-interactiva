@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -23,7 +22,7 @@ export default function Navbar() {
       className={styles.navbar}
     >
       <div className={styles.container}>
-        {/* Logo */}
+        {/* Logo que vuelve al home */}
         <motion.h1
           whileHover={{ scale: 1.05 }}
           className={styles.logo}
@@ -35,9 +34,9 @@ export default function Navbar() {
           NutriApp 🥗
         </motion.h1>
 
-        {/* Menú móvil */}
+        {/* Botón menú móvil */}
         <button className={styles.toggle} onClick={() => setOpen(!open)}>
-          {open ? <X size={24} /> : <Menu size={24} />}
+          {open ? "✖" : "☰"}
         </button>
 
         {/* Links */}
