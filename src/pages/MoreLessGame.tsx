@@ -32,7 +32,7 @@ function getRandomFood(excludeList: Food[] = []): Food {
   }
 }
 
-export function MoreLessGame() {
+function MoreLessGame() {
   const [leftFood, setLeftFood] = useState<Food>(getRandomFood());
   const [rightFood, setRightFood] = useState<Food>(getRandomFood([leftFood]));
   const [lastRight, setLastRight] = useState<Food | null>(null);
@@ -243,3 +243,5 @@ export function MoreLessGame() {
     </div>
   );
 }
+
+export default MoreLessGame;

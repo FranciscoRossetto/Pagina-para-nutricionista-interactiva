@@ -1,18 +1,16 @@
-import React from "react";
 import "./Home.module.css";
+import { useNavigate } from "react-router-dom";
 
-type HomeProps = {
-  setSection: (s: "home" | "recetas" | "agenda" | "juego") => void;
-};
+export default function Home() {
+  const navigate = useNavigate();
 
-export const Home: React.FC<HomeProps> = ({ setSection }) => {
   return (
     <div className="home">
       <section className="hero">
         <div className="hero-content">
           <h1>No a las dietas, sí al cambio de hábitos</h1>
           <p>Mejorá tu relación con la comida, sin restricciones extremas.</p>
-          <button className="cta-btn" onClick={() => setSection("recetas")}>
+          <button className="cta-btn" onClick={() => navigate("/recetas")}>
             Comenzar ahora
           </button>
         </div>
@@ -46,4 +44,4 @@ export const Home: React.FC<HomeProps> = ({ setSection }) => {
       </footer>
     </div>
   );
-};
+}
