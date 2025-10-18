@@ -1,0 +1,54 @@
+.whatsappBubble {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+  z-index: 1000;
+}
+
+.whatsappBubble:hover {
+  background-color: #20ba5a;
+  transform: scale(1.08);
+}
+
+.whatsappIcon {
+  width: 32px;
+  height: 32px;
+  fill: white;
+}
+.whatsappBubble {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #25d366;
+  border-radius: 50%;
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+  z-index: 1000;
+}
+
+.whatsappBubble:hover {
+  background-color: #20ba5a;
+  transform: scale(1.08);
+}
+
+.whatsappIcon {
+  width: 42px;
+  height: 42px;
+}

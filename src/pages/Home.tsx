@@ -1,4 +1,5 @@
 import styles from "./Home.module.css";
+import WhatsAppBubble from "../components/WhatsAppBubble"; // 👈 ajustá la ruta si cambia
 
 type HomeProps = {
   setSection?: (s: "home" | "recetas" | "agenda" | "juego") => void;
@@ -51,7 +52,8 @@ export default function Home({ setSection }: HomeProps) {
       <section className={styles.aboutGuadalupe}>
         <h2>Acerca sobre Guadalupe</h2>
         <p>
-          Guadalupe es especialista en nutrición y bienestar. Su enfoque está basado en hábitos saludables, equilibrio y atención personalizada. Aquí podés poner cualquier otra info que quieras destacar.
+          Guadalupe es especialista en nutrición y bienestar. Su enfoque está basado en hábitos saludables,
+          equilibrio y atención personalizada. Aquí podés poner cualquier otra info que quieras destacar.
         </p>
       </section>
 
@@ -65,14 +67,7 @@ export default function Home({ setSection }: HomeProps) {
       </section>
 
       {/* Burbuja de WhatsApp */}
-      <a
-        href="https://wa.me/541112345678" // Pon tu número real
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.whatsappBubble}
-      >
-        💬
-      </a>
+      <WhatsAppBubble />
     </div>
   );
 }
