@@ -1,4 +1,4 @@
-// src/pages/Agenda.tsx
+
 import React, { useMemo, useState } from "react";
 
 type Motivo = "consulta" | "control" | "plan" | "otro";
@@ -23,7 +23,7 @@ type FormState = {
 
 const h = React.createElement;
 
-/* ======== fecha ======== */
+
 function hoyISO(): string {
   const d = new Date();
   d.setHours(0,0,0,0);
@@ -43,7 +43,7 @@ function startOfWeekISO(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   const dt = new Date(y, m - 1, d);
   const jsDay = dt.getDay();
-  const offset = jsDay === 0 ? -6 : 1 - jsDay; // lunes
+  const offset = jsDay === 0 ? -6 : 1 - jsDay; 
   return addDays(iso, offset);
 }
 function isWeekend(iso: string): boolean {
@@ -53,7 +53,7 @@ function isWeekend(iso: string): boolean {
   return w === 0 || w === 6;
 }
 
-/* ======== feriados AR (editable) ======== */
+
 const HOLIDAYS_AR = new Set<string>([
   "2025-01-01","2025-03-03","2025-03-04",
   "2025-03-24","2025-04-02","2025-04-18",
@@ -62,13 +62,13 @@ const HOLIDAYS_AR = new Set<string>([
 ]);
 function isHoliday(iso: string): boolean { return HOLIDAYS_AR.has(iso); }
 
-/* próxima fecha hábil >= iso */
+
 function nextBusinessDayFrom(iso: string): string {
   let cur = iso;
   while (isWeekend(cur) || isHoliday(cur)) cur = addDays(cur, 1);
   return cur;
 }
-/* N días hábiles consecutivos desde una fecha base */
+
 function businessDaysFrom(fromISO: string, count: number): string[] {
   const res: string[] = [];
   let cur = fromISO;
@@ -86,7 +86,7 @@ function generarId(t: Omit<Turno, "id">): string {
   return `${t.fecha}_${t.inicio}_${t.paciente}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/* ======== slots 09–18, 1h ======== */
+
 const SLOTS: string[] = Array.from({ length: 10 }, (_, i) => String(9 + i).padStart(2, "0") + ":00");
 function addOneHour(hhmm: string): string {
   const [hh, mm] = hhmm.split(":").map(Number);
@@ -97,7 +97,7 @@ function addOneHour(hhmm: string): string {
   return `${H}:${M}`;
 }
 
-/* ======== estilos ======== */
+
 const styles: Record<string, React.CSSProperties> = {
   bg: {
     backgroundImage: "linear-gradient(180deg,#ffe4f1 0%, #ffd1ea 40%, #ffc2e4 100%)",
@@ -153,13 +153,13 @@ function chipStyle(kind: Motivo): React.CSSProperties {
   return { ...base, ...map[kind] };
 }
 
-/* ======== componente ======== */
+
 export default function Agenda(): React.ReactElement {
   const [turnos, setTurnos] = useState<Turno[]>([]);
   const [cursor, setCursor] = useState<string>(hoyISO());
   const [filtroPaciente, setFiltroPaciente] = useState<string>("");
 
-  // fecha inicial = hoy o próximo hábil si hoy es finde/feriado
+  
   const [form, setForm] = useState<FormState>({
     fecha: nextBusinessDayFrom(hoyISO()),
     inicio: "09:00",
@@ -170,11 +170,11 @@ export default function Agenda(): React.ReactElement {
 
   const semanaInicio = useMemo(() => startOfWeekISO(cursor), [cursor]);
 
-  // AGENDA: mostrar SIEMPRE próximos 15 días hábiles FUTUROS (bloquea pasado, findes y feriados)
+ 
   const diasVista = useMemo(() => {
     const base = nextBusinessDayFrom(hoyISO());
     return businessDaysFrom(base, 15);
-  }, [cursor]); // recalcula al navegar para mantener ventana futura
+  }, [cursor]); 
 
   const turnosVista = useMemo(() => {
     const set = new Set(diasVista);
@@ -233,7 +233,7 @@ export default function Agenda(): React.ReactElement {
     setTurnos((prev) => prev.filter((t) => t.id !== id));
   }
   function moverSemana(delta: number) {
-    // navegación visual, pero la ventana siempre es futura relativa a hoy
+    
     setCursor((prev) => addDays(prev, delta * 7));
   }
 
@@ -366,7 +366,7 @@ export default function Agenda(): React.ReactElement {
   );
 }
 
-/* ======== helper ======== */
+
 function formatearCabeceraDia(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   const dt = new Date(y, m - 1, d);
