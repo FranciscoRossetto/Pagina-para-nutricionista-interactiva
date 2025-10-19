@@ -49,42 +49,44 @@ export default function Recetas() {
       </div>
 
       <Swiper
-        spaceBetween={30}
-        slidesPerView={3}
-        loop={true}
-        centeredSlides={true}
-        className={styles.swiper}
+  spaceBetween={30}
+  slidesPerView={3}
+  loop={true}
+  centeredSlides={true}
+  grabCursor={true}
+  className={styles.swiper}
+>
+  {filteredRecipes.map((recipe) => (
+    <SwiperSlide key={recipe.id}>
+      <motion.div
+        className={`${styles.card} ${
+          flippedCard === recipe.id ? styles.flipped : ""
+        }`}
+        onClick={() =>
+          setFlippedCard(flippedCard === recipe.id ? null : recipe.id)
+        }
       >
-        {filteredRecipes.map((recipe) => (
-          <SwiperSlide key={recipe.id}>
-            <motion.div
-              className={`${styles.card} ${
-                flippedCard === recipe.id ? styles.flipped : ""
-              }`}
-              onClick={() =>
-                setFlippedCard(flippedCard === recipe.id ? null : recipe.id)
-              }
-            >
-              {/* Frente */}
-              <motion.div className={styles.front}>
-                <img src={recipe.image} alt={recipe.title} />
-                <h3>{recipe.title}</h3>
-              </motion.div>
+        {/* Frente */}
+        <motion.div className={styles.front}>
+          <img src={recipe.image} alt={recipe.title} />
+          <h3>{recipe.title}</h3>
+        </motion.div>
 
-              {/* Dorso */}
-              <motion.div className={styles.back}>
-                <h3>{recipe.title}</h3>
-                <p>{recipe.description}</p>
-                <ul>
-                  {recipe.ingredients.map((i, idx) => (
-                    <li key={idx}>{i}</li>
-                  ))}
-                </ul>
-              </motion.div>
-            </motion.div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        {/* Dorso */}
+        <motion.div className={styles.back}>
+          <h3>{recipe.title}</h3>
+          <p>{recipe.description}</p>
+          <ul>
+            {recipe.ingredients.map((i, idx) => (
+              <li key={idx}>{i}</li>
+            ))}
+          </ul>
+        </motion.div>
+      </motion.div>
+    </SwiperSlide>
+  ))}
+</Swiper>
+
     </div>
   );
 }
