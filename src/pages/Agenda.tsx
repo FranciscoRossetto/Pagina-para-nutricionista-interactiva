@@ -1,7 +1,6 @@
 // agenda.tsx
 import React, { useMemo, useState } from "react";
 
-<<<<<<< HEAD
 type Turno = {
   id: string;
   fecha: string;       // YYYY-MM-DD
@@ -259,8 +258,4 @@ function formatearCabeceraDia(iso: string): string {
   const dt = new Date(y, m - 1, d);
   const dias = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
   return `${dias[dt.getDay()]} ${d.toString().padStart(2, "0")}/${m.toString().padStart(2, "0")}`;
-=======
-export default function Agenda() {
-  return <h1>🗓️ Página de Agenda</h1>;
->>>>>>> 289cb747fc42d4bd499b25d4852d20d477ece5e6
 }
