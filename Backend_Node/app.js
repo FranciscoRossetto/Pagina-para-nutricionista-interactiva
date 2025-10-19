@@ -1,1 +1,0 @@
-console.log("Hello from Backend_Node/app.js");
