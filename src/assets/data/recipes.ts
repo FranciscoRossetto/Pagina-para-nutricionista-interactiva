@@ -12,6 +12,7 @@ export interface Recipe {
     sinSal?: boolean;
   };
 }
+//poner las imagenes, descargarlas, y despues poner bien la data que esta asi nomas
 
 export const recipes: Recipe[] = [
   {
