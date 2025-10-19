@@ -78,7 +78,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 15 días = 3 filas x 5 cols */
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 

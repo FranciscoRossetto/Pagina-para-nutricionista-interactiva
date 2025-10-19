@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-/* ===== Tipos ===== */
+
 export type Motivo = "consulta" | "control" | "plan" | "otro";
 
 export type Turno = {
@@ -21,7 +21,7 @@ export type FormState = {
   notas: string;
 };
 
-/* ===== Utilidades de fecha ===== */
+
 export function hoyISO(): string {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -44,7 +44,7 @@ export function isWeekend(iso: string): boolean {
   return w === 0 || w === 6;
 }
 
-/* ===== Feriados AR (editable) ===== */
+
 const HOLIDAYS_AR = new Set<string>([
   "2025-01-01","2025-03-03","2025-03-04",
   "2025-03-24","2025-04-02","2025-04-18",
@@ -55,14 +55,14 @@ export function isHoliday(iso: string): boolean {
   return HOLIDAYS_AR.has(iso);
 }
 
-/* Próximo día hábil >= iso */
+
 export function nextBusinessDayFrom(iso: string): string {
   let cur = iso;
   while (isWeekend(cur) || isHoliday(cur)) cur = addDays(cur, 1);
   return cur;
 }
 
-/* N días hábiles consecutivos a partir de fromISO (incluido) */
+
 export function businessDaysFrom(fromISO: string, count: number): string[] {
   const out: string[] = [];
   let cur = fromISO;
@@ -73,7 +73,7 @@ export function businessDaysFrom(fromISO: string, count: number): string[] {
   return out;
 }
 
-/* ===== Slots fijos 09–18, duración 1h ===== */
+
 export const SLOTS: string[] = Array.from({ length: 10 }, (_, i) =>
   String(9 + i).padStart(2, "0") + ":00"
 );
@@ -90,7 +90,7 @@ function generarId(t: Omit<Turno, "id">) {
   return `${t.fecha}_${t.inicio}_${t.paciente}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/* ===== Hook principal ===== */
+
 export function useAgenda() {
   const [turnos, setTurnos] = useState<Turno[]>([]);
   const [filtroPaciente, setFiltroPaciente] = useState("");
@@ -102,10 +102,10 @@ export function useAgenda() {
     notas: "",
   });
 
-  // 15 días hábiles FUTUROS desde hoy
+  
   const diasVista = useMemo(
     () => businessDaysFrom(nextBusinessDayFrom(hoyISO()), 15),
-    [turnos.length] // recalcula en usos típicos; si querés, cambiá la dependencia
+    [turnos.length]
   );
 
   const turnosVista = useMemo(() => {
@@ -165,16 +165,16 @@ export function useAgenda() {
   }
 
   return {
-    // state
+    
     form, turnosVista, diasVista, filtroPaciente,
-    // setters
+    
     setFiltroPaciente, onChange,
-    // actions
+    
     crearTurno, borrarTurno,
   };
 }
 
-/* ===== Helper para cabecera de día ===== */
+
 export function formatearCabeceraDia(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   const dt = new Date(y, m - 1, d);
