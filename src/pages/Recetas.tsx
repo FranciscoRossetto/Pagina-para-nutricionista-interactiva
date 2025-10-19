@@ -4,7 +4,7 @@ import type { Recipe } from "../assets/data/recipes";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { motion } from "framer-motion";
-import "swiper/css"; //revisar error
+import "swiper/css";
 import styles from "./Recetas.module.css";
 
 const filtersList = [

@@ -1,14 +1,22 @@
 .container {
   text-align: center;
   color: #333;
-  padding: 2rem;
+  padding: 1.5rem 2rem; 
+  background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+
 .title {
-  margin-bottom: 1.5rem;
+  margin-top: 0.5rem; 
+  margin-bottom: 1rem;
   font-size: 2rem;
   color: #007b5e;
 }
+
 
 .filters {
   display: flex;
@@ -32,11 +40,12 @@
 
 .card {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 3 / 3.5; 
   perspective: 1000px;
   position: relative;
   cursor: pointer;
 }
+
 
 .front,
 .back {
