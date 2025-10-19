@@ -1,4 +1,5 @@
 import styles from "./Home.module.css";
+import WhatsAppBubble from "../components/WhatsAppBubble"; // 👈 ajustá la ruta si cambia
 
 type HomeProps = {
   setSection?: (s: "home" | "recetas" | "agenda" | "juego") => void;
@@ -46,6 +47,27 @@ export default function Home({ setSection }: HomeProps) {
           </div>
         </div>
       </section>
+
+      {/* Sección "Acerca sobre Guadalupe" */}
+      <section className={styles.aboutGuadalupe}>
+        <h2>Acerca sobre Guadalupe</h2>
+        <p>
+          Guadalupe es especialista en nutrición y bienestar. Su enfoque está basado en hábitos saludables,
+          equilibrio y atención personalizada. Aquí podés poner cualquier otra info que quieras destacar.
+        </p>
+      </section>
+
+      {/* Sección de contacto */}
+      <section className={styles.contact}>
+        <h2>Contacto</h2>
+        <p>Dirección: Calle Falsa 123, Ciudad</p>
+        <p>Email: contacto@nutriapp.com</p>
+        <p>Teléfono: +54 9 11 1234-5678</p>
+        <p>Redes sociales: @nutriapp</p>
+      </section>
+
+      {/* Burbuja de WhatsApp */}
+      <WhatsAppBubble />
     </div>
   );
 }

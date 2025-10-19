@@ -1,0 +1,112 @@
+.container {
+  text-align: center;
+  color: #333;
+  padding: 1.5rem 2rem; 
+  background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.title {
+  margin-top: 0.5rem; 
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #007b5e;
+}
+
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.filterItem {
+  background: #f0f0f0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.swiper {
+  width: 90%;
+  margin: auto;
+}
+
+.card {
+  width: 100%;
+  aspect-ratio: 3 / 3.5; 
+  perspective: 1000px;
+  position: relative;
+  cursor: pointer;
+}
+
+
+.front,
+.back {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.7s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.front {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.front img {
+  width: 100%;
+  height: 70%;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+.back {
+  background: #fff;
+  transform: rotateY(180deg);
+  padding: 1rem;
+  text-align: left;
+  overflow-y: auto;
+}
+
+.flipped .front {
+  transform: rotateY(180deg);
+}
+
+.flipped .back {
+  transform: rotateY(0deg);
+}
+
+.swiper-slide {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  transform: scale(0.8);
+  opacity: 0.5;
+  filter: blur(1px);
+}
+
+.swiper-slide-active {
+  transform: scale(1);
+  opacity: 1;
+  filter: none;
+  z-index: 10;
+}
+
+
+.swiper {
+  width: 90%;
+  margin: auto;
+  overflow: visible !important;
+}
