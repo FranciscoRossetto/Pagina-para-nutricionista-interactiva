@@ -1,22 +1,20 @@
 .container {
   text-align: center;
   color: #333;
-  padding: 1.5rem 2rem; 
+  padding: 1.5rem 2rem;
   background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
-  min-height: 100vh; 
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-
 .title {
-  margin-top: 0.5rem; 
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
   font-size: 2rem;
   color: #007b5e;
 }
-
 
 .filters {
   display: flex;
@@ -38,14 +36,14 @@
   margin: auto;
 }
 
+
 .card {
   width: 100%;
-  aspect-ratio: 3 / 3.5; 
+  aspect-ratio: 3 / 2.8; 
   perspective: 1000px;
   position: relative;
   cursor: pointer;
 }
-
 
 .front,
 .back {
@@ -61,25 +59,36 @@
 }
 
 .front {
-  background: white;
+  background: rgba(180, 155, 255, 0.25); 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border: 1px solid rgba(150, 120, 255, 0.3);
 }
 
 .front img {
   width: 100%;
-  height: 70%;
+  height: 65%;
   object-fit: cover;
   border-radius: 12px 12px 0 0;
 }
 
+.front h3,
+.back h3 {
+  font-size: 1.3rem; 
+  color: #5c2bb8;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
 .back {
-  background: #fff;
+  background: rgba(180, 155, 255, 0.2); 
   transform: rotateY(180deg);
   padding: 1rem;
   text-align: left;
   overflow-y: auto;
+  color: #222;
+  border: 1px solid rgba(150, 120, 255, 0.3);
 }
 
 .flipped .front {
@@ -175,7 +184,7 @@
 
 .description {
   font-size: 0.9rem;
-  color: #555;
+  color: #444;
   margin-bottom: 0.8rem;
 }
 
@@ -184,11 +193,12 @@
   padding-left: 1.2rem;
 }
 
+
 .steps {
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #222; 
-  background: #f2f2f2; 
+  color: #222;
+  background: #f2f2f2;
   padding: 0.8rem 1rem;
   border-radius: 10px;
   margin-top: 0.6rem;
@@ -196,4 +206,3 @@
   width: 100%;
   box-sizing: border-box;
 }
-
