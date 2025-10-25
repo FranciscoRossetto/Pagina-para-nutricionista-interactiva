@@ -1,5 +1,7 @@
+import { motion } from "framer-motion";
 import styles from "./Home.module.css";
-import WhatsAppBubble from "../components/WhatsAppBubble"; // 👈 ajustá la ruta si cambia
+import WhatsAppBubble from "../components/WhatsAppBubble";
+import heroImage from "../assets/imagenes/healthy_illustration.png"; // 👈 agregá una ilustración SVG o PNG en /src/assets/
 
 type HomeProps = {
   setSection?: (s: "home" | "recetas" | "agenda" | "juego") => void;
@@ -7,67 +9,118 @@ type HomeProps = {
 
 export default function Home({ setSection }: HomeProps) {
   return (
-    <div className={styles.home}>
+    <motion.div
+      className={styles.home}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
       {/* Hero */}
       <section className={styles.hero}>
-        <div className={styles.heroContent}>
-          <h1>No a las dietas, sí al cambio de hábitos</h1>
+        <motion.div
+          className={styles.heroContent}
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 70, delay: 0.2 }}
+        >
+          <h1>
+            No a las <span>dietas</span>, sí al <span>cambio de hábitos</span>
+          </h1>
           <p>Mejorá tu relación con la comida, sin restricciones extremas.</p>
           {setSection && (
-            <button onClick={() => setSection("recetas")} className={styles.button}>
-              Comenzar ahora
-            </button>
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSection("recetas")}
+              className={styles.button}
+            >
+              ¡Empezá tu cambio hoy!
+            </motion.button>
           )}
-        </div>
+        </motion.div>
+
+        {/* Imagen ilustrativa */}
+        <motion.img
+          src={heroImage}
+          alt="Nutrición saludable"
+          className={styles.heroImage}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.4 }}
+        />
       </section>
 
       {/* Por qué elegirnos */}
       <section className={styles.why}>
-        <h2>¿Por qué elegirnos?</h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          ¿Por qué elegirnos?
+        </motion.h2>
         <p>
           En NutriApp creemos que una alimentación saludable no tiene por qué ser aburrida.
           Te ayudamos a construir hábitos sostenibles con recetas simples y un enfoque personalizado.
         </p>
 
         <div className={styles.cards}>
-          <div className={styles.card}>
-            <span className={styles.icon}>🥗</span>
-            <h3>Recetas saludables</h3>
-            <p>Ideas fáciles, deliciosas y balanceadas para tu día a día.</p>
-          </div>
-          <div className={styles.card}>
-            <span className={styles.icon}>📅</span>
-            <h3>Agenda tu progreso</h3>
-            <p>Organizá tus comidas y seguí tu evolución semana a semana.</p>
-          </div>
-          <div className={styles.card}>
-            <span className={styles.icon}>🎮</span>
-            <h3>Juego interactivo</h3>
-            <p>Aprendé jugando con nuestro quiz de nutrición.</p>
-          </div>
+          {[
+            { icon: "🥗", title: "Recetas saludables", desc: "Ideas fáciles, deliciosas y balanceadas para tu día a día." },
+            { icon: "📅", title: "Agenda tu progreso", desc: "Organizá tus comidas y seguí tu evolución semana a semana." },
+            { icon: "🎮", title: "Juego interactivo", desc: "Aprendé jugando con nuestro quiz de nutrición." },
+          ].map((card, i) => (
+            <motion.div
+              key={i}
+              className={styles.card}
+              whileHover={{ scale: 1.05 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+            >
+              <span className={styles.icon}>{card.icon}</span>
+              <h3>{card.title}</h3>
+              <p>{card.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* Sección "Acerca sobre Guadalupe" */}
-      <section className={styles.aboutGuadalupe}>
+      {/* Acerca de Guadalupe */}
+      <motion.section
+        className={styles.aboutGuadalupe}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
         <h2>Acerca sobre Guadalupe</h2>
         <p>
-          Guadalupe es especialista en nutrición y bienestar. Su enfoque está basado en hábitos saludables,
-          equilibrio y atención personalizada. Aquí podés poner cualquier otra info que quieras destacar.
+          Soy Guadalupe, nutricionista apasionada por acompañar a las personas en el proceso de transformar su relación con la comida. 
+          Creo que una buena alimentación no se trata de restricciones, sino de equilibrio, bienestar y disfrute. 
+          Mi objetivo es ayudarte a construir hábitos saludables que se adapten a tu estilo de vida, para que te sientas bien por dentro y por fuera, todos los días.
         </p>
-      </section>
+      </motion.section>
 
-      {/* Sección de contacto */}
-      <section className={styles.contact}>
+      {/* Contacto */}
+      <motion.section
+        className={styles.contact}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
         <h2>Contacto</h2>
         <p>Dirección: Calle Falsa 123, Ciudad</p>
         <p>Email: contacto@nutriapp.com</p>
         <p>Teléfono: +54 9 11 1234-5678</p>
         <p>Redes sociales: @nutriapp</p>
-      </section>
+      </motion.section>
 
       {/* Burbuja de WhatsApp */}
       <WhatsAppBubble />
-    </div>
+    </motion.div>
   );
 }
