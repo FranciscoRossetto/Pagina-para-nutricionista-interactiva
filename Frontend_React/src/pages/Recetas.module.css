@@ -59,11 +59,13 @@
 }
 
 .front {
-  background: rgba(180, 155, 255, 0.25); 
+  background: rgba(180, 155, 255, 0.25);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
   border: 1px solid rgba(150, 120, 255, 0.3);
+  padding-bottom: 0.2rem; 
 }
 
 .front img {
@@ -71,15 +73,16 @@
   height: 65%;
   object-fit: cover;
   border-radius: 12px 12px 0 0;
+  margin-bottom: 0.2rem; 
 }
 
-.front h3,
-.back h3 {
-  font-size: 1.3rem; 
+.front h3 {
+  font-size: 1.3rem;
   color: #5c2bb8;
   text-align: center;
-  margin: 0.5rem 0;
+  margin: 0.2rem 0 0.2rem 0; 
 }
+
 
 .back {
   background: rgba(180, 155, 255, 0.2); 
