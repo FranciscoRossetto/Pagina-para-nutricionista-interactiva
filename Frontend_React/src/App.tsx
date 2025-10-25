@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Recetas from "./pages/Recetas";
 import Agenda from "./pages/Agenda";
 import MoreLessGame from "./pages/MoreLessGame";
+import IMCPage from "./pages/IMCPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/recetas" element={<Recetas />} />
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/juego" element={<MoreLessGame />} />
+        <Route path="/imc" element={<IMCPage />} />
       </Routes>
     </>
   );

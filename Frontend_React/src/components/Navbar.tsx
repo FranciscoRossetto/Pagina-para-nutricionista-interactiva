@@ -12,6 +12,8 @@ export default function Navbar() {
     { to: "/recetas", label: "Recetas" },
     { to: "/agenda", label: "Agenda" },
     { to: "/juego", label: "Juego" },
+    { to: "/imc", label: "Calculadora IMC" },
+
   ];
 
   return (
