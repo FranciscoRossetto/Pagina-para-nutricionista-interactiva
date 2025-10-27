@@ -1,7 +1,7 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
 import Recetas from "./pages/Recetas";
@@ -20,6 +20,7 @@ function App() {
         <Route path="/juego" element={<MoreLessGame />} />
         <Route path="/imc" element={<IMCPage />} />
       </Routes>
+      <Footer />
     </>
   );
 }

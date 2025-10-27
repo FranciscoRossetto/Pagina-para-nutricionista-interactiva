@@ -1,0 +1,110 @@
+.footer {
+  background-color: #f8f8f8;
+  color: #333;
+  padding: 2.5rem 1rem 1rem;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+}
+
+/* Logo + lema */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  height: 60px;
+  width: 60px;
+  object-fit: contain;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.slogan {
+  color: #666;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+/* Enlaces rápidos */
+.links h4,
+.contact h4 {
+  margin-bottom: 0.7rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.links li {
+  margin-bottom: 0.4rem;
+}
+
+.links a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.links a:hover {
+  color: #2e7d32;
+}
+
+/* Contacto y redes */
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .socials {
+    justify-content: flex-start;
+  }
+}
+
+.socials a {
+  color: #333;
+  font-size: 1.5rem;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.socials a:hover {
+  color: #2e7d32;
+  transform: scale(1.1);
+}
+
+/* Copyright */
+.copy {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 2rem;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
