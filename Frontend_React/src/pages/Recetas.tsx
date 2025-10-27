@@ -15,12 +15,17 @@ const filtersList = [
 ];
 
 function RecipeCarousel({ title, data }: { title: string; data: Recipe[] }) {
+  // Reinicia el slider si cambia la cantidad de recetas
   const [sliderRef] = useKeenSlider<HTMLDivElement>({
     loop: true,
     mode: "free-snap",
     renderMode: "performance",
     drag: true,
-    slides: { perView: 3, spacing: 20, origin: "center" },
+    slides: {
+      perView: 3,
+      spacing: 20,
+      origin: "center",
+    },
     breakpoints: {
       "(max-width: 768px)": {
         slides: { perView: 1.2, spacing: 10, origin: "center" },
@@ -36,7 +41,12 @@ function RecipeCarousel({ title, data }: { title: string; data: Recipe[] }) {
   return (
     <div className={styles.carouselSection}>
       <h2 className={styles.carouselTitle}>{title}</h2>
-      <div ref={sliderRef} className={`keen-slider ${styles.slider}`}>
+      {/* key hace que se reinicie el slider si cambia la cantidad */}
+      <div
+        key={data.length + title}
+        ref={sliderRef}
+        className={`keen-slider ${styles.slider}`}
+      >
         {data.map((recipe) => (
           <div key={recipe.id} className={`keen-slider__slide ${styles.slide}`}>
             <motion.div
@@ -82,7 +92,9 @@ export default function Recetas() {
 
   const handleFilterChange = (key: string) => {
     setSelectedFilters((prev) =>
-      prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]
+      prev.includes(key)
+        ? prev.filter((f) => f !== key)
+        : [...prev, key]
     );
   };
 
@@ -92,7 +104,6 @@ export default function Recetas() {
       : selectedFilters.every((key) => (r.type as any)[key])
   );
 
- 
   const groupedRecipes = filtersList.map((filter) => ({
     title: filter.label,
     data: recipes.filter((r) => (r.type as any)[filter.key]),
@@ -102,7 +113,6 @@ export default function Recetas() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Recetas Saludables 🍽️</h1>
-
         <button
           className={styles.filterButton}
           onClick={() => setShowFilterMenu(!showFilterMenu)}
@@ -111,7 +121,7 @@ export default function Recetas() {
         </button>
       </div>
 
-      {}
+      {/* Menú de filtros */}
       {showFilterMenu && (
         <div className={styles.filterMenu}>
           {filtersList.map((f) => (
@@ -127,7 +137,7 @@ export default function Recetas() {
         </div>
       )}
 
-      {}
+      {/* Carrusel combinado de filtros */}
       {selectedFilters.length > 0 && filteredRecipes.length > 0 && (
         <RecipeCarousel
           title={`Recetas filtradas: ${selectedFilters
@@ -139,7 +149,7 @@ export default function Recetas() {
         />
       )}
 
-      {}
+      {/* Carruseles por tipo */}
       {groupedRecipes.map(
         (group) =>
           group.data.length > 0 && (

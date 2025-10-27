@@ -13,16 +13,11 @@ import arroz from "../imagenes/arroz.jpg";
 import papas from "../imagenes/papas.jpg";
 import fideos from "../imagenes/fideos.jpg";
 import jugo from "../imagenes/jugo.jpg";
-
 import tortilla from "../imagenes/tortilla.jpg";
- 
 import brochetas from "../imagenes/zapallitos.jpg";
-/*
 import brownie from "../imagenes/brownie.jpg";
 import hamburguesa from "../imagenes/hamburguesa.jpg";
 import frutas from "../imagenes/frutas.jpg";
-
-
 ESTO HAY QUE USARLO SI TENGO LAS CARPETA DE IMAGENES ADENTRO DE ASSETS PERO COMO LO PASE A PUBLIC NO HACE FALTA
 */
 export interface Recipe {
@@ -59,7 +54,7 @@ export const recipes: Recipe[] = [
     ],
     steps:
       "1. Cocina la quinoa según las instrucciones del paquete (aproximadamente 15-20 minutos). 2. Mientras tanto, corta los tomates y el pepino en cubos pequeños. 3. Corta la palta en cubos y reserva. 4. Una vez que la quinoa esté cocida, déjala enfriar. 5. Mezcla la quinoa con los vegetales y el aceite de oliva. 6. Agrega jugo de limón y mezcla bien. 7. Sirve fría.",
-    type: { celiaco: true, vegetariano: true, vegano: true, sinHarina: true, sinSal: true },
+    type: { celiaco: true, vegetariano: true, vegano: true, sinHarina: true },
   },
   {
     id: 2,
