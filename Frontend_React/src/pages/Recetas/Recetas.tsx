@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { motion } from "framer-motion";
-import { recipes } from "../assets/data/recipes";
-import type { Recipe } from "../assets/data/recipes";
+import { recipes } from "../../assets/data/recipes";
+import type { Recipe } from "../../assets/data/recipes";
 import styles from "./Recetas.module.css";
 
 const filtersList = [

@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Agenda.module.css";
 
-import type { Motivo } from "../components/AgendaComponente";
+import type { Motivo } from "../../components/AgendaComponente/AgendaComponente.tsx";
 
 import {
   useAgenda,
@@ -9,7 +9,7 @@ import {
   addOneHour,
   formatearCabeceraDia,
   hoyISO,
-} from "../components/AgendaComponente.tsx";
+} from "../../components/AgendaComponente/AgendaComponente.tsx";
 
 export default function Agenda(): React.ReactElement {
   const {

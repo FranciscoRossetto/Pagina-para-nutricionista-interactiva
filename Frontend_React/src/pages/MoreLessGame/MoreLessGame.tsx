@@ -1,8 +1,11 @@
+// src/components/MoreLessGame/MoreLessGame.tsx
 import { motion } from "framer-motion";
-import { useMoreLessGame } from "../contexts/hooks/useMoreLessGame";
-import styles from "./MoreLessGame.module.css"; // 👈 import del módulo CSS
+import useMoreLessGame from "../../contexts/hooks/useMoreLessGame";
+import { useUser } from "../../contexts/UserContext";
+import styles from "./MoreLessGame.module.css";
 
 function MoreLessGame() {
+  const { user } = useUser();
   const {
     leftFood,
     rightFood,
@@ -14,11 +17,22 @@ function MoreLessGame() {
     handleRestart,
   } = useMoreLessGame();
 
+  // 🧠 Evitar render si todavía no hay comidas cargadas
+  if (!leftFood || !rightFood) {
+    return (
+      <div className={styles.container}>
+        <h1>Cargando juego...</h1>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <h1>¿Cuál tiene más calorías?</h1>
       <p className={styles.score}>Puntaje: {score}</p>
-      <p className={styles.highscore}>🏆 Récord: {highScore}</p>
+      <p className={styles.highscore}>
+        🏆 {user ? `${user} - Récord:` : "Récord:"} {highScore}
+      </p>
 
       <div className={styles.cards}>
         {!gameOver && (
@@ -66,7 +80,9 @@ function MoreLessGame() {
           >
             <h2>¡Game Over!</h2>
             <p className={styles.finalScore}>Tu puntaje: {score}</p>
-            <p className={styles.highscore}>🏆 Récord: {highScore}</p>
+            <p className={styles.highscore}>
+              🏆 {user ? `${user} - Récord:` : "Récord:"} {highScore}
+            </p>
             <button onClick={handleRestart}>Jugar de nuevo 🔄</button>
           </motion.div>
         </motion.div>

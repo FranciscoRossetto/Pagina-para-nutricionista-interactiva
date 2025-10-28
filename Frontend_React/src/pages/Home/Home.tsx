@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styles from "./Home.module.css";
-import WhatsAppBubble from "../components/WhatsAppBubble";
-import heroImage from "../assets/imagenes/healthy_illustration.png"; // 👈 agregá una ilustración SVG o PNG en /src/assets/
+import WhatsAppBubble from "../../components/WhatsAppBubble/WhatsAppBubble";
+import heroImage from "../../assets/imagenes/healthy_illustration.png"; // 👈 agregá una ilustración SVG o PNG en /src/assets/
 
 type HomeProps = {
   setSection?: (s: "home" | "recetas" | "agenda" | "juego") => void;
