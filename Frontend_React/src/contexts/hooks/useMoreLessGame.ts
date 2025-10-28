@@ -6,7 +6,6 @@ import { useUser } from "../../contexts/UserContext";
 
 const API_URL = "http://localhost:4000/api";
 
-
 export default function useMoreLessGame() {
   const { user } = useUser();
 
