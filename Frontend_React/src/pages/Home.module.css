@@ -1,40 +1,35 @@
-.home {
+.home { 
   font-family: 'Poppins', sans-serif;
   color: #333;
   overflow-x: hidden;
+  width: 100%;
 }
 
 /* === HERO SECTION === */
 .hero {
-  position: relative;
-  width: 100%;
-  min-height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  padding: 100px 20px;
+  padding: 60px 20px;
   background: linear-gradient(120deg, #a8edea, #fed6e3, #a8edea);
   background-size: 400% 400%;
   animation: gradientShift 12s ease infinite;
   border-radius: 0 0 30px 30px;
+  box-sizing: border-box;
+  min-height: 100vh;
 }
 
+
 @keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .heroContent {
   flex: 1;
-  min-width: 300px;
+  min-width: 280px;
   max-width: 500px;
   text-align: left;
   z-index: 2;
@@ -58,6 +53,15 @@
   margin-bottom: 25px;
 }
 
+.heroImage {
+  flex: 1;
+  max-width: 450px;
+  width: 100%;
+  height: auto;
+  z-index: 1;
+}
+
+/* === BUTTON === */
 .button {
   background-color: #ff6b81;
   border: none;
@@ -75,20 +79,13 @@
   box-shadow: 0 6px 18px rgba(255, 107, 129, 0.4);
 }
 
-.heroImage {
-  flex: 1;
-  max-width: 450px;
-  width: 100%;
-  height: auto;
-  z-index: 1;
-}
-
 /* === WHY SECTION === */
 .why {
-  padding: 80px 20px;
+  padding: 60px 20px;
   max-width: 1000px;
   margin: auto;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .why h2 {
@@ -103,6 +100,7 @@
   margin-bottom: 40px;
 }
 
+/* === CARDS === */
 .cards {
   display: flex;
   justify-content: center;
@@ -130,42 +128,86 @@
   margin-bottom: 10px;
 }
 
-/* === ABOUT SECTION === */
+/* === ABOUT GUADALUPE ELEGANTE === */
 .aboutGuadalupe {
   padding: 80px 20px;
-  background: #fff;
-  max-width: 1000px;
-  margin: auto;
-  text-align: center;
+  background: linear-gradient(135deg, #fef9f9, #fff8f0);
+  border-radius: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+  max-width: 1200px;
+  margin: 60px auto;
+  box-sizing: border-box;
 }
 
-.aboutGuadalupe h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
+.aboutContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 40px;
+}
+
+.aboutImageWrapper {
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.aboutImage {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  object-fit: cover;
+}
+
+.aboutText {
+  flex: 2;
+  min-width: 280px;
+}
+
+.aboutText h2 {
+  font-size: 2rem;
   color: #222;
+  margin-bottom: 20px;
 }
 
-.aboutGuadalupe p {
+.aboutText p {
   font-size: 1rem;
   color: #555;
   line-height: 1.6;
+  margin-bottom: 30px;
 }
 
-/* === CONTACT SECTION === */
-.contact {
-  padding: 80px 20px;
-  background: #f5f5f5;
+/* Valores / Filosofía */
+.aboutValues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.valueCard {
+  flex: 1;
+  min-width: 200px;
+  background: white;
+  padding: 20px 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.contact h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: #222;
+.valueCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
-.contact p {
-  margin: 5px 0;
+.valueCard h4 {
+  font-size: 1.1rem;
+  color: #ff6b81;
+  margin-bottom: 8px;
+}
+
+.valueCard p {
+  font-size: 0.95rem;
   color: #555;
-  font-size: 1rem;
+  line-height: 1.4;
 }

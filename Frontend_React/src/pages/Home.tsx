@@ -89,35 +89,54 @@ export default function Home({ setSection }: HomeProps) {
       </section>
 
       {/* Acerca de Guadalupe */}
-      <motion.section
-        className={styles.aboutGuadalupe}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <h2>Acerca sobre Guadalupe</h2>
-        <p>
-          Soy Guadalupe, nutricionista apasionada por acompañar a las personas en el proceso de transformar su relación con la comida. 
-          Creo que una buena alimentación no se trata de restricciones, sino de equilibrio, bienestar y disfrute. 
-          Mi objetivo es ayudarte a construir hábitos saludables que se adapten a tu estilo de vida, para que te sientas bien por dentro y por fuera, todos los días.
-        </p>
-      </motion.section>
+<motion.section
+  className={styles.aboutGuadalupe}
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.8 }}
+>
+  <div className={styles.aboutContainer}>
+    <div className={styles.aboutImageWrapper}>
+      <img
+        src={heroImage} // reemplazá con foto real de Guadalupe si tenés
+        alt="Guadalupe"
+        className={styles.aboutImage}
+      />
+    </div>
 
-      {/* Contacto */}
-      <motion.section
-        className={styles.contact}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <h2>Contacto</h2>
-        <p>Dirección: Calle Falsa 123, Ciudad</p>
-        <p>Email: contacto@nutriapp.com</p>
-        <p>Teléfono: +54 9 11 1234-5678</p>
-        <p>Redes sociales: @nutriapp</p>
-      </motion.section>
+    <div className={styles.aboutText}>
+      <h2>Conocé a Guadalupe</h2>
+      <p>
+        Soy Guadalupe, nutricionista apasionada por acompañar a las personas en el proceso de transformar su relación con la comida. 
+        Creo que una buena alimentación no se trata de restricciones, sino de equilibrio, bienestar y disfrute. 
+        Mi objetivo es ayudarte a construir hábitos saludables que se adapten a tu estilo de vida, para que te sientas bien por dentro y por fuera, todos los días.
+      </p>
+
+      <div className={styles.aboutValues}>
+        {[
+          { title: "Equilibrio", desc: "Encontrá la armonía entre salud y disfrute." },
+          { title: "Sostenibilidad", desc: "Hábitos que perduran y se adaptan a vos." },
+          { title: "Apoyo Personalizado", desc: "Acompañamiento cercano en cada paso." },
+        ].map((val, i) => (
+          <motion.div
+            key={i}
+            className={styles.valueCard}
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.2 }}
+          >
+            <h4>{val.title}</h4>
+            <p>{val.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </div>
+</motion.section>
+
 
       {/* Burbuja de WhatsApp */}
       <WhatsAppBubble />
