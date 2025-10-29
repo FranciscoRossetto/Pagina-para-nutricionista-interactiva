@@ -26,14 +26,16 @@ function AnimatedNumber({
     const step = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; // easeInOut-ish
+      const eased =
+        progress < 0.5
+          ? 2 * progress * progress
+          : -1 + (4 - 2 * progress) * progress; // easeInOut-ish
       const current = Math.round(value * eased);
       setDisplay(current);
       if (progress < 1) requestAnimationFrame(step);
     };
 
     requestAnimationFrame(step);
-    // cleanup not strictly necessary
   }, [value, trigger, duration]);
 
   return <>{display}</>;
@@ -52,10 +54,9 @@ export default function MoreLessGame() {
     handleRestart,
   } = useMoreLessGame();
 
-  // local state to know qué eligió el usuario para colorear
   const [localSelected, setLocalSelected] = useState<"left" | "right" | null>(null);
 
-  // reset localSelected cuando cambia revealed o gameOver (para la siguiente ronda)
+  // Reset selección local para la siguiente ronda
   useEffect(() => {
     if (!revealed) setLocalSelected(null);
   }, [revealed]);
@@ -71,16 +72,30 @@ export default function MoreLessGame() {
   const correctSide = leftFood.calories >= rightFood.calories ? "left" : "right";
 
   const onCardClick = (side: "left" | "right") => {
-    // Guardamos localmente para colorear la carta
     setLocalSelected(side);
-    // Llamamos a la lógica del hook (que revelará, marcará puntaje o gameOver)
     handleClick(side);
+  };
+
+  // Función para manejar las clases de las cartas
+  const getCardClass = (side: "left" | "right") => {
+    if (!revealed) return styles.card;
+
+    if (localSelected === side) {
+      return localSelected === correctSide
+        ? `${styles.card} ${styles.correct}`
+        : `${styles.card} ${styles.incorrect}`;
+    }
+
+    if (correctSide === side) {
+      return `${styles.card} ${styles.revealCorrect}`;
+    }
+
+    return styles.card;
   };
 
   return (
     <div className={styles.container}>
       <h1>¿Cuál tiene más calorías?</h1>
-
       <p className={styles.score}>Puntaje: {score}</p>
       <p className={styles.highscore}>
         🏆 {user ? `${user} - Récord:` : "Récord:"} {highScore}
@@ -90,18 +105,7 @@ export default function MoreLessGame() {
         {/* LEFT CARD */}
         <motion.div
           key={`${leftFood.name}-${leftFood.calories}`}
-          className={`${styles.card} ${
-            revealed
-              ? localSelected === "left"
-                ? localSelected === correctSide
-                  ? styles.correct
-                  : styles.incorrect
-                : // si no seleccionó esta pero se reveló y el otro fue incorrecto, marcar la correcta
-                correctSide === "left"
-                ? styles.revealCorrect
-                : ""
-              : ""
-          }`}
+          className={getCardClass("left")}
           onClick={() => onCardClick("left")}
           initial={{ x: -200, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -110,7 +114,6 @@ export default function MoreLessGame() {
         >
           <img src={leftFood.image} alt={leftFood.name} />
           <p className={styles.foodName}>{leftFood.name}</p>
-          {/* mostrar calorías SOLO si revealed === true */}
           {revealed && (
             <p className={styles.calories}>
               <AnimatedNumber value={leftFood.calories} trigger={revealed} /> cal
@@ -121,17 +124,7 @@ export default function MoreLessGame() {
         {/* RIGHT CARD */}
         <motion.div
           key={`${rightFood.name}-${rightFood.calories}`}
-          className={`${styles.card} ${
-            revealed
-              ? localSelected === "right"
-                ? localSelected === correctSide
-                  ? styles.correct
-                  : styles.incorrect
-                : correctSide === "right"
-                ? styles.revealCorrect
-                : ""
-              : ""
-          }`}
+          className={getCardClass("right")}
           onClick={() => onCardClick("right")}
           initial={{ x: 200, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -148,6 +141,7 @@ export default function MoreLessGame() {
         </motion.div>
       </div>
 
+      {/* GAME OVER MODAL */}
       {gameOver && (
         <motion.div
           className={styles.gameoverWrapper}
