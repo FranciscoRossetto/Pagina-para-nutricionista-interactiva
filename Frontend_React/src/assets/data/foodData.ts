@@ -28,14 +28,14 @@ export const foodList: Food[] = [
   { name: "Churros", calories: 420, image: "/imagenes/imagenesJuego/Churros.jpg" },
   { name: "Chocotorta", calories: 430, image: "/imagenes/imagenesJuego/Chocotorta.jpg" },
   { name: "Milanesa con puré", calories: 540, image: "/imagenes/imagenesJuego/Milanesa con pure.jpg" },
-  { name: "Choripán", calories: 650, image: "/imagenes/imagenesJuego/Choripán.jpg" },
+  { name: "Choripan", calories: 650, image: "/imagenes/imagenesJuego/Choripan.jpg" },
   { name: "Bizcochuelo", calories: 280, image: "/imagenes/imagenesJuego/Bizcochuelo.jpg" },
   { name: "Gelatina", calories: 90, image: "/imagenes/imagenesJuego/Gelatina.jpg" },
   { name: "Gomitas", calories: 150, image: "/imagenes/imagenesJuego/Gomitas.jpg" },
   { name: "Pan francés", calories: 150, image: "/imagenes/imagenesJuego/Pan frances.jpg" },
   { name: "Panqueque con dulce de leche", calories: 220, image: "/imagenes/imagenesJuego/Panqueque con dulce de leche.jpg" },
   { name: "Papas fritas", calories: 300, image: "/imagenes/imagenesJuego/Papas Fritas.jpg" },
-  { name: "Pizza muzarella", calories: 270, image: "/imagenes/imagenesJuego/Pizza muzarella.jpg" },
+  { name: "Pizza muzzarella", calories: 270, image: "/imagenes/imagenesJuego/Pizza muzzarella.jpg" },
   { name: "Tortilla francesa", calories: 150, image: "/imagenes/imagenesJuego/Tortilla Francesa.jpg" },
 ];
 
