@@ -58,6 +58,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
 }
 
 .carouselSection {
@@ -81,12 +84,14 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: 1rem;
-  -webkit-overflow-scrolling: touch; /* scroll suave en iOS */
+  -webkit-overflow-scrolling: touch;
+  /* scroll suave en iOS */
   scroll-behavior: smooth;
 }
 
 .slide {
-  flex: 0 0 auto; /* ancho fijo */
+  flex: 0 0 auto;
+  /* ancho fijo */
   width: 250px;
   scroll-snap-align: start;
 }
@@ -179,4 +184,3 @@
   width: 100%;
   box-sizing: border-box;
 }
-

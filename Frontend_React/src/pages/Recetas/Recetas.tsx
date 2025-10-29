@@ -19,7 +19,8 @@ export default function Recetas() {
   const [showMenu, setShowMenu] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
-  const [favoritesKey, setFavoritesKey] = useState(0); 
+  const [favoritesKey, setFavoritesKey] = useState(0);
+  const [filteredKey, setFilteredKey] = useState(0);
 
   const { user, token } = useUser();
 
@@ -27,6 +28,10 @@ export default function Recetas() {
     setSelected((prev) =>
       prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]
     );
+
+  useEffect(() => {
+    setFilteredKey((prev) => prev + 1);
+  }, [selected]);
 
   const filtered = recipes.filter((r) =>
     selected.length === 0 ? false : selected.every((key) => (r.type as any)[key])
@@ -37,16 +42,15 @@ export default function Recetas() {
     data: recipes.filter((r) => (r.type as any)[f.key]),
   }));
 
- 
   const fetchFavorites = async () => {
     if (!user || !token) return setFavorites([]);
     try {
-      const favs = await getUserFavorites(token); // [{ recipeId: ... }]
+      const favs = await getUserFavorites(token);
       const favRecipes = recipes.filter((r) =>
         favs.some((f: any) => f.recipeId === r.id.toString())
       );
       setFavorites(favRecipes);
-      setFavoritesKey((prev) => prev + 1); 
+      setFavoritesKey((prev) => prev + 1);
     } catch (err) {
       console.error("Error cargando favoritos:", err);
       setFavorites([]);
@@ -65,6 +69,20 @@ export default function Recetas() {
         <FilterMenu filters={filtersList} selected={selected} onToggle={toggleFilter} />
       )}
 
+
+
+      {/* === RECETAS FILTRADAS === */}
+      {selected.length > 0 && filtered.length > 0 && (
+        <RecipeCarousel
+          key={filteredKey}
+          title={`Recetas filtradas: ${selected
+            .map((f) => filtersList.find((i) => i.key === f)?.label || f)
+            .join(", ")}`}
+          data={filtered}
+          onUpdateFavorites={fetchFavorites}
+        />
+      )}
+
       {/* === FAVORITOS === */}
       {user && (
         <section style={{ marginTop: "2rem", width: "100%" }}>
@@ -81,10 +99,10 @@ export default function Recetas() {
 
           {favorites.length > 0 ? (
             <RecipeCarousel
-              key={favoritesKey} 
+              key={favoritesKey}
               title=""
               data={favorites}
-              onUpdateFavorites={fetchFavorites} 
+              onUpdateFavorites={fetchFavorites}
             />
           ) : (
             <p style={{ textAlign: "center", color: "#777", marginBottom: "2rem" }}>
@@ -94,16 +112,12 @@ export default function Recetas() {
         </section>
       )}
 
-      {/* === RECETAS FILTRADAS === */}
-      {selected.length > 0 && filtered.length > 0 && (
-        <RecipeCarousel
-          title={`Recetas filtradas: ${selected
-            .map((f) => filtersList.find((i) => i.key === f)?.label || f)
-            .join(", ")}`}
-          data={filtered}
-          onUpdateFavorites={fetchFavorites}
-        />
-      )}
+      {/*  CARRUSEL CON TODAS LAS COMIDAS */}
+      <RecipeCarousel
+        title="🍽️ Todas las comidas"
+        data={recipes}
+        onUpdateFavorites={fetchFavorites}
+      />
 
       {/* === CARRUSELES POR TIPO === */}
       {grouped.map(
