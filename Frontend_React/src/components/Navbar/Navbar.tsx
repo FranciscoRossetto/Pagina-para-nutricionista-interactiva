@@ -1,134 +1,272 @@
-// …imports
-import { motion } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-import styles from "./Navbar.module.css";
+import React, { useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Menu,
+  MenuItem,
+  Box,
+  useMediaQuery,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useTheme } from "@mui/material/styles";
+import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false); // menú móvil
-  const [dropdownOpen, setDropdownOpen] = useState(false); // dropdown usuario
-  const location = useLocation();
-  const navigate = useNavigate();
   const { user, logout } = useUser();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  // Cerrar dropdown si clickeas afuera
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const links = [
-    { to: "/recetas", label: "Recetas" },
-    { to: "/agenda", label: "Agenda" },
-    { to: "/juego", label: "Juego" },
-    { to: "/imc", label: "Calculadora IMC" },
+    { label: "Recetas", path: "/recetas" },
+    { label: "Agenda", path: "/agenda" },
+    { label: "Juego", path: "/juego" },
+    { label: "Calculadora IMC", path: "/imc" },
   ];
 
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => setAnchorEl(null);
+
+  const handleLogout = () => {
+    logout();
+    handleClose();
+    navigate("/");
+  };
+
   return (
-    <motion.nav
-      initial={{ y: -40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 80 }}
-      className={styles.navbar}
+    <AppBar
+      position="sticky"
+      sx={{
+        backgroundColor: "rgba(255,255,255,0.9)",
+        backdropFilter: "blur(10px)",
+        color: "#17252a",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+      }}
     >
-      <div className={styles.container}>
-        {/* Logo */}
-        <motion.h1
-          whileHover={{ scale: 1.05 }}
-          className={styles.logo}
-          onClick={() => {
-            navigate("/");
-            setOpen(false);
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        {/* LOGO */}
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 800,
+            color: "#2b7a78",
+            cursor: "pointer",
+            "&:hover": { color: "#3aafa9" },
           }}
+          onClick={() => navigate("/")}
         >
           NutriApp 🥗
-        </motion.h1>
+        </Typography>
 
-        {/* Botón menú móvil */}
-        <button className={styles.toggle} onClick={() => setOpen(!open)}>
-          {open ? "✖" : "☰"}
-        </button>
-
-        {/* Links principales */}
-        <ul className={`${styles.links} ${open ? styles.open : ""}`}>
-          {links.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <motion.li
-                key={link.to}
-                className={styles.linkItem}
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.95 }}
+        {/* LINKS + USER/AUTH (Desktop) */}
+        {!isMobile && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {links.map((link) => (
+              <Button
+                key={link.path}
+                component={RouterLink}
+                to={link.path}
+                sx={{
+                  color: location.pathname === link.path ? "#2b7a78" : "#17252a",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  height: "48px",
+                  borderRadius: "10px",
+                  "&:hover": { color: "#2b7a78", backgroundColor: "transparent" },
+                }}
               >
-                <Link
-                  to={link.to}
-                  className={`${styles.link} ${isActive ? styles.active : ""}`}
-                  onClick={() => setOpen(false)}
+                {link.label}
+              </Button>
+            ))}
+
+            {/* USER / AUTH */}
+            {user ? (
+              <>
+                <IconButton
+                  onClick={handleMenu}
+                  sx={{
+                    color: "#2b7a78",
+                    "&:hover": { color: "#3aafa9" },
+                  }}
                 >
-                  {link.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="underline"
-                      className={styles.underline}
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              </motion.li>
-            );
-          })}
-        </ul>
+                  <AccountCircle fontSize="large" />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  PaperProps={{
+                    sx: {
+                      borderRadius: 2,
+                      boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                      mt: 1,
+                    },
+                  }}
+                >
+                  <MenuItem disabled sx={{ opacity: 1, fontWeight: 600 }}>
+                    {user}
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#2b7a78",
+                    "&:hover": { backgroundColor: "#3aafa9" },
+                    textTransform: "none",
+                    fontWeight: 600,
+                    height: "48px",
+                    borderRadius: "10px",
+                  }}
+                  onClick={() => navigate("/login")}
+                >
+                  Iniciar sesión
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    borderColor: "#2b7a78",
+                    color: "#2b7a78",
+                    "&:hover": {
+                      backgroundColor: "#2b7a78",
+                      color: "white",
+                      borderColor: "#2b7a78",
+                    },
+                    textTransform: "none",
+                    fontWeight: 600,
+                    height: "48px",
+                    borderRadius: "10px",
+                  }}
+                  onClick={() => navigate("/register")}
+                >
+                  Registrarse
+                </Button>
+              </>
+            )}
+          </Box>
+        )}
 
-        {/* Usuario o botones de login/register */}
-        <div className={styles.userSection}>
-          {user ? (
-            <div className={styles.userDropdown} ref={dropdownRef}>
-              <button
-                className={styles.userNameButton}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+        {/* MENU ICON (Mobile) */}
+        {isMobile && (
+          <IconButton onClick={() => setDrawerOpen(true)}>
+            <MenuIcon sx={{ color: "#2b7a78" }} />
+          </IconButton>
+        )}
+      </Toolbar>
+
+      {/* DRAWER (Mobile menu) */}
+      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box sx={{ width: 250, p: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 2,
+              fontWeight: 700,
+              color: "#2b7a78",
+            }}
+          >
+            Menú
+          </Typography>
+          <List>
+            {links.map((link) => (
+              <ListItem
+                button
+                key={link.path}
+                component={RouterLink}
+                to={link.path}
+                onClick={() => setDrawerOpen(false)}
               >
-                {user} ▼
-              </button>
-              {dropdownOpen && (
-                <div className={styles.dropdownMenu}>
-                  <button
-                    onClick={() => {
-                      navigate("/perfil");
-                      setDropdownOpen(false);
-                    }}
-                    className={styles.dropdownItem}
-                  >
-                    Perfil
-                  </button>
-                  <button
-                    onClick={logout}
-                    className={styles.logoutButton}
-                  >
-                    Cerrar sesión
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className={styles.authButtons}>
-              <button className={styles.loginButton} onClick={() => navigate("/login")}>
-                Iniciar sesión
-              </button>
-              <button className={styles.registerButton} onClick={() => navigate("/register")}>
-                Registrarse
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </motion.nav>
+                <ListItemText primary={link.label} />
+              </ListItem>
+            ))}
+          </List>
+          <Box sx={{ mt: 2 }}>
+            {!user ? (
+              <>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    mb: 1,
+                    backgroundColor: "#2b7a78",
+                    "&:hover": { backgroundColor: "#3aafa9" },
+                  }}
+                  onClick={() => {
+                    navigate("/login");
+                    setDrawerOpen(false);
+                  }}
+                >
+                  Iniciar sesión
+                </Button>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    borderColor: "#2b7a78",
+                    color: "#2b7a78",
+                    "&:hover": {
+                      backgroundColor: "#2b7a78",
+                      color: "white",
+                      borderColor: "#2b7a78",
+                    },
+                  }}
+                  onClick={() => {
+                    navigate("/register");
+                    setDrawerOpen(false);
+                  }}
+                >
+                  Registrarse
+                </Button>
+              </>
+            ) : (
+              <>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    mb: 1,
+                    textAlign: "center",
+                    color: "#2b7a78",
+                  }}
+                >
+                  {user}
+                </Typography>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    handleLogout();
+                    setDrawerOpen(false);
+                  }}
+                >
+                  Cerrar sesión
+                </Button>
+              </>
+            )}
+          </Box>
+        </Box>
+      </Drawer>
+    </AppBar>
   );
 }

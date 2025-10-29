@@ -179,3 +179,26 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.heart, .star {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.heart:hover, .star:hover {
+  transform: scale(1.2);
+}
+
+.active {
+  color: #ff4b4b;
+}

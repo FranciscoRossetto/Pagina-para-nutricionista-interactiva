@@ -14,3 +14,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/highscore", highScoreRoutes);
 
 export default app;
+
+import favoriteRoutes from "./routes/favoriteRoutes";
+import likeRoutes from "./routes/likeRoutes";
+
+app.use("/api/favorites", favoriteRoutes);
+app.use("/api/likes", likeRoutes);
