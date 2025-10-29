@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import styles from "./Home.module.css";
 import WhatsAppBubble from "../../components/WhatsAppBubble/WhatsAppBubble";
-import heroImage from "../../assets/imagenes/healthy_illustration.png"; // 👈 agregá una ilustración SVG o PNG en /src/assets/
+import heroImage from "../../assets/imagenes/healthy_illustration.png";
 
 type HomeProps = {
   setSection?: (s: "home" | "recetas" | "agenda" | "juego") => void;
@@ -15,7 +16,7 @@ export default function Home({ setSection }: HomeProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      {/* Hero */}
+      {/* === HERO SECTION === */}
       <section className={styles.hero}>
         <motion.div
           className={styles.heroContent}
@@ -27,6 +28,7 @@ export default function Home({ setSection }: HomeProps) {
             No a las <span>dietas</span>, sí al <span>cambio de hábitos</span>
           </h1>
           <p>Mejorá tu relación con la comida, sin restricciones extremas.</p>
+
           {setSection && (
             <motion.button
               whileHover={{ scale: 1.08 }}
@@ -50,7 +52,7 @@ export default function Home({ setSection }: HomeProps) {
         />
       </section>
 
-      {/* Por qué elegirnos */}
+      {/* === POR QUÉ ELEGIRNOS === */}
       <section className={styles.why}>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -67,78 +69,108 @@ export default function Home({ setSection }: HomeProps) {
 
         <div className={styles.cards}>
           {[
-            { icon: "🥗", title: "Recetas saludables", desc: "Ideas fáciles, deliciosas y balanceadas para tu día a día." },
-            { icon: "📅", title: "Agenda tu progreso", desc: "Organizá tus comidas y seguí tu evolución semana a semana." },
-            { icon: "🎮", title: "Juego interactivo", desc: "Aprendé jugando con nuestro quiz de nutrición." },
+            {
+              icon: "🥗",
+              title: "Recetas saludables",
+              desc: "Ideas fáciles, deliciosas y balanceadas para tu día a día.",
+              to: "/recetas",
+            },
+            {
+              icon: "📅",
+              title: "Agenda tu turno",
+              desc: "Agenda tu turno con la Dr.Guadalupe.",
+              to: "/agenda",
+            },
+            {
+              icon: "🎮",
+              title: "Juego interactivo",
+              desc: "Aprendé jugando con nuestro MoreAndLess de nutrición.",
+              to: "/juego",
+            },
           ].map((card, i) => (
-            <motion.div
+            <Link
               key={i}
-              className={styles.card}
-              whileHover={{ scale: 1.05 }}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2 }}
+              to={card.to}
+              className={styles.cardLink}
+              onClick={() => window.scrollTo(0, 0)}
             >
-              <span className={styles.icon}>{card.icon}</span>
-              <h3>{card.title}</h3>
-              <p>{card.desc}</p>
-            </motion.div>
+              <motion.div
+                className={styles.card}
+                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+              >
+                <span className={styles.icon}>{card.icon}</span>
+                <h3>{card.title}</h3>
+                <p>{card.desc}</p>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* Acerca de Guadalupe */}
-<motion.section
-  className={styles.aboutGuadalupe}
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.8 }}
->
-  <div className={styles.aboutContainer}>
-    <div className={styles.aboutImageWrapper}>
-      <img
-        src={heroImage} // reemplazá con foto real de Guadalupe si tenés
-        alt="Guadalupe"
-        className={styles.aboutImage}
-      />
-    </div>
+      {/* === ACERCA DE GUADALUPE === */}
+      <motion.section
+        className={styles.aboutGuadalupe}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className={styles.aboutContainer}>
+          <div className={styles.aboutImageWrapper}>
+            <img
+              src={heroImage} // Podés reemplazar con una foto real
+              alt="Guadalupe"
+              className={styles.aboutImage}
+            />
+          </div>
+          <div className={styles.aboutText}>
+            <h2>Conocé a Guadalupe</h2>
+            <p>
+              Soy Guadalupe, nutricionista apasionada por acompañar a las personas en el proceso
+              de transformar su relación con la comida. Creo que una buena alimentación no se
+              trata de restricciones, sino de equilibrio, bienestar y disfrute. Mi objetivo es
+              ayudarte a construir hábitos saludables que se adapten a tu estilo de vida, para
+              que te sientas bien por dentro y por fuera, todos los días.
+            </p>
 
-    <div className={styles.aboutText}>
-      <h2>Conocé a Guadalupe</h2>
-      <p>
-        Soy Guadalupe, nutricionista apasionada por acompañar a las personas en el proceso de transformar su relación con la comida. 
-        Creo que una buena alimentación no se trata de restricciones, sino de equilibrio, bienestar y disfrute. 
-        Mi objetivo es ayudarte a construir hábitos saludables que se adapten a tu estilo de vida, para que te sientas bien por dentro y por fuera, todos los días.
-      </p>
+            <div className={styles.aboutValues}>
+              {[
+                {
+                  title: "Equilibrio",
+                  desc: "Encontrá la armonía entre salud y disfrute.",
+                },
+                {
+                  title: "Sostenibilidad",
+                  desc: "Hábitos que perduran y se adaptan a vos.",
+                },
+                {
+                  title: "Apoyo Personalizado",
+                  desc: "Acompañamiento cercano en cada paso.",
+                },
+              ].map((val, i) => (
+                <motion.div
+                  key={i}
+                  className={styles.valueCard}
+                  whileHover={{ scale: 1.05 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                >
+                  <h4>{val.title}</h4>
+                  <p>{val.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
 
-      <div className={styles.aboutValues}>
-        {[
-          { title: "Equilibrio", desc: "Encontrá la armonía entre salud y disfrute." },
-          { title: "Sostenibilidad", desc: "Hábitos que perduran y se adaptan a vos." },
-          { title: "Apoyo Personalizado", desc: "Acompañamiento cercano en cada paso." },
-        ].map((val, i) => (
-          <motion.div
-            key={i}
-            className={styles.valueCard}
-            whileHover={{ scale: 1.05 }}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.2 }}
-          >
-            <h4>{val.title}</h4>
-            <p>{val.desc}</p>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </div>
-</motion.section>
-
-
-      {/* Burbuja de WhatsApp */}
+      {/* === BURBUJA DE WHATSAPP === */}
       <WhatsAppBubble />
     </motion.div>
   );
