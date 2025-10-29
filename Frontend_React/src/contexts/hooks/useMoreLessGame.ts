@@ -16,35 +16,32 @@ export default function useMoreLessGame() {
   const [revealed, setRevealed] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
-  // 🔹 Inicializar comidas diferentes
+  // Inicializa los alimentos
   useEffect(() => {
     const left = getRandomFood();
     let right = getRandomFood([left]);
     while (right.name === left.name) right = getRandomFood([left]);
-
     setLeftFood(left);
     setRightFood(right);
   }, []);
 
-  // 🔹 Traer highscore al cargar o cuando cambia el usuario
+  // Obtener highscore desde backend
   useEffect(() => {
     const fetchHighScore = async () => {
-      if (!user || user.trim() === "") return; // 👈 esperar a que haya usuario
+      if (!user || user.trim() === "") return;
 
       try {
-        console.log("🟢 Obteniendo highscore para:", user);
         const res = await axios.get(`${API_URL}/highscore/${user}`);
-        console.log("📊 Respuesta del backend:", res.data);
         setHighScore(res.data?.score || 0);
       } catch (err) {
-        console.error("❌ Error al obtener highscore:", err);
+        console.error("Error al obtener highscore:", err);
       }
     };
 
     fetchHighScore();
-  }, [user]); // 👈 se vuelve a ejecutar si cambia el user
+  }, [user]);
 
-  // 🔹 Guardar nuevo highscore si se supera
+  // Actualizar highscore si es necesario
   useEffect(() => {
     const updateHighScore = async () => {
       if (score > highScore) {
@@ -52,13 +49,9 @@ export default function useMoreLessGame() {
 
         if (user && user.trim() !== "") {
           try {
-            console.log("💾 Guardando nuevo highscore:", score);
-            await axios.post("http://localhost:4000/api/highscore", {
-              player: user,
-              score,
-            });
+            await axios.post(`${API_URL}/highscore`, { player: user, score });
           } catch (err) {
-            console.error("❌ Error al guardar highscore:", err);
+            console.error("Error al guardar highscore:", err);
           }
         } else {
           localStorage.setItem("localHighScore", String(score));
@@ -69,7 +62,7 @@ export default function useMoreLessGame() {
     updateHighScore();
   }, [score, user]);
 
-  // 🔹 Lógica del juego
+  // Manejar click del usuario
   const handleClick = (selected: "left" | "right") => {
     if (!leftFood || !rightFood || revealed || gameOver) return;
 
@@ -77,11 +70,12 @@ export default function useMoreLessGame() {
     setRevealed(true);
 
     if (selected === correct) {
-      setScore((prev) => prev + 1);
+      setScore(prev => prev + 1);
     } else {
       setGameOver(true);
     }
 
+    // Preparar siguiente ronda
     setTimeout(() => {
       const newLeft = rightFood;
       let newRight = getRandomFood([newLeft]);
@@ -90,10 +84,10 @@ export default function useMoreLessGame() {
       setLeftFood(newLeft);
       setRightFood(newRight);
       setRevealed(false);
-    }, 1200);
+    }, 1000);
   };
 
-  // 🔹 Reiniciar juego
+  // Reiniciar juego
   const handleRestart = () => {
     const left = getRandomFood();
     let right = getRandomFood([left]);
