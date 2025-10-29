@@ -19,6 +19,7 @@ export default function Recetas() {
   const [showMenu, setShowMenu] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
+  const [favoritesKey, setFavoritesKey] = useState(0); 
 
   const { user, token } = useUser();
 
@@ -36,7 +37,7 @@ export default function Recetas() {
     data: recipes.filter((r) => (r.type as any)[f.key]),
   }));
 
-  // ===== Traer favoritos del usuario =====
+ 
   const fetchFavorites = async () => {
     if (!user || !token) return setFavorites([]);
     try {
@@ -45,6 +46,7 @@ export default function Recetas() {
         favs.some((f: any) => f.recipeId === r.id.toString())
       );
       setFavorites(favRecipes);
+      setFavoritesKey((prev) => prev + 1); 
     } catch (err) {
       console.error("Error cargando favoritos:", err);
       setFavorites([]);
@@ -79,9 +81,10 @@ export default function Recetas() {
 
           {favorites.length > 0 ? (
             <RecipeCarousel
+              key={favoritesKey} 
               title=""
               data={favorites}
-              onUpdateFavorites={fetchFavorites} // refresca favoritos
+              onUpdateFavorites={fetchFavorites} 
             />
           ) : (
             <p style={{ textAlign: "center", color: "#777", marginBottom: "2rem" }}>
