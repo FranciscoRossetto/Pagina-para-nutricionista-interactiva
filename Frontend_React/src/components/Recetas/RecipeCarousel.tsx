@@ -28,11 +28,7 @@ export default function RecipeCarousel({
     <section className={styles.carouselSection}>
       <h2 className={styles.carouselTitle}>{title}</h2>
 
-      <div
-        key={data.length + title}
-        ref={sliderRef}
-        className={`keen-slider ${styles.slider}`}
-      >
+      <div ref={sliderRef} className={`keen-slider ${styles.slider}`}>
         {data.map((recipe) => (
           <div key={recipe.id} className={`keen-slider__slide ${styles.slide}`}>
             <RecipeCard

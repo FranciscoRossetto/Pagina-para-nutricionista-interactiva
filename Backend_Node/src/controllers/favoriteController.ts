@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Favorite } from "../models/Favorite";
+import { AuthRequest } from "../middlewares/auth";
 
-export const addFavorite = async (req: Request, res: Response) => {
+export const addFavorite = async (req: AuthRequest, res: Response) => {
   try {
     const { recipeId } = req.body;
-    const userId = req.user.id; 
+    const userId = req.user!.id;
 
     const exists = await Favorite.findOne({ userId, recipeId });
     if (exists) {
@@ -15,17 +16,17 @@ export const addFavorite = async (req: Request, res: Response) => {
     const favorite = new Favorite({ userId, recipeId });
     await favorite.save();
     res.json({ message: "Agregado a favoritos", favorite });
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 };
 
-export const getUserFavorites = async (req: Request, res: Response) => {
+export const getUserFavorites = async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user!.id;
     const favorites = await Favorite.find({ userId });
     res.json(favorites);
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 };

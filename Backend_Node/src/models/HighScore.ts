@@ -1,8 +1,7 @@
-// src/models/HighScore.ts
 import { Schema, model, Document } from "mongoose";
 
 export interface IHighScore extends Document {
-  player: string; // username
+  player: string;
   score: number;
   date: Date;
 }

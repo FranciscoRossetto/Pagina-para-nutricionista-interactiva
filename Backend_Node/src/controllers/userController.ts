@@ -1,4 +1,3 @@
-// src/controllers/userController.ts
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
@@ -16,10 +15,10 @@ export const registerUser = async (req: Request, res: Response) => {
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
 
-    const token = jwt.sign({ username: newUser.username }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: newUser._id, username: newUser.username }, JWT_SECRET, { expiresIn: "7d" });
     res.status(201).json({ username: newUser.username, token });
-  } catch (error) {
-    res.status(500).json({ msg: "Error al registrar usuario", error });
+  } catch (error: any) {
+    res.status(500).json({ msg: "Error al registrar usuario", error: error.message });
   }
 };
 
@@ -32,9 +31,9 @@ export const loginUser = async (req: Request, res: Response) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Contraseña incorrecta" });
 
-    const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: "7d" });
     res.json({ username: user.username, token });
-  } catch (error) {
-    res.status(500).json({ msg: "Error al iniciar sesión", error });
+  } catch (error: any) {
+    res.status(500).json({ msg: "Error al iniciar sesión", error: error.message });
   }
 };

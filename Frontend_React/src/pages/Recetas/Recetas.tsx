@@ -1,69 +1,58 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { recipes, Recipe } from "../../assets/data/recipes";
+import { useState } from "react";
+import { recipes } from "../../assets/data/recipes";
+import RecipeCarousel from "../../components/Recetas/RecipeCarousel";
+import FilterMenu from "../../components/Recetas/FilterMenu";
+import HeaderRecetas from "../../components/Recetas/HeaderRecetas";
 import styles from "./Recetas.module.css";
 
-const Recetas: React.FC = () => {
-  const [selectedFilter, setSelectedFilter] = useState<string>("todos");
+const filtersList = [
+  { key: "celiaco", label: "Apto celíacos" },
+  { key: "vegetariano", label: "Vegetariano" },
+  { key: "vegano", label: "Vegano" },
+  { key: "sinHarina", label: "Sin harina" },
+  { key: "sinSal", label: "Sin sal" },
+];
 
-  const filteredRecipes = recipes.filter((recipe: Recipe) => {
-    if (selectedFilter === "todos") return true;
-    return recipe.type[selectedFilter as keyof Recipe["type"]];
-  });
+export default function Recetas() {
+  const [showMenu, setShowMenu] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const toggleFilter = (key: string) =>
+    setSelected((prev) =>
+      prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]
+    );
+
+  const filtered = recipes.filter((r) =>
+    selected.length === 0
+      ? false
+      : selected.every((key) => (r.type as any)[key])
+  );
+
+  const grouped = filtersList.map((f) => ({
+    title: f.label,
+    data: recipes.filter((r) => (r.type as any)[f.key]),
+  }));
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.titulo}>Recetario Saludable</h1>
+      <HeaderRecetas onToggleMenu={() => setShowMenu(!showMenu)} showMenu={showMenu} />
 
-      <div className={styles.filtros}>
-        <button onClick={() => setSelectedFilter("todos")}>Todos</button>
-        <button onClick={() => setSelectedFilter("celiaco")}>Apto celíacos</button>
-        <button onClick={() => setSelectedFilter("vegetariano")}>Vegetariano</button>
-        <button onClick={() => setSelectedFilter("vegano")}>Vegano</button>
-        <button onClick={() => setSelectedFilter("sinHarina")}>Sin harina</button>
-        <button onClick={() => setSelectedFilter("sinSal")}>Sin sal</button>
-      </div>
+      {showMenu && (
+        <FilterMenu filters={filtersList} selected={selected} onToggle={toggleFilter} />
+      )}
 
-      <div className={styles.grid}>
-        {filteredRecipes.map((recipe: Recipe, idx: number) => (
-          <motion.div
-            key={`${recipe.id}-${idx}`}
-            className={styles.card}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className={styles.imageContainer}>
-              <img src={recipe.image} alt={recipe.title} className={styles.image} />
-            </div>
-            <h2>{recipe.title}</h2>
-            <p>{recipe.description}</p>
+      {selected.length > 0 && filtered.length > 0 && (
+        <RecipeCarousel
+          title={`Recetas filtradas: ${selected
+            .map((f) => filtersList.find((i) => i.key === f)?.label || f)
+            .join(", ")}`}
+          data={filtered}
+        />
+      )}
 
-            <div className={styles.tags}>
-              {recipe.type.celiaco && <span className={styles.tag}>Celiaco</span>}
-              {recipe.type.vegetariano && <span className={styles.tag}>Vegetariano</span>}
-              {recipe.type.vegano && <span className={styles.tag}>Vegano</span>}
-              {recipe.type.sinHarina && <span className={styles.tag}>Sin harina</span>}
-              {recipe.type.sinSal && <span className={styles.tag}>Sin sal</span>}
-            </div>
-
-            <details className={styles.details}>
-              <summary>Ver más</summary>
-              <div>
-                <h3>Ingredientes:</h3>
-                <ul>
-                  {recipe.ingredients.map((i: string, idx2: number) => (
-                    <li key={`${recipe.id}-ing-${idx2}`}>{i}</li>
-                  ))}
-                </ul>
-                <h3>Pasos:</h3>
-                <p>{recipe.steps}</p>
-              </div>
-            </details>
-          </motion.div>
-        ))}
-      </div>
+      {grouped.map(
+        (g) => g.data.length > 0 && <RecipeCarousel key={g.title} {...g} />
+      )}
     </div>
   );
-};
-
-export default Recetas;
+}
