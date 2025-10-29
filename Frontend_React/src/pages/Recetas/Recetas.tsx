@@ -20,7 +20,7 @@ export default function Recetas() {
   const [selected, setSelected] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
   const [favoritesKey, setFavoritesKey] = useState(0);
-  const [filteredKey, setFilteredKey] = useState(0); 
+  const [filteredKey, setFilteredKey] = useState(0);
 
   const { user, token } = useUser();
 
@@ -29,7 +29,6 @@ export default function Recetas() {
       prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]
     );
 
- 
   useEffect(() => {
     setFilteredKey((prev) => prev + 1);
   }, [selected]);
@@ -43,11 +42,10 @@ export default function Recetas() {
     data: recipes.filter((r) => (r.type as any)[f.key]),
   }));
 
-  
   const fetchFavorites = async () => {
     if (!user || !token) return setFavorites([]);
     try {
-      const favs = await getUserFavorites(token); 
+      const favs = await getUserFavorites(token);
       const favRecipes = recipes.filter((r) =>
         favs.some((f: any) => f.recipeId === r.id.toString())
       );
@@ -71,10 +69,12 @@ export default function Recetas() {
         <FilterMenu filters={filtersList} selected={selected} onToggle={toggleFilter} />
       )}
 
+
+
       {/* === RECETAS FILTRADAS === */}
       {selected.length > 0 && filtered.length > 0 && (
         <RecipeCarousel
-          key={filteredKey} 
+          key={filteredKey}
           title={`Recetas filtradas: ${selected
             .map((f) => filtersList.find((i) => i.key === f)?.label || f)
             .join(", ")}`}
@@ -111,6 +111,13 @@ export default function Recetas() {
           )}
         </section>
       )}
+
+      {/*  CARRUSEL CON TODAS LAS COMIDAS */}
+      <RecipeCarousel
+        title="🍽️ Todas las comidas"
+        data={recipes}
+        onUpdateFavorites={fetchFavorites}
+      />
 
       {/* === CARRUSELES POR TIPO === */}
       {grouped.map(
