@@ -1,4 +1,3 @@
-// src/pages/MoreLessGame/MoreLessGame.tsx
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import useMoreLessGame from "../../contexts/hooks/useMoreLessGame";
@@ -29,7 +28,7 @@ function AnimatedNumber({
       const eased =
         progress < 0.5
           ? 2 * progress * progress
-          : -1 + (4 - 2 * progress) * progress; // easeInOut-ish
+          : -1 + (4 - 2 * progress) * progress;
       const current = Math.round(value * eased);
       setDisplay(current);
       if (progress < 1) requestAnimationFrame(step);
@@ -54,9 +53,10 @@ export default function MoreLessGame() {
     handleRestart,
   } = useMoreLessGame();
 
-  const [localSelected, setLocalSelected] = useState<"left" | "right" | null>(null);
+  const [localSelected, setLocalSelected] = useState<"left" | "right" | null>(
+    null
+  );
 
-  // Reset selección local para la siguiente ronda
   useEffect(() => {
     if (!revealed) setLocalSelected(null);
   }, [revealed]);
@@ -69,24 +69,30 @@ export default function MoreLessGame() {
     );
   }
 
-  const correctSide = leftFood.calories >= rightFood.calories ? "left" : "right";
+  const correctSide =
+    leftFood.calories === rightFood.calories
+      ? "both"
+      : leftFood.calories > rightFood.calories
+      ? "left"
+      : "right";
 
   const onCardClick = (side: "left" | "right") => {
     setLocalSelected(side);
     handleClick(side);
   };
 
-  // Función para manejar las clases de las cartas
   const getCardClass = (side: "left" | "right") => {
     if (!revealed) return styles.card;
 
     if (localSelected === side) {
-      return localSelected === correctSide
-        ? `${styles.card} ${styles.correct}`
-        : `${styles.card} ${styles.incorrect}`;
+      if (correctSide === "both" || localSelected === correctSide) {
+        return `${styles.card} ${styles.correct}`;
+      } else {
+        return `${styles.card} ${styles.incorrect}`;
+      }
     }
 
-    if (correctSide === side) {
+    if (correctSide !== "both" && correctSide === side) {
       return `${styles.card} ${styles.revealCorrect}`;
     }
 
@@ -96,40 +102,39 @@ export default function MoreLessGame() {
   return (
     <div className={styles.container}>
       <h1>¿Cuál tiene más calorías?</h1>
-      <p className={styles.score}>Puntaje: {score}</p>
-      <p className={styles.highscore}>
-        🏆 {user ? `${user} - Récord:` : "Récord:"} {highScore}
-      </p>
+
+      <div className={styles.scoreBoard}>
+        <div className={styles.scoreBox}>
+          <p>Puntaje</p>
+          <span>{score}</span>
+        </div>
+        <div className={styles.scoreBox}>
+          <p>Récord</p>
+          <span>{highScore}</span>
+        </div>
+      </div>
 
       <div className={styles.cards}>
-        {/* LEFT CARD */}
         <motion.div
           key={`${leftFood.name}-${leftFood.calories}`}
           className={getCardClass("left")}
           onClick={() => onCardClick("left")}
           initial={{ x: -200, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.98 }}
         >
           <img src={leftFood.image} alt={leftFood.name} />
           <p className={styles.foodName}>{leftFood.name}</p>
-          {revealed && (
-            <p className={styles.calories}>
-              <AnimatedNumber value={leftFood.calories} trigger={revealed} /> cal
-            </p>
-          )}
+          <p className={styles.calories}>
+            <AnimatedNumber value={leftFood.calories} trigger={true} /> cal
+          </p>
         </motion.div>
 
-        {/* RIGHT CARD */}
         <motion.div
           key={`${rightFood.name}-${rightFood.calories}`}
           className={getCardClass("right")}
           onClick={() => onCardClick("right")}
           initial={{ x: 200, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.98 }}
         >
           <img src={rightFood.image} alt={rightFood.name} />
           <p className={styles.foodName}>{rightFood.name}</p>
@@ -141,7 +146,6 @@ export default function MoreLessGame() {
         </motion.div>
       </div>
 
-      {/* GAME OVER MODAL */}
       {gameOver && (
         <motion.div
           className={styles.gameoverWrapper}
@@ -149,23 +153,18 @@ export default function MoreLessGame() {
           animate={{ opacity: 1 }}
         >
           <motion.div
-            className={styles.gameover}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            className={styles.gameoverCard}
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
           >
-            <h2>¡Game Over!</h2>
-            <p className={styles.finalScore}>Tu puntaje: {score}</p>
-            <p className={styles.highscore}>
+            <h2 className={styles.gameoverTitle}>¡Fin del juego!</h2>
+            <p className={styles.finalScore}>Puntaje final: {score}</p>
+            <p className={styles.highscoreText}>
               🏆 {user ? `${user} - Récord:` : "Récord:"} {highScore}
             </p>
-            <button
-              onClick={() => {
-                handleRestart();
-                setLocalSelected(null);
-              }}
-            >
-              Jugar de nuevo 🔄
+            <button className={styles.restartButton} onClick={handleRestart}>
+              Jugar de nuevo
             </button>
           </motion.div>
         </motion.div>
