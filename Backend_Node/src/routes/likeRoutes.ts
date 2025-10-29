@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { toggleLike, getRecipeLikes } from "../controllers/likeController";
-import { auth } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
-router.post("/", auth, toggleLike);
-// ahora auth está activo para que el frontend pueda saber si el usuario dio like
-router.get("/:recipeId", auth, getRecipeLikes);
+// Solo usuarios logeados pueden dar like
+router.post("/", authMiddleware, toggleLike);
+
+// Todos pueden ver cuántos likes hay
+router.get("/:recipeId", getRecipeLikes);
 
 export default router;
