@@ -8,9 +8,11 @@ import styles from "../../pages/Recetas/Recetas.module.css";
 export default function RecipeCarousel({
   title,
   data,
+  onUpdateFavorites,
 }: {
   title: string;
   data: Recipe[];
+  onUpdateFavorites?: () => void; // callback para actualizar favoritos
 }) {
   const [sliderRef] = useKeenSlider<HTMLDivElement>({
     loop: true,
@@ -26,7 +28,7 @@ export default function RecipeCarousel({
 
   return (
     <section className={styles.carouselSection}>
-      <h2 className={styles.carouselTitle}>{title}</h2>
+      {title && <h2 className={styles.carouselTitle}>{title}</h2>}
 
       <div ref={sliderRef} className={`keen-slider ${styles.slider}`}>
         {data.map((recipe) => (
@@ -37,6 +39,7 @@ export default function RecipeCarousel({
               onFlip={() =>
                 setFlippedCard(flippedCard === recipe.id ? null : recipe.id)
               }
+              onUpdateFavorites={onUpdateFavorites} // se pasa callback
             />
           </div>
         ))}
