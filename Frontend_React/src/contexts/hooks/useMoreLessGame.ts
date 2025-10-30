@@ -40,7 +40,7 @@ export default function useMoreLessGame() {
     const fetchHighScore = async () => {
       if (user && user.trim() !== "") {
         try {
-          const res = await axios.get(`${API}/highscore/${user}`);
+          const res = await axios.get(`${API}highscore/${user}`);
           setHighScore(res.data?.score || 0);
         } catch (err) {
           console.error("Error al obtener highscore:", err);
@@ -59,7 +59,7 @@ export default function useMoreLessGame() {
         setHighScore(score);
         if (user && user.trim() !== "") {
           try {
-            await axios.post(`${API}/highscore`, { player: user, score });
+            await axios.post(`${API}highscore`, { player: user, score });
           } catch (err) {
             console.error("Error al guardar highscore:", err);
           }
