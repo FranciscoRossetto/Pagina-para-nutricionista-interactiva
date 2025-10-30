@@ -138,35 +138,63 @@
 .tagOtro     { color:#334155; border-color:#e2e8f0; background:#f8fafc; }
 /* ...tus estilos existentes... */
 
+/* Base existentes tuyos pueden quedar. Agrego/ajusto: */
+
+
+.bg {
+  background-image: linear-gradient(180deg, #ffe4f1 0%, #ffd1ea 40%, #ffc2e4 100%);
+  min-height: 100vh;
+  width: 100%;
+}
+.cont { font-family: Inter, system-ui, Arial, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+.panel {
+  border: 1px solid #f9a8d4; border-radius: 16px; background: rgba(255,255,255,0.9);
+  box-shadow: 0 10px 30px rgba(219,39,119,0.15); backdrop-filter: blur(3px); padding: 12px;
+}
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.headerRight { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+.title { font-size: 22px; font-weight: 900; color: #9d174d; }
+.weekRange { font-weight: 600; color: #831843; }
+
+.btn, .btnPrimary, .btnDanger {
+  padding: 8px 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.15);
+}
+.btn { border: 1px solid #f472b6; background: #fff; color: #9d174d; }
+.btnPrimary { border: 1px solid #ec4899; background: #ec4899; color: #fff; }
+.btnDanger { border: 1px solid #ef4444; background: #fff5f5; color: #ef4444; }
+
+.input, .select {
+  padding: 10px; border: 1px solid #fbcfe8; border-radius: 12px; background: #fff; outline: none;
+}
+
 .gridWrap { margin-top: 8px; }
-.gridWeek {
+.gridWeek { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+
+.col { border: 1px dashed #f9a8d4; border-radius: 14px; padding: 10px; background: rgba(255,255,255,0.95); }
+.colHead { font-size: 12px; font-weight: 800; color: #9d174d; margin-bottom: 8px; text-transform: uppercase; }
+
+/* “Tabla” 1 columna con filas por hora */
+.tableDay { display: flex; flex-direction: column; gap: 6px; }
+.rowSlot {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 días hábiles */
-  gap: 12px;
+  grid-template-columns: 1fr; /* 1 columna visual */
+  padding: 8px; border: 1px solid #fbcfe8; border-radius: 12px; background: #fff;
 }
+.slotHour { font-weight: 700; color: #831843; margin-bottom: 6px; }
 
-.slotWrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
+.cellBusy {
+  padding: 6px 8px; border: 1px solid #e5e7eb; border-radius: 10px;
+  background: #f3f4f6; color: #6b7280; font-size: 12px; text-align: center;
 }
+.cellMine { display: flex; align-items: center; gap: 8px; }
 
-.slotFree {
-  padding: 6px 10px;
-  border: 1px dashed #a3e635;
-  border-radius: 10px;
-  background: #f0fdf4;
-  cursor: pointer;
-  font-size: 12px;
+.tag {
+  font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid;
 }
-.slotFree:hover { filter: brightness(0.98); }
+.tagConsulta { color:#9d174d; border-color:#fbcfe8; background:#fde2f3; }
+.tagControl  { color:#065f46; border-color:#bbf7d0; background:#ecfdf5; }
+.tagPlan     { color:#7c2d12; border-color:#fed7aa; background:#fff7ed; }
+.tagOtro     { color:#334155; border-color:#e2e8f0; background:#f8fafc; }
 
-.slotBusy {
-  padding: 6px 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #f3f4f6;
-  color: #6b7280;
-  font-size: 12px;
-}
