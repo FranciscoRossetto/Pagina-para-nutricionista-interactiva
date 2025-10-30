@@ -29,7 +29,7 @@ export function addDays(iso: string, delta: number): string {
 }
 export function localDateFromISO(iso: string): Date {
   const [y, m, d] = iso.split("-").map(Number);
-  return new Date(y, m - 1, d); // local time, evita “domingo”
+  return new Date(y, m - 1, d); // local time
 }
 export function weekMonday(iso: string): string {
   const dt = localDateFromISO(iso);
@@ -59,7 +59,8 @@ function toTurno(a: ApiAppointment): Turno {
 export function useAgenda() {
   const { token, user } = useUser();
 
-  const [weekStart, setWeekStart] = useState<string>(weekMonday(hoyISO())); // lunes de la semana actual
+  const currentWeekStart = weekMonday(hoyISO());
+  const [weekStart, setWeekStart] = useState<string>(currentWeekStart); // lunes de la semana visible
   const weekDays = useMemo(() => monToFri(weekStart), [weekStart]);
 
   const [motivo, setMotivo] = useState<Motivo>("consulta");
@@ -110,7 +111,12 @@ export function useAgenda() {
   }
 
   function startReservar(fecha: string, hora: string) {
-    setEditSlot({ fecha, hora }); setNota("");
+    if (!token) {
+      alert("Debes iniciar sesión para poder sacar un turno.");
+      return;
+    }
+    setEditSlot({ fecha, hora });
+    setNota("");
   }
   function cancelReservar() {
     setEditSlot(null); setNota("");
@@ -162,7 +168,14 @@ export function useAgenda() {
   }
 
   function nextWeek() { setWeekStart(prev => addDays(prev, 7)); }
-  function prevWeek() { setWeekStart(prev => addDays(prev, -7)); }
+  function prevWeek() {
+    // no permitir ir antes del lunes de la semana actual
+    setWeekStart(prev => {
+      const candidate = addDays(prev, -7);
+      return candidate < currentWeekStart ? prev : candidate;
+    });
+  }
+  const prevDisabled = weekStart <= currentWeekStart;
 
   const isEditing = (fecha: string, hora: string) =>
     !!editSlot && editSlot.fecha === fecha && editSlot.hora === hora;
@@ -174,7 +187,7 @@ export function useAgenda() {
     startReservar, cancelReservar, confirmReservar,
     isEditing, nota, setNota,
     cancelar,
-    nextWeek, prevWeek,
-    localDateFromISO, // lo exponemos para pintar correctamente
+    nextWeek, prevWeek, prevDisabled,
+    localDateFromISO,
   };
 }
