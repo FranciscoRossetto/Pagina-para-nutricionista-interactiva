@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { useUser } from "../../contexts/UserContext"; // ruta correcta
+import { useUser } from "../../contexts/UserContext"; 
 
 export type Motivo = "consulta" | "control" | "plan" | "otro";
 
