@@ -3,24 +3,28 @@ import styles from "../../pages/Recetas/Recetas.module.css";
 import type { Recipe } from "../../assets/data/recipes";
 import { useUser } from "../../contexts/UserContext";
 import {
-  toggleLike,
-  getRecipeLikes,
+  toggleLike as apiToggleLike,
+  getRecipeLikes as apiGetLikes,
   toggleFavorite,
   getRecipeFavorite,
 } from "../../utils/api";
 import { useState, useEffect } from "react";
-import { Heart, HeartOff, Star, StarOff } from "lucide-react";
+import { Heart, Star, StarOff } from "lucide-react";
 
 export default function RecipeCard({
   recipe,
   flipped,
   onFlip,
   onUpdateFavorites,
+  likeTick,          // ⬅️ llega desde arriba
+  bumpLike,          // ⬅️ función global que incrementa el tick
 }: {
   recipe: Recipe;
   flipped: boolean;
   onFlip: () => void;
   onUpdateFavorites?: () => void;
+  likeTick: number;
+  bumpLike: () => void;
 }) {
   const { user, token } = useUser();
   const [likesCount, setLikesCount] = useState(0);
@@ -31,34 +35,41 @@ export default function RecipeCard({
 
   const recipeIdStr = recipe.id.toString();
 
+  // Re-fetch de likes también cuando cambia likeTick
   useEffect(() => {
     let mounted = true;
 
-    const fetchData = async () => {
+    const loadLikes = async () => {
       try {
-        const likes = await getRecipeLikes(recipeIdStr, token ?? "");
+        const likes = await apiGetLikes(recipeIdStr, token ?? "");
         if (!mounted) return;
         setLikesCount(likes.likes ?? 0);
-        setLiked(likes.likedByUser ?? false);
+        setLiked(!!likes.likedByUser);
       } catch (err) {
+        if (!mounted) return;
         console.error("Error cargando likes:", err);
       }
+    };
 
+    const loadFav = async () => {
       try {
         const fav = await getRecipeFavorite(recipeIdStr, token ?? "");
         if (!mounted) return;
         setFavorited(!!fav.favoritedByUser);
       } catch (err) {
+        if (!mounted) return;
         console.error("Error cargando favorito:", err);
         setFavorited(false);
       }
     };
 
-    fetchData();
+    loadLikes();
+    loadFav();
     return () => {
       mounted = false;
     };
-  }, [user, token, recipeIdStr]);
+    // ⬇️ clave: dependemos de likeTick para que TODAS las tarjetas se actualicen
+  }, [user, token, recipeIdStr, likeTick]);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,10 +77,13 @@ export default function RecipeCard({
 
     try {
       setLikeAnim(true);
-      await toggleLike(recipeIdStr, token);
-      const updated = await getRecipeLikes(recipeIdStr, token);
+      await apiToggleLike(recipeIdStr, token);
+      // Reconsulta local
+      const updated = await apiGetLikes(recipeIdStr, token);
       setLikesCount(updated.likes ?? 0);
-      setLiked(updated.likedByUser ?? false);
+      setLiked(!!updated.likedByUser);
+      // 🔁 Propaga actualización al resto
+      bumpLike();
     } catch (err) {
       console.error("Error toggleLike:", err);
     } finally {
@@ -86,9 +100,7 @@ export default function RecipeCard({
       await toggleFavorite(recipeIdStr, token);
       const updated = await getRecipeFavorite(recipeIdStr, token);
       setFavorited(!!updated.favoritedByUser);
-
-      // refresca la sección de favoritos en la página
-      if (onUpdateFavorites) onUpdateFavorites();
+      onUpdateFavorites?.();
     } catch (err) {
       console.error("Error toggleFavorite:", err);
     } finally {
@@ -100,7 +112,7 @@ export default function RecipeCard({
     <motion.div
       className={`${styles.card} ${flipped ? styles.flipped : ""}`}
       onClick={onFlip}
-      style={{ transformStyle: "preserve-3d" }} // evita agrandarse
+      style={{ transformStyle: "preserve-3d" }}
     >
       <motion.div className={styles.front}>
         <img src={recipe.image} alt={recipe.title} />
@@ -132,7 +144,7 @@ export default function RecipeCard({
               opacity: user ? 1 : 0.6,
             }}
           >
-            {liked ? <Heart fill="red" stroke="red" size={35} /> : <Heart stroke="gray" size={35} />}
+            <Heart fill={liked ? "red" : "none"} stroke={liked ? "red" : "gray"} size={35} />
             <span style={{ fontWeight: 600 }}>{likesCount}</span>
           </motion.button>
 
