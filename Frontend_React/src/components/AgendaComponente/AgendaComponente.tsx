@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { useUser } from "../../contexts/UserContext"; // ruta correcta
+import { useUser } from "../../contexts/UserContext";
 
 export type Motivo = "consulta" | "control" | "plan" | "otro";
 
@@ -13,17 +13,6 @@ export type Turno = {
   notas?: string;
 };
 
-export type FormState = {
-  fecha: string;
-  inicio: string;
-  paciente: string;
-  motivo: Motivo;
-  notas: string;
-};
-
-/* ===== Backend ===== */
-const API = "http://localhost:4000";
-
 type ApiAppointment = {
   _id: string;
   fecha: string;
@@ -34,19 +23,18 @@ type ApiAppointment = {
   notas?: string;
 };
 
-function toTurno(a: ApiAppointment): Turno {
-  return {
-    id: a._id,
-    fecha: a.fecha,
-    inicio: a.inicio,
-    fin: a.fin,
-    paciente: a.paciente,
-    motivo: a.motivo,
-    notas: a.notas,
-  };
-}
+export type FormState = {
+  fecha: string;
+  inicio: string;
+  paciente: string;
+  motivo: Motivo;
+  notas: string;
+};
 
-/* ===== Helpers de fechas/validaciones (tus originales) ===== */
+/* ====== Backend base ====== */
+const API = "http://localhost:4000";                  // ajustá si usás proxy
+
+/* ====== Helpers fecha ====== */
 export function hoyISO(): string {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -68,23 +56,17 @@ export function isWeekend(iso: string): boolean {
   const w = dt.getDay();
   return w === 0 || w === 6;
 }
-
 const HOLIDAYS_AR = new Set<string>([
-  "2025-01-01","2025-03-03","2025-03-04",
-  "2025-03-24","2025-04-02","2025-04-18",
-  "2025-05-01","2025-05-25","2025-06-20",
-  "2025-07-09","2025-12-08","2025-12-25",
+  "2025-01-01","2025-03-03","2025-03-04","2025-03-24","2025-04-02","2025-04-18",
+  "2025-05-01","2025-05-25","2025-06-20","2025-07-09","2025-12-08","2025-12-25",
 ]);
-export function isHoliday(iso: string): boolean {
-  return HOLIDAYS_AR.has(iso);
-}
+export function isHoliday(iso: string): boolean { return HOLIDAYS_AR.has(iso); }
 
 export function nextBusinessDayFrom(iso: string): string {
   let cur = iso;
   while (isWeekend(cur) || isHoliday(cur)) cur = addDays(cur, 1);
   return cur;
 }
-
 export function businessDaysFrom(fromISO: string, count: number): string[] {
   const out: string[] = [];
   let cur = fromISO;
@@ -94,7 +76,18 @@ export function businessDaysFrom(fromISO: string, count: number): string[] {
   }
   return out;
 }
+function advanceBusinessDays(fromISO: string, deltaBizDays: number): string {
+  let cur = fromISO;
+  let left = Math.abs(deltaBizDays);
+  const step = deltaBizDays >= 0 ? 1 : -1;
+  while (left > 0) {
+    cur = addDays(cur, step);
+    if (!isWeekend(cur) && !isHoliday(cur)) left -= 1;
+  }
+  return cur;
+}
 
+/* ====== Slots ====== */
 export const SLOTS: string[] = Array.from({ length: 10 }, (_, i) =>
   String(9 + i).padStart(2, "0") + ":00"
 );
@@ -104,138 +97,153 @@ export function addOneHour(hhmm: string): string {
   end.setHours(end.getHours() + 1);
   return `${String(end.getHours()).padStart(2, "0")}:${String(end.getMinutes()).padStart(2, "0")}`;
 }
-function ordenarPorHora(a: Turno, b: Turno) {
-  return a.inicio.localeCompare(b.inicio);
+function toTurno(a: ApiAppointment): Turno {
+  return { id: a._id, fecha: a.fecha, inicio: a.inicio, fin: a.fin, paciente: a.paciente, motivo: a.motivo, notas: a.notas };
 }
+function ordenarPorHora(a: Turno, b: Turno) { return a.inicio.localeCompare(b.inicio); }
 
-/* ===== Hook principal ===== */
+/* ====== Hook principal con semanas ====== */
 export function useAgenda() {
-  const { token } = useUser(); // JWT del login
+  const { token, user } = useUser();
 
-  const [turnos, setTurnos] = useState<Turno[]>([]);
+  const [turnos, setTurnos] = useState<Turno[]>([]);                 // mis turnos visibles
+  const [ocupados, setOcupados] = useState<Record<string, Set<string>>>({}); // slots tomados por cualquiera
   const [filtroPaciente, setFiltroPaciente] = useState("");
+
+  const baseStart = nextBusinessDayFrom(hoyISO());
+  const [weekStart, setWeekStart] = useState<string>(baseStart);     // inicio de semana actual (día hábil)
+
+  const weekDays = useMemo(() => businessDaysFrom(weekStart, 5), [weekStart]);
+
   const [form, setForm] = useState<FormState>({
-    fecha: nextBusinessDayFrom(hoyISO()),
+    fecha: weekDays[0] ?? baseStart,
     inicio: "09:00",
-    paciente: "",
+    paciente: user || "",
     motivo: "consulta",
     notas: "",
   });
 
-  const diasVista = useMemo(
-    () => businessDaysFrom(nextBusinessDayFrom(hoyISO()), 15),
-    []
-  );
+  useEffect(() => { setForm((f) => ({ ...f, fecha: weekDays[0] ?? f.fecha })); }, [weekDays]);
 
-  // Cargar turnos del backend cuando hay token
+  // Mis turnos de la semana
   useEffect(() => {
-    if (!token || diasVista.length === 0) return;
-    const from = diasVista[0];
-    const to = diasVista[diasVista.length - 1];
+    if (!token || weekDays.length === 0) return;
+    const from = weekDays[0];
+    const to = weekDays[weekDays.length - 1];
     (async () => {
       try {
         const r = await fetch(`${API}/api/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!r.ok) return; // 401/403 silencioso
+        if (!r.ok) { setTurnos([]); return; }
         const rows: ApiAppointment[] = await r.json();
         setTurnos(rows.map(toTurno));
-      } catch {
-        // silencio
-      }
+      } catch { setTurnos([]); }
     })();
-  }, [token, diasVista]);
+  }, [token, weekDays.join(",")]);
+
+  // Ocupación anónima de la semana
+  useEffect(() => {
+    if (weekDays.length === 0) return;
+    const from = weekDays[0];
+    const to = weekDays[weekDays.length - 1];
+    (async () => {
+      try {
+        const r = await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`);
+        if (!r.ok) { setOcupados({}); return; }
+        const data: Array<{ fecha: string; slots: string[] }> = await r.json();
+        const map: Record<string, Set<string>> = {};
+        data.forEach((d) => { map[d.fecha] = new Set(d.slots); });
+        setOcupados(map);
+      } catch { setOcupados({}); }
+    })();
+  }, [weekDays.join(",")]);
 
   const turnosVista = useMemo(() => {
-    const set = new Set(diasVista);
+    const set = new Set(weekDays);
     return turnos
       .filter((t) => set.has(t.fecha))
-      .filter((t) =>
-        filtroPaciente ? t.paciente.toLowerCase().includes(filtroPaciente.toLowerCase()) : true
-      )
+      .filter((t) => (filtroPaciente ? t.paciente.toLowerCase().includes(filtroPaciente.toLowerCase()) : true))
       .sort((a, b) => (a.fecha === b.fecha ? ordenarPorHora(a, b) : a.fecha.localeCompare(b.fecha)));
-  }, [turnos, diasVista, filtroPaciente]);
+  }, [turnos, weekDays, filtroPaciente]);
 
   function onChange<K extends keyof FormState>(k: K, v: FormState[K]) {
     if (k === "fecha" && typeof v === "string") {
       const hoy = hoyISO();
-      if (v < hoy) {
-        alert("No se pueden asignar turnos en fechas pasadas.");
-        setForm((prev) => ({ ...prev, fecha: nextBusinessDayFrom(hoy) }));
-        return;
-      }
-      if (isWeekend(v) || isHoliday(v)) {
-        const prox = nextBusinessDayFrom(v);
-        alert("No hay turnos sábados, domingos ni feriados. Se ajustó al próximo día hábil.");
-        setForm((prev) => ({ ...prev, fecha: prox }));
-        return;
-      }
+      if (v < hoy) return alert("No se pueden asignar turnos en fechas pasadas.");
+      if (isWeekend(v) || isHoliday(v)) return alert("No hay turnos sábados, domingos ni feriados.");
     }
     setForm((prev) => ({ ...prev, [k]: v }));
   }
 
-  // Crear turno en backend
+  function seleccionarSlot(fecha: string, inicio: string) {
+    setForm((f) => ({ ...f, fecha, inicio }));
+  }
+
   async function crearTurno(e?: React.FormEvent) {
     if (e) e.preventDefault();
-    if (!token) return alert("Tenés que iniciar sesión para sacar un turno.");
-
+    if (!token) return alert("Iniciá sesión para sacar turno.");
     if (!form.paciente.trim()) return alert("Paciente es requerido.");
-    const hoy = hoyISO();
-    if (form.fecha < hoy) return alert("No se pueden asignar turnos en fechas pasadas.");
     if (isWeekend(form.fecha) || isHoliday(form.fecha)) return alert("Día no hábil.");
     if (!SLOTS.includes(form.inicio)) return alert("Horario no válido.");
 
     try {
       const r = await fetch(`${API}/api/appointments`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           fecha: form.fecha,
           inicio: form.inicio,
-          paciente: form.paciente,
+          paciente: form.paciente || user || "usuario",
           motivo: form.motivo,
           notas: form.notas || undefined,
         }),
       });
-      if (!r.ok) {
-        const msg = await r.text();
-        return alert(`Error al crear: ${msg}`);
-      }
-      const nuevoApi: ApiAppointment = await r.json();
-      const nuevo = toTurno(nuevoApi);
-
-      setTurnos((prev) => [...prev, nuevo]);
-      setForm((f) => ({ ...f, inicio: "09:00", paciente: "", motivo: "consulta", notas: "" }));
-    } catch {
-      alert("No se pudo conectar para crear el turno.");
-    }
+      if (!r.ok) return alert(await r.text());
+      // refrescar semana
+      const from = weekDays[0], to = weekDays[weekDays.length - 1];
+      await Promise.all([
+        fetch(`${API}/api/appointments?from=${from}&to=${to}`, { headers: { Authorization: `Bearer ${token}` }}).then(res=>res.json()).then((rows: ApiAppointment[])=>setTurnos(rows.map(toTurno))),
+        fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`).then(res=>res.json()).then((data: Array<{fecha:string;slots:string[]}>)=>{
+          const map: Record<string, Set<string>> = {}; data.forEach(d=>map[d.fecha]=new Set(d.slots)); setOcupados(map);
+        }),
+      ]);
+      setForm((f) => ({ ...f, notas: "" }));
+    } catch { alert("No se pudo conectar para crear el turno."); }
   }
 
-  // Borrar turno en backend
   async function borrarTurno(id: string) {
-    if (!token) return alert("Tenés que iniciar sesión para borrar turnos.");
+    if (!token) return alert("Iniciá sesión para borrar.");
     try {
       const r = await fetch(`${API}/api/appointments/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!r.ok) {
-        const msg = await r.text();
-        return alert(`No se pudo borrar: ${msg}`);
-      }
+      if (!r.ok) return alert(await r.text());
       setTurnos((prev) => prev.filter((t) => t.id !== id));
-    } catch {
-      alert("Error de conexión al borrar turno.");
-    }
+      // actualizar ocupados de la semana
+      const from = weekDays[0], to = weekDays[weekDays.length - 1];
+      const data: Array<{ fecha: string; slots: string[] }> =
+        await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`).then(res=>res.json());
+      const map: Record<string, Set<string>> = {};
+      data.forEach((d) => { map[d.fecha] = new Set(d.slots); });
+      setOcupados(map);
+    } catch { alert("Error de conexión al borrar turno."); }
   }
 
+  function disponiblesPara(fecha: string): string[] {
+    const taken = ocupados[fecha] || new Set<string>();
+    return SLOTS.filter((s) => !taken.has(s));
+  }
+
+  function nextWeek() { setWeekStart((s) => advanceBusinessDays(s, 5)); }
+  function prevWeek() { setWeekStart((s) => advanceBusinessDays(s, -5)); }
+
   return {
-    form, turnosVista, diasVista, filtroPaciente,
-    setFiltroPaciente, onChange,
-    crearTurno, borrarTurno,
+    form, turnosVista, weekDays, filtroPaciente,
+    setFiltroPaciente, onChange, crearTurno, borrarTurno,
+    addOneHour, disponiblesPara, seleccionarSlot,
+    nextWeek, prevWeek,
   };
 }
 

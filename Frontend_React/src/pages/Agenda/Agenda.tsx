@@ -1,20 +1,19 @@
 import React from "react";
 import styles from "./Agenda.module.css";
 
-import type { Motivo } from "../../components/AgendaComponente/AgendaComponente.tsx";
-
+import type { Motivo } from "../../components/AgendaComponente/AgendaComponente";
 import {
   useAgenda,
-  SLOTS,
   addOneHour,
   formatearCabeceraDia,
   hoyISO,
-} from "../../components/AgendaComponente/AgendaComponente.tsx";
+} from "../../components/AgendaComponente/AgendaComponente";
 
 export default function Agenda(): React.ReactElement {
   const {
-    form, diasVista, turnosVista, filtroPaciente,
+    form, weekDays, turnosVista, filtroPaciente,
     setFiltroPaciente, onChange, crearTurno, borrarTurno,
+    disponiblesPara, seleccionarSlot, nextWeek, prevWeek,
   } = useAgenda();
 
   const tagClass = (m: Motivo) =>
@@ -23,6 +22,10 @@ export default function Agenda(): React.ReactElement {
     m === "plan"     ? styles.tag + " " + styles.tagPlan     :
                        styles.tag + " " + styles.tagOtro;
 
+  const rango = weekDays.length
+    ? `${weekDays[0]} → ${weekDays[weekDays.length-1]}`
+    : "";
+
   return (
     <div className={styles.bg}>
       <div className={styles.cont}>
@@ -30,8 +33,10 @@ export default function Agenda(): React.ReactElement {
         {/* Header */}
         <div className={`${styles.panel} ${styles.header}`}>
           <div className={styles.title}>Agenda de nutrición</div>
-          <div>Próximos 15 días hábiles</div>
+          <div>Semana: {rango}</div>
           <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+            <button className={styles.btn} type="button" onClick={prevWeek}>⟵ Semana previa</button>
+            <button className={styles.btn} type="button" onClick={nextWeek}>Semana siguiente ⟶</button>
             <input
               className={styles.input}
               placeholder="Filtrar por paciente"
@@ -56,7 +61,7 @@ export default function Agenda(): React.ReactElement {
               value={form.inicio}
               onChange={(e) => onChange("inicio", e.target.value)}
             >
-              {SLOTS.map((s) => (
+              { (disponiblesPara(form.fecha)).map((s) => (
                 <option key={s} value={s}>{`${s} a ${addOneHour(s)}`}</option>
               ))}
             </select>
@@ -88,12 +93,32 @@ export default function Agenda(): React.ReactElement {
           </form>
         </div>
 
-        {/* Agenda 15 días hábiles */}
+        {/* Semana actual con slots ocupados/libres */}
         <div className={`${styles.panel} ${styles.gridWrap}`}>
-          <div className={styles.grid}>
-            {diasVista.map((dia) => (
+          <div className={styles.gridWeek}>
+            {weekDays.map((dia) => (
               <div key={dia} className={styles.col}>
                 <div className={styles.colHead}>{formatearCabeceraDia(dia)}</div>
+
+                {/* Chips de slots: ocupado vs libre */}
+                <div className={styles.slotWrap}>
+                  {disponiblesPara(dia).length === 0 && (
+                    <span className={styles.slotBusy} title="Sin disponibilidad">Sin disponibilidad</span>
+                  )}
+                  {disponiblesPara(dia).map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className={styles.slotFree}
+                      title={`${s} - ${addOneHour(s)}`}
+                      onClick={() => seleccionarSlot(dia, s)}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Mis turnos del día */}
                 {turnosVista
                   .filter((t) => t.fecha === dia)
                   .map((t) => (

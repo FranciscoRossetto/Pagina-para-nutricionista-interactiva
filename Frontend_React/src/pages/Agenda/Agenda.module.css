@@ -136,3 +136,37 @@
 .tagControl  { color:#065f46; border-color:#bbf7d0; background:#ecfdf5; }
 .tagPlan     { color:#7c2d12; border-color:#fed7aa; background:#fff7ed; }
 .tagOtro     { color:#334155; border-color:#e2e8f0; background:#f8fafc; }
+/* ...tus estilos existentes... */
+
+.gridWrap { margin-top: 8px; }
+.gridWeek {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 días hábiles */
+  gap: 12px;
+}
+
+.slotWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.slotFree {
+  padding: 6px 10px;
+  border: 1px dashed #a3e635;
+  border-radius: 10px;
+  background: #f0fdf4;
+  cursor: pointer;
+  font-size: 12px;
+}
+.slotFree:hover { filter: brightness(0.98); }
+
+.slotBusy {
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 12px;
+}
