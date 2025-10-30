@@ -1,217 +1,222 @@
-/* src/pages/Agenda/Agenda.module.css */
-
-/* ===== Lienzo general ===== */
+/* Fondo y contenedor */
 .bg {
   background-image: linear-gradient(180deg, #ffe4f1 0%, #ffd1ea 40%, #ffc2e4 100%);
-  background-repeat: no-repeat;
-  background-size: cover;
   min-height: 100vh;
   width: 100%;
 }
-
 .cont {
   font-family: Inter, system-ui, Arial, sans-serif;
   padding: 20px;
-  max-width: 1300px;            /* un poco más ancho para notas */
+  max-width: 1400px;        /* agenda más ancha */
   margin: 0 auto;
 }
 
-/* ===== Paneles ===== */
+/* Paneles y header */
 .panel {
   border: 1px solid #f9a8d4;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 10px 30px rgba(219, 39, 119, 0.15);
   backdrop-filter: blur(3px);
-  padding: 14px;
+  padding: 12px;
 }
-
-/* ===== Header ===== */
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: center;   /* alinea todo en Y */
   gap: 12px;
   margin-bottom: 16px;
-  flex-wrap: wrap;
+  min-height: 48px;
 }
-
 .headerLeft {
   display: flex;
-  align-items: center;
+  align-items: center;   /* mismo eje Y que los botones */
   gap: 12px;
+}
+.headerRight {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;   /* mismo eje Y que el título */
 }
 
 .title {
   font-size: 22px;
   font-weight: 900;
   color: #9d174d;
+  line-height: 40px;     /* igual a botones */
 }
-
 .weekRange {
-  font-size: 13px;
-  color: #7a2449;
+  font-weight: 600;
+  color: #831843;
+  line-height: 40px;     /* igual a botones */
 }
 
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Alineación perfecta en la barra derecha */
-.headerRight > * {
-  display: inline-flex;
-  align-items: center;
-  height: 40px;                 /* igual que los botones de semana */
-}
-
-/* Selector de motivo alineado y consistente */
-.select {
+/* Botones e inputs */
+.btn,
+.btnPrimary,
+.btnDanger,
+.btnSized {
   height: 40px;
-  padding: 0 10px;
+  padding: 0 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.15);
+}
+.btn {
+  border: 1px solid #f472b6;
+  background: #fff;
+  color: #9d174d;
+}
+.btn:hover { filter: brightness(0.98); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+
+.btnPrimary {
+  border: 1px solid #ec4899;
+  background: #ec4899;
+  color: #fff;
+}
+.btnPrimary:hover { filter: brightness(0.98); }
+
+.btnDanger {
+  border: 1px solid #ef4444;
+  background: #fff5f5;
+  color: #ef4444;
+}
+.btnDanger:hover { filter: brightness(0.98); }
+
+.select {
   border: 1px solid #f472b6;
   background: #fff;
   color: #9d174d;
   border-radius: 12px;
-  position: relative;
-  top: 2px;                      /* corrige el “saltito” vertical */
+  padding: 0 10px;
+}
+.btnSized { height: 40px; }
+
+.inputNote {
+  height: 36px;
+  padding: 6px 10px;
+  border: 1px solid #fbcfe8;
+  border-radius: 10px;
+  width: 100%;
+  outline: none;
 }
 
-/* Botones de navegación de semana */
-.navBtn {
-  height: 40px;
-  padding: 0 14px;
-  border: 1px solid #ec4899;
-  border-radius: 12px;
-  cursor: pointer;
-  background: #fff;
-  color: #9d174d;
-  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.15);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  user-select: none;
-}
-
-.navBtn:hover { background: #fff6fa; }
-
-.navBtnDisabled {
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-/* ===== Grilla semanal (solo L-V) ===== */
+/* Grilla semanal (L–V) */
 .gridWrap { margin-top: 8px; }
-
-.grid {
+.gridWeek {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* L-V */
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 
-/* Columna por día */
-.dayCol {
+.col {
   border: 1px dashed #f9a8d4;
   border-radius: 14px;
   padding: 10px;
   background: rgba(255, 255, 255, 0.95);
-  min-height: 520px;                    /* alto estable */
-  box-shadow: 0 4px 10px rgba(244, 114, 182, 0.12);
-  display: flex;
-  flex-direction: column;
 }
-
-.dayHeader {
+.colHead {
   font-size: 12px;
   font-weight: 800;
   color: #9d174d;
   margin-bottom: 8px;
   text-transform: uppercase;
+}
+
+/* “Tabla” 1 columna con filas horario a horario */
+.tableDay {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Fila con altura fija pero más alta para notas siempre visibles */
+.rowSlot {
+  border: 1px solid #fbcfe8;
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px;
+
+  /* altura fija ampliada */
+  min-height: 140px;
+  max-height: 140px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
 
-/* ===== Fila de hora ===== */
-.hourRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;       /* hora a la izq / acciones a la der */
+/* Barra superior: hora izq, acción der */
+.slotRow {
+  display: flex;
   align-items: center;
-  border: 1px solid #fbcfe8;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #fff, #ffeaf5 100%);
-  margin-bottom: 8px;
-  padding: 8px;
-  min-height: 64px;                     /* mismo tamaño siempre */
+  justify-content: space-between;
+  gap: 12px;
 }
-
-.hourLeft {
+.slotHour {
   font-weight: 800;
   color: #831843;
+}
+
+.slotAction {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.hourRight {
+/* Nota SIEMPRE visible debajo */
+.noteRow {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex-direction: column;
   gap: 8px;
+  margin-top: 8px;
 }
 
-/* Botones reservar/cancelar */
-.reserveBtn,
-.cancelBtn {
-  height: 32px;
-  padding: 0 10px;
+.editButtons {
+  display: flex;
+  flex-wrap: wrap;   /* evita cortes */
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+/* Estados del slot */
+.cellBusy {
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-}
-
-.reserveBtn {
-  background: #ec4899;
-  color: #fff;
-  border-color: #ec4899;
-}
-
-.cancelBtn {
-  background: #fff;
-  color: #ef4444;
-  border-color: #ef4444;
-}
-
-/* Notas: siempre visible, 15 chars max desde el input HTML */
-.noteInput {
-  margin-top: 6px;
-  width: 100%;
-  height: 28px;                         /* reserva espacio constante */
-  border: 1px solid #fbcfe8;
-  border-radius: 10px;
-  padding: 0 8px;
-  font-size: 12px;
-  color: #374151;
-  background: #fff;
-}
-
-.noteHelp {
-  margin-top: 4px;
-  font-size: 10px;
+  background: #f3f4f6;
   color: #6b7280;
+  font-size: 12px;
+  text-align: center;
 }
-
-/* Estados */
-.occupied {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  color: #64748b;
+.cellPast {
+  padding: 6px 10px;
+  border: 1px solid #fee2e2;
+  border-radius: 10px;
+  background: #fff1f2;
+  color: #991b1b;
+  font-size: 12px;
+  text-align: center;
 }
+.cellMine { display: flex; align-items: center; gap: 8px; }
+.cellEditing { font-size: 12px; color: #6b7280; }
 
-.pastSlot {
-  opacity: 0.45;
-  pointer-events: none;
+/* Tags */
+.tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.tagConsulta { color:#9d174d; border-color:#fbcfe8; background:#fde2f3; }
+.tagControl  { color:#065f46; border-color:#bbf7d0; background:#ecfdf5; }
+.tagPlan     { color:#7c2d12; border-color:#fed7aa; background:#fff7ed; }
+.tagOtro     { color:#334155; border-color:#e2e8f0; background:#f8fafc; }
+
+/* Responsivo simple */
+@media (max-width: 980px) {
+  .gridWeek { grid-template-columns: 1fr; }
 }
