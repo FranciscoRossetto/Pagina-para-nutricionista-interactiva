@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useUser } from "../../contexts/UserContext";
-import { hoyISO, addDays, localDateFromISO, weekMonday, monToFri, SLOTS, addOneHour, isPastSlot } from "../utils/dateUtils";
-import { fetchAppointments, fetchTakenSlots, postAppointment, deleteAppointment } from "../api/api";
+import { hoyISO, addDays, localDateFromISO, weekMonday, monToFri, SLOTS, addOneHour, isPastSlot } from "../../utils/dateUtils";
+import { fetchAppointments, fetchTakenSlots, postAppointment, deleteAppointment } from "../../utils/api";
 
 export type Turno = {
   id: string;

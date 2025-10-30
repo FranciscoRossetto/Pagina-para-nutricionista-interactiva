@@ -23,7 +23,7 @@ export function LikesProvider({ children }: { children: ReactNode }) {
   const setOne = useCallback((recipeId: string, next: Partial<LikeState>) => {
     setStore(prev => ({
       ...prev,
-      [recipeId]: { likes: 0, likedByUser: false, loaded: false, ...(prev[recipeId] || {}), ...next },
+      [recipeId]: { ...(prev[recipeId] || { likes: 0, likedByUser: false, loaded: false }), ...next },
     }));
   }, []);
 
