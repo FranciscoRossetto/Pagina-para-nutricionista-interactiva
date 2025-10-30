@@ -13,7 +13,7 @@ type ApiAppointment = {
 
 const API = "http://localhost:4000";
 
-/* ===== fechas (en local, no UTC) ===== */
+/* ===== fechas (local) ===== */
 export function hoyISO(): string {
   const d = new Date(); d.setHours(0,0,0,0);
   const m = (d.getMonth()+1).toString().padStart(2,"0");
@@ -29,7 +29,7 @@ export function addDays(iso: string, delta: number): string {
 }
 export function localDateFromISO(iso: string): Date {
   const [y, m, d] = iso.split("-").map(Number);
-  return new Date(y, m - 1, d); // local time
+  return new Date(y, m - 1, d);
 }
 export function weekMonday(iso: string): string {
   const dt = localDateFromISO(iso);
@@ -55,23 +55,32 @@ function toTurno(a: ApiAppointment): Turno {
   return { id:a._id, fecha:a.fecha, inicio:a.inicio, fin:a.fin, paciente:a.paciente, motivo:a.motivo, notas:a.notas };
 }
 
+/* slot pasado: fecha < hoy, o igual y hora <= ahora */
+function isPastSlot(fecha: string, hora: string): boolean {
+  const [y,m,d] = fecha.split("-").map(Number);
+  const [hh,mm] = hora.split(":").map(Number);
+  const slot = new Date(y, (m-1), d, hh, mm, 0, 0);
+  const now = new Date();
+  return slot.getTime() <= now.getTime();
+}
+
 /* ===== Hook semanal L–V ===== */
 export function useAgenda() {
   const { token, user } = useUser();
 
   const currentWeekStart = weekMonday(hoyISO());
-  const [weekStart, setWeekStart] = useState<string>(currentWeekStart); // lunes de la semana visible
+  const [weekStart, setWeekStart] = useState<string>(currentWeekStart); // lunes visible
   const weekDays = useMemo(() => monToFri(weekStart), [weekStart]);
 
   const [motivo, setMotivo] = useState<Motivo>("consulta");
   const [misTurnos, setMisTurnos] = useState<Turno[]>([]);
   const [ocupados, setOcupados] = useState<Record<string, Set<string>>>({}); // {fecha:Set(horas)}
 
-  // estado de reserva en edición
+  // edición
   const [editSlot, setEditSlot] = useState<{ fecha: string; hora: string } | null>(null);
   const [nota, setNota] = useState<string>("");
 
-  // cargar mis turnos de la semana
+  // cargar mis turnos
   useEffect(() => {
     if (!token || weekDays.length === 0) { setMisTurnos([]); return; }
     const from = weekDays[0], to = weekDays[4];
@@ -87,7 +96,7 @@ export function useAgenda() {
     })();
   }, [token, weekDays.join(",")]);
 
-  // cargar ocupación anónima de la semana
+  // cargar ocupación anónima
   useEffect(() => {
     if (weekDays.length === 0) { setOcupados({}); return; }
     const from = weekDays[0], to = weekDays[4];
@@ -111,20 +120,17 @@ export function useAgenda() {
   }
 
   function startReservar(fecha: string, hora: string) {
-    if (!token) {
-      alert("Debes iniciar sesión para poder sacar un turno.");
-      return;
-    }
-    setEditSlot({ fecha, hora });
-    setNota("");
+    if (!token) { alert("Debes iniciar sesión para poder sacar un turno."); return; }
+    if (isPastSlot(fecha, hora)) { alert("No podés reservar en una fecha u hora pasada."); return; }
+    if (isTaken(fecha, hora)) { alert("Ese horario ya está ocupado."); return; }
+    setEditSlot({ fecha, hora }); setNota("");
   }
-  function cancelReservar() {
-    setEditSlot(null); setNota("");
-  }
+  function cancelReservar() { setEditSlot(null); setNota(""); }
 
   async function confirmReservar() {
     if (!token || !editSlot) return;
     const { fecha, hora } = editSlot;
+    if (isPastSlot(fecha, hora)) { alert("No podés reservar en una fecha u hora pasada."); return; }
     try {
       const r = await fetch(`${API}/api/appointments`, {
         method: "POST",
@@ -183,7 +189,7 @@ export function useAgenda() {
   return {
     weekDays, motivo, setMotivo,
     SLOTS, addOneHour,
-    isTaken, mineAt,
+    isTaken, isPastSlot, mineAt,
     startReservar, cancelReservar, confirmReservar,
     isEditing, nota, setNota,
     cancelar,

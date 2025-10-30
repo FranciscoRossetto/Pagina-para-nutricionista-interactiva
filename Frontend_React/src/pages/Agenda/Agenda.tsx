@@ -4,14 +4,13 @@ import styles from "./Agenda.module.css";
 import type { Motivo } from "../../components/AgendaComponente/AgendaComponente";
 import {
   useAgenda,
-  addOneHour,
 } from "../../components/AgendaComponente/AgendaComponente";
 
 export default function Agenda(): React.ReactElement {
   const {
     weekDays, motivo, setMotivo,
-    SLOTS, addOneHour: a1h,
-    isTaken, mineAt,
+    SLOTS, addOneHour,
+    isTaken, isPastSlot, mineAt,
     startReservar, cancelReservar, confirmReservar,
     isEditing, nota, setNota,
     cancelar,
@@ -31,10 +30,12 @@ export default function Agenda(): React.ReactElement {
     <div className={styles.bg}>
       <div className={styles.cont}>
 
+        {/* Header con alineación uniforme en Y */}
         <div className={`${styles.panel} ${styles.header}`}>
-          <div className={styles.title}>Agenda semanal</div>
-          <div className={styles.weekRange}>{rango}</div>
-
+          <div className={styles.headerLeft}>
+            <div className={styles.title}>Agenda semanal</div>
+            <div className={styles.weekRange}>{rango}</div>
+          </div>
           <div className={styles.headerRight}>
             <select
               className={`${styles.btnSized} ${styles.select}`}
@@ -77,17 +78,17 @@ export default function Agenda(): React.ReactElement {
                   {SLOTS.map((hora) => {
                     const mine = mineAt(dia, hora);
                     const taken = isTaken(dia, hora);
+                    const past  = isPastSlot(dia, hora);
                     const editing = isEditing(dia, hora);
 
                     return (
                       <div key={hora} className={styles.rowSlot}>
+                        {/* Fila superior: hora a la izquierda, acción a la derecha */}
                         <div className={styles.slotRow}>
-                          {/* izquierda: horario */}
                           <div className={styles.slotHour}>
-                            {hora}–{a1h(hora)}
+                            {hora}–{addOneHour(hora)}
                           </div>
 
-                          {/* derecha: acción */}
                           <div className={styles.slotAction}>
                             {mine ? (
                               <div className={styles.cellMine}>
@@ -101,26 +102,12 @@ export default function Agenda(): React.ReactElement {
                                   Cancelar
                                 </button>
                               </div>
+                            ) : past ? (
+                              <div className={styles.cellPast}>Pasado</div>
                             ) : taken ? (
                               <div className={styles.cellBusy}>Ocupado</div>
                             ) : editing ? (
-                              <div className={styles.editWrap}>
-                                <input
-                                  className={styles.inputNote}
-                                  placeholder="Nota (máx 15)"
-                                  value={nota}
-                                  maxLength={15}
-                                  onChange={(e) => setNota(e.target.value)}
-                                />
-                                <div className={styles.editButtons}>
-                                  <button className={styles.btnPrimary} type="button" onClick={confirmReservar}>
-                                    Confirmar
-                                  </button>
-                                  <button className={styles.btn} type="button" onClick={cancelReservar}>
-                                    Cancelar
-                                  </button>
-                                </div>
-                              </div>
+                              <div className={styles.cellEditing}>Reservando…</div>
                             ) : (
                               <button
                                 className={styles.btnPrimary}
@@ -133,7 +120,27 @@ export default function Agenda(): React.ReactElement {
                           </div>
                         </div>
 
-                        <div className={styles.rowReserveSpace}></div>
+                        {/* Segunda fila: notas SIEMPRE visibles debajo */}
+                        <div className={styles.noteRow}>
+                          <input
+                            className={styles.inputNote}
+                            placeholder="Notas (máx 15)"
+                            value={editing ? nota : (mine?.notas ?? "")}
+                            onChange={(e) => editing ? setNota(e.target.value.slice(0,15)) : undefined}
+                            maxLength={15}
+                            disabled={!editing}
+                          />
+                          {editing && (
+                            <div className={styles.editButtons}>
+                              <button className={styles.btnPrimary} type="button" onClick={confirmReservar}>
+                                Confirmar
+                              </button>
+                              <button className={styles.btn} type="button" onClick={cancelReservar}>
+                                Cancelar
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })}

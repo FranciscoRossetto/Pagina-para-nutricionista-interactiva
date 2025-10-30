@@ -7,7 +7,7 @@
 .cont {
   font-family: Inter, system-ui, Arial, sans-serif;
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1400px;        /* agenda más ancha */
   margin: 0 auto;
 }
 
@@ -22,26 +22,33 @@
 }
 .header {
   display: flex;
-  align-items: center;
+  align-items: center;   /* alinea todo en Y */
   gap: 12px;
   margin-bottom: 16px;
-  flex-wrap: wrap;
+  min-height: 48px;
+}
+.headerLeft {
+  display: flex;
+  align-items: center;   /* mismo eje Y que los botones */
+  gap: 12px;
 }
 .headerRight {
   margin-left: auto;
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: center;   /* mismo eje Y que el título */
 }
 
 .title {
   font-size: 22px;
   font-weight: 900;
   color: #9d174d;
+  line-height: 40px;     /* igual a botones */
 }
 .weekRange {
   font-weight: 600;
   color: #831843;
+  line-height: 40px;     /* igual a botones */
 }
 
 /* Botones e inputs */
@@ -62,11 +69,7 @@
   color: #9d174d;
 }
 .btn:hover { filter: brightness(0.98); }
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  filter: none;
-}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
 
 .btnPrimary {
   border: 1px solid #ec4899;
@@ -126,19 +129,19 @@
 .tableDay {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-/* Fila con altura fija para evitar saltos */
+/* Fila con altura fija pero más alta para notas siempre visibles */
 .rowSlot {
   border: 1px solid #fbcfe8;
   border-radius: 12px;
   background: #fff;
-  padding: 8px;
+  padding: 10px;
 
-  /* altura fija para TODAS las filas */
-  min-height: 96px;
-  max-height: 96px;
+  /* altura fija ampliada */
+  min-height: 140px;
+  max-height: 140px;
   overflow: hidden;
 
   display: flex;
@@ -146,7 +149,7 @@
   justify-content: space-between;
 }
 
-/* Barra principal de la fila: hora izq, acción der */
+/* Barra superior: hora izq, acción der */
 .slotRow {
   display: flex;
   align-items: center;
@@ -164,6 +167,21 @@
   gap: 8px;
 }
 
+/* Nota SIEMPRE visible debajo */
+.noteRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.editButtons {
+  display: flex;
+  flex-wrap: wrap;   /* evita cortes */
+  gap: 8px;
+  justify-content: flex-start;
+}
+
 /* Estados del slot */
 .cellBusy {
   padding: 6px 10px;
@@ -174,31 +192,19 @@
   font-size: 12px;
   text-align: center;
 }
-.cellMine {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.cellPast {
+  padding: 6px 10px;
+  border: 1px solid #fee2e2;
+  border-radius: 10px;
+  background: #fff1f2;
+  color: #991b1b;
+  font-size: 12px;
+  text-align: center;
 }
+.cellMine { display: flex; align-items: center; gap: 8px; }
+.cellEditing { font-size: 12px; color: #6b7280; }
 
-/* Edición (nota + confirmar/cancelar) */
-.editWrap {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-}
-.editButtons {
-  display: flex;
-  flex-wrap: wrap;   /* evita corte del botón */
-  gap: 8px;
-  justify-content: flex-start;
-}
-
-/* Espacio reservado para mantener la altura constante */
-.rowReserveSpace { height: 0px; }
-
-/* Tags de motivo */
+/* Tags */
 .tag {
   font-size: 11px;
   padding: 2px 8px;
