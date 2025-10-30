@@ -10,7 +10,11 @@ import {
 export default function Agenda(): React.ReactElement {
   const {
     weekDays, motivo, setMotivo,
-    SLOTS, isTaken, mineAt, reservar, cancelar,
+    SLOTS, addOneHour: a1h,
+    isTaken, mineAt,
+    startReservar, cancelReservar, confirmReservar,
+    isEditing, nota, setNota,
+    cancelar,
     nextWeek, prevWeek,
   } = useAgenda();
 
@@ -26,17 +30,16 @@ export default function Agenda(): React.ReactElement {
     <div className={styles.bg}>
       <div className={styles.cont}>
 
-        {/* Header con motivo + paginación semanal */}
         <div className={`${styles.panel} ${styles.header}`}>
           <div className={styles.title}>Agenda semanal</div>
           <div className={styles.weekRange}>{rango}</div>
 
           <div className={styles.headerRight}>
             <select
-              className={styles.select}
+              className={`${styles.btnSized} ${styles.select}`}
               value={motivo}
               onChange={(e) => setMotivo(e.target.value as Motivo)}
-              title="Motivo del turno"
+              title="Motivo"
             >
               <option value="consulta">Consulta</option>
               <option value="control">Control</option>
@@ -49,51 +52,76 @@ export default function Agenda(): React.ReactElement {
           </div>
         </div>
 
-        {/* Grilla L–V. Cada día: “tabla” 1 columna, filas por hora */}
         <div className={`${styles.panel} ${styles.gridWrap}`}>
           <div className={styles.gridWeek}>
             {weekDays.map((dia) => (
               <div key={dia} className={styles.col}>
                 <div className={styles.colHead}>
-                  {new Date(dia).toLocaleDateString(undefined, { weekday: "short", day: "2-digit", month: "2-digit" })}
+                  {new Date(dia).toLocaleDateString(undefined, { weekday: "long", day: "2-digit", month: "2-digit" })}
                 </div>
 
                 <div className={styles.tableDay}>
                   {SLOTS.map((hora) => {
                     const mine = mineAt(dia, hora);
                     const taken = isTaken(dia, hora);
+                    const editing = isEditing(dia, hora);
+
                     return (
                       <div key={hora} className={styles.rowSlot}>
-                        <div className={styles.slotHour}>
-                          {hora}–{addOneHour(hora)}
+                        <div className={styles.slotRow}>
+                          {/* izquierda: horario */}
+                          <div className={styles.slotHour}>
+                            {hora}–{a1h(hora)}
+                          </div>
+
+                          {/* derecha: acción */}
+                          <div className={styles.slotAction}>
+                            {mine ? (
+                              <div className={styles.cellMine}>
+                                <span className={tagClass(mine.motivo)}>{mine.motivo}</span>
+                                <button
+                                  className={styles.btnDanger}
+                                  type="button"
+                                  onClick={() => cancelar(mine.id)}
+                                  title="Cancelar mi turno"
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            ) : taken ? (
+                              <div className={styles.cellBusy}>Ocupado</div>
+                            ) : editing ? (
+                              <div className={styles.editWrap}>
+                                <input
+                                  className={styles.inputNote}
+                                  placeholder="Nota (máx 15)"
+                                  value={nota}
+                                  maxLength={15}
+                                  onChange={(e) => setNota(e.target.value)}
+                                />
+                                <div className={styles.editButtons}>
+                                  <button className={styles.btnPrimary} type="button" onClick={confirmReservar}>
+                                    Confirmar
+                                  </button>
+                                  <button className={styles.btn} type="button" onClick={cancelReservar}>
+                                    Cancelar
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                className={styles.btnPrimary}
+                                type="button"
+                                onClick={() => startReservar(dia, hora)}
+                              >
+                                Reservar
+                              </button>
+                            )}
+                          </div>
                         </div>
 
-                        {mine ? (
-                          <div className={styles.cellMine}>
-                            <span className={tagClass(mine.motivo)}>{mine.motivo}</span>
-                            <button
-                              className={styles.btnDanger}
-                              type="button"
-                              onClick={() => cancelar(mine.id)}
-                              title="Cancelar mi turno"
-                            >
-                              Cancelar
-                            </button>
-                          </div>
-                        ) : taken ? (
-                          <div className={styles.cellBusy}>Ocupado</div>
-                        ) : (
-                          <div>
-                            <button
-                              className={styles.btnPrimary}
-                              type="button"
-                              onClick={() => reservar(dia, hora)}
-                              title="Reservar este horario"
-                            >
-                              Reservar
-                            </button>
-                          </div>
-                        )}
+                        {/* espacio reservado para que todas las filas midan igual */}
+                        <div className={styles.rowReserveSpace}></div>
                       </div>
                     );
                   })}
