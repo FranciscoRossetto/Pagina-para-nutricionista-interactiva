@@ -13,7 +13,7 @@ type ApiAppointment = {
 
 const API = "http://localhost:4000";
 
-/* ===== fechas ===== */
+/* ===== fechas (en local, no UTC) ===== */
 export function hoyISO(): string {
   const d = new Date(); d.setHours(0,0,0,0);
   const m = (d.getMonth()+1).toString().padStart(2,"0");
@@ -27,11 +27,16 @@ export function addDays(iso: string, delta: number): string {
   const dd = dt.getDate().toString().padStart(2,"0");
   return `${dt.getFullYear()}-${mm}-${dd}`;
 }
+export function localDateFromISO(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d); // local time, evita “domingo”
+}
 export function weekMonday(iso: string): string {
-  const [y,m,d] = iso.split("-").map(Number);
-  const dt = new Date(y, m-1, d); const wd = dt.getDay(); // 0=Dom
-  const offset = wd === 0 ? -6 : 1 - wd; // lunes
-  return addDays(iso, offset);
+  const dt = localDateFromISO(iso);
+  const wd = dt.getDay();                 // 0=Dom, 1=Lun
+  const offset = wd === 0 ? -6 : 1 - wd;  // retrocede a lunes
+  const ymd = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
+  return addDays(ymd, offset);
 }
 export function monToFri(weekMonISO: string): string[] {
   return [0,1,2,3,4].map(n => addDays(weekMonISO, n));
@@ -50,11 +55,11 @@ function toTurno(a: ApiAppointment): Turno {
   return { id:a._id, fecha:a.fecha, inicio:a.inicio, fin:a.fin, paciente:a.paciente, motivo:a.motivo, notas:a.notas };
 }
 
-/* ===== Hook semanal ===== */
+/* ===== Hook semanal L–V ===== */
 export function useAgenda() {
   const { token, user } = useUser();
 
-  const [weekStart, setWeekStart] = useState<string>(weekMonday(hoyISO())); // lunes actual
+  const [weekStart, setWeekStart] = useState<string>(weekMonday(hoyISO())); // lunes de la semana actual
   const weekDays = useMemo(() => monToFri(weekStart), [weekStart]);
 
   const [motivo, setMotivo] = useState<Motivo>("consulta");
@@ -170,5 +175,6 @@ export function useAgenda() {
     isEditing, nota, setNota,
     cancelar,
     nextWeek, prevWeek,
+    localDateFromISO, // lo exponemos para pintar correctamente
   };
 }

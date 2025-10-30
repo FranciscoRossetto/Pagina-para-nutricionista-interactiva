@@ -16,6 +16,7 @@ export default function Agenda(): React.ReactElement {
     isEditing, nota, setNota,
     cancelar,
     nextWeek, prevWeek,
+    localDateFromISO,
   } = useAgenda();
 
   const tagClass = (m: Motivo) =>
@@ -57,7 +58,9 @@ export default function Agenda(): React.ReactElement {
             {weekDays.map((dia) => (
               <div key={dia} className={styles.col}>
                 <div className={styles.colHead}>
-                  {new Date(dia).toLocaleDateString(undefined, { weekday: "long", day: "2-digit", month: "2-digit" })}
+                  {localDateFromISO(dia).toLocaleDateString(undefined, {
+                    weekday: "long", day: "2-digit", month: "2-digit"
+                  })}
                 </div>
 
                 <div className={styles.tableDay}>
@@ -120,7 +123,7 @@ export default function Agenda(): React.ReactElement {
                           </div>
                         </div>
 
-                        {/* espacio reservado para que todas las filas midan igual */}
+                        {/* Reserva de espacio para altura fija */}
                         <div className={styles.rowReserveSpace}></div>
                       </div>
                     );
