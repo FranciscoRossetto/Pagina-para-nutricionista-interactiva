@@ -11,81 +11,110 @@
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2.8rem;
   margin-bottom: 20px;
   color: #333;
 }
 
-.score {
-  font-size: 1.6rem;
-  color: #27ae60;
-  margin-bottom: 5px;
+.scoreBoard {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 14px 30px;
+  border-radius: 25px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #333;
 }
 
-.highscore {
-  font-size: 1.4rem;
+.scoreBoard .score {
+  color: #27ae60;
+}
+
+.scoreBoard .highscore {
   color: #e67e22;
-  margin-bottom: 30px;
 }
 
 .cards {
   display: flex;
-  gap: 60px;
+  gap: 40px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .card {
   background: white;
-  border-radius: 25px;
-  width: 320px;
-  height: 370px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  width: 340px;
+  height: 400px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
   overflow: hidden;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
   position: relative;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
-  transform: scale(1.05);
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
 }
 
 .card img {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
+  height: 300px;
   object-fit: cover;
-  border-radius: 25px;
-  z-index: 0;
+  border-radius: 20px 20px 0 0;
+  flex-shrink: 0;
 }
 
 .foodName {
-  position: relative;
-  z-index: 2;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: #333;
-  margin: 12px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #222;
+  margin-top: 12px;
+  text-align: center;
 }
 
 .calories {
-  position: relative;
-  z-index: 2;
-  background: rgba(255, 255, 255, 0.85);
-  color: #555;
-  border-radius: 12px;
-  padding: 6px 10px;
-  margin-bottom: 14px;
-  font-size: 1.2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #444;
+  margin: 8px 0 12px;
+}
+
+.correct {
+  animation: popCorrect 0.45s ease forwards;
+  box-shadow: 0 0 30px 6px rgba(46, 204, 113, 0.75);
+  transform: translateY(-4px) scale(1.02);
+}
+
+@keyframes popCorrect {
+  0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+  60% { transform: scale(1.06); box-shadow: 0 0 45px 12px rgba(46, 204, 113, 0.6); }
+  100% { transform: scale(1.02); box-shadow: 0 0 30px 6px rgba(46, 204, 113, 0.75); }
+}
+
+.incorrect {
+  animation: popIncorrect 0.45s ease forwards;
+  box-shadow: 0 0 30px 6px rgba(231, 76, 60, 0.75);
+  transform: translateY(0px) scale(0.98);
+}
+
+@keyframes popIncorrect {
+  0% { transform: scale(1.02); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+  60% { transform: scale(0.96); box-shadow: 0 0 45px 12px rgba(231, 76, 60, 0.6); }
+  100% { transform: scale(0.98); box-shadow: 0 0 30px 6px rgba(231, 76, 60, 0.75); }
+}
+
+.revealCorrect {
+  box-shadow: 0 0 22px 5px rgba(46, 204, 113, 0.55);
+  transform: translateY(-3px) scale(1.01);
 }
 
 .gameoverWrapper {
@@ -94,41 +123,104 @@ h1 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
 }
 
-.gameover {
-  background: white;
-  padding: 50px 80px;
-  border-radius: 30px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .finalScore {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 button {
   background: #27ae60;
   color: white;
   border: none;
-  padding: 12px 28px;
-  border-radius: 12px;
+  padding: 12px 22px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1.1rem;
-  margin-top: 12px;
-  transition: background 0.3s;
+  font-size: 1.05rem;
+  margin-top: 10px;
+  transition: background 0.25s;
 }
 
 button:hover {
   background: #219150;
+}
+
+@media (max-width: 900px) {
+  .card { width: 320px; height: 380px; }
+  .cards { gap: 28px; }
+}
+
+@media (max-width: 600px) {
+  .cards { flex-direction: column; gap: 18px; }
+  .card { width: 95%; height: 320px; }
+  h1 { font-size: 1.8rem; }
+  .foodName { font-size: 1.15rem; }
+  .calories { font-size: 1rem; }
+  .scoreBoard { flex-direction: column; gap: 10px; padding: 10px 20px; }
+}
+
+.gameoverCard {
+  background: linear-gradient(145deg, #ffffff, #ffe6d1);
+  padding: 45px 70px;
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: popIn 0.5s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.gameoverTitle {
+  font-size: 2.2rem;
+  color: #e74c3c;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.finalScore {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.highscoreText {
+  font-size: 1.1rem;
+  color: #e67e22;
+  margin-bottom: 25px;
+}
+
+.restartButton {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.restartButton:hover {
+  background: #219150;
+  transform: scale(1.05);
 }

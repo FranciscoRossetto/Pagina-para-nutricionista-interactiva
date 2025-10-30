@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:4000/api"; // Cambiar si tu backend corre en otro puerto
+const BASE_URL = "http://localhost:4000/api";
 
 // === USUARIOS ===
 export const registerUser = async (username: string, password: string) => {
@@ -42,13 +42,14 @@ export const getRecipeLikes = async (recipeId: string, token?: string) => {
   });
   return res.json();
 };
+
 // === FAVORITOS ===
 export const toggleFavorite = async (recipeId: string, token: string) => {
-  const res = await fetch(`${BASE_URL}/favorites`, {
+  const res = await fetch(`${BASE_URL}/favorites/toggle`, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}` 
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ recipeId }),
   });
@@ -56,10 +57,17 @@ export const toggleFavorite = async (recipeId: string, token: string) => {
 };
 
 export const getUserFavorites = async (token: string) => {
-  const res = await fetch(`${BASE_URL}/favorites`, {
-    method: "GET",
-    headers: { "Authorization": `Bearer ${token}` },
+  const res = await fetch(`${BASE_URL}/favorites/user`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
+  const data = await res.json();
+  return Array.isArray(data.favorites) ? data.favorites : []; // 👈 devuelve array
+};
+
+export const getRecipeFavorite = async (recipeId: string, token?: string) => {
+  const headers: any = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`${BASE_URL}/favorites/${recipeId}`, { headers });
   return res.json();
 };
 

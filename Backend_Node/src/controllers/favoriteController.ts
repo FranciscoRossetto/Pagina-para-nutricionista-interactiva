@@ -1,32 +1,84 @@
-import { Response } from "express";
+// src/controllers/favoriteController.ts
+import { Request, Response } from "express";
 import { Favorite } from "../models/Favorite";
-import { AuthRequest } from "../middlewares/auth";
+import jwt from "jsonwebtoken";
 
-export const addFavorite = async (req: AuthRequest, res: Response) => {
+const JWT_SECRET = process.env.JWT_SECRET || "secret123";
+
+// Toggle favorito
+export const toggleFavorite = async (req: Request, res: Response) => {
   try {
-    const { recipeId } = req.body;
-    const userId = req.user!.id;
+    const authHeader = req.header("Authorization");
+    if (!authHeader) return res.status(401).json({ msg: "No autorizado" });
 
-    const exists = await Favorite.findOne({ userId, recipeId });
-    if (exists) {
-      await Favorite.deleteOne({ userId, recipeId });
-      return res.json({ message: "Favorito eliminado" });
+    const token = authHeader.replace("Bearer ", "");
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+
+    const { recipeId } = req.body; // 👈 ahora lo leemos del body
+    if (!recipeId) return res.status(400).json({ msg: "Falta recipeId" });
+
+    const userId = decoded.id;
+
+    const existing = await Favorite.findOne({ userId, recipeId });
+    if (existing) {
+      await Favorite.deleteOne({ _id: existing._id });
+      return res.json({ success: true, message: "Favorito quitado", favorited: false });
     }
 
-    const favorite = new Favorite({ userId, recipeId });
-    await favorite.save();
-    res.json({ message: "Agregado a favoritos", favorite });
+    const fav = new Favorite({ userId, recipeId });
+    await fav.save();
+    return res.json({ success: true, message: "Favorito agregado", favorited: true });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    console.error("Error toggleFavorite:", err);
+    return res.status(500).json({ success: false, error: err.message || "Error" });
   }
 };
 
-export const getUserFavorites = async (req: AuthRequest, res: Response) => {
+// Obtener favoritos del usuario
+export const getUserFavorites = async (req: Request, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const authHeader = req.header("Authorization");
+    if (!authHeader) return res.status(401).json({ msg: "No autorizado" });
+
+    const token = authHeader.replace("Bearer ", "");
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+
+    const userId = decoded.id;
     const favorites = await Favorite.find({ userId });
-    res.json(favorites);
+
+    const clean = favorites.map((f) => ({
+      _id: f._id,
+      recipeId: f.recipeId.toString(),
+      userId: f.userId.toString(),
+      createdAt: f.createdAt,
+    }));
+
+    return res.json({ success: true, favorites: clean });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    console.error("Error getUserFavorites:", err);
+    return res.status(500).json({ success: false, error: err.message || "Error" });
+  }
+};
+
+// Saber si esta receta es favorita del usuario
+export const getRecipeFavorite = async (req: Request, res: Response) => {
+  try {
+    const { recipeId } = req.params;
+    let favoritedByUser = false;
+
+    const authHeader = req.header("Authorization");
+    if (authHeader) {
+      try {
+        const token = authHeader.replace("Bearer ", "");
+        const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+        const exists = await Favorite.findOne({ recipeId, userId: decoded.id });
+        favoritedByUser = !!exists;
+      } catch (err) {}
+    }
+
+    return res.json({ recipeId, favoritedByUser });
+  } catch (err: any) {
+    console.error("Error getRecipeFavorite:", err);
+    return res.status(500).json({ success: false, error: err.message || "Error" });
   }
 };

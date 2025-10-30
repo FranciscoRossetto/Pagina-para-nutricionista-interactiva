@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import type { Food } from "../../assets/data/foodData";
-import { getRandomFood } from "../../assets/data/foodData";
+import { getRandomFood, foodList } from "../../assets/data/foodData";
 import { useUser } from "../../contexts/UserContext";
+import axios from "axios";
 
 const API_URL = "http://localhost:4000/api";
 
@@ -15,23 +15,40 @@ export default function useMoreLessGame() {
   const [highScore, setHighScore] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [deck, setDeck] = useState<Food[]>([]);
 
   useEffect(() => {
-    const left = getRandomFood();
-    let right = getRandomFood([left]);
-    while (right.name === left.name) right = getRandomFood([left]);
+    const shuffled = shuffleArray([...foodList]);
+    setDeck(shuffled);
+
+    const left = shuffled[0];
+    const right = shuffled[1] || getRandomFood([left]);
     setLeftFood(left);
     setRightFood(right);
+    setDeck(shuffled.slice(2));
   }, []);
+
+  function shuffleArray(array: Food[]): Food[] {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
 
   useEffect(() => {
     const fetchHighScore = async () => {
-      if (!user || user.trim() === "") return;
-      try {
-        const res = await axios.get(`${API_URL}/highscore/${user}`);
-        setHighScore(res.data?.score || 0);
-      } catch (err) {
-        console.error("Error al obtener highscore:", err);
+      if (user && user.trim() !== "") {
+        try {
+          const res = await axios.get(`${API_URL}/highscore/${user}`);
+          setHighScore(res.data?.score || 0);
+        } catch (err) {
+          console.error("Error al obtener highscore:", err);
+        }
+      } else {
+        const local = localStorage.getItem("localHighScore");
+        if (local) setHighScore(Number(local));
       }
     };
     fetchHighScore();
@@ -58,31 +75,49 @@ export default function useMoreLessGame() {
   const handleClick = (selected: "left" | "right") => {
     if (!leftFood || !rightFood || revealed || gameOver) return;
 
-    const correct = leftFood.calories >= rightFood.calories ? "left" : "right";
+    const correct =
+      leftFood.calories === rightFood.calories
+        ? "either"
+        : leftFood.calories >= rightFood.calories
+        ? "left"
+        : "right";
+
     setRevealed(true);
 
-    if (selected === correct) {
+    if (correct === "either" || selected === correct) {
       setScore(prev => prev + 1);
     } else {
       setGameOver(true);
     }
 
     setTimeout(() => {
-      const newLeft = rightFood;
-      let newRight = getRandomFood([newLeft]);
-      while (newRight.name === newLeft.name) newRight = getRandomFood([newLeft]);
+      let newLeft = rightFood;
+      let newRight: Food;
+
+      let newDeck = [...deck];
+      if (newDeck.length < 1) {
+        newDeck = shuffleArray([...foodList]);
+      }
+
+      do {
+        newRight = newDeck[0];
+        newDeck = newDeck.slice(1);
+      } while (newRight.name === newLeft.name && newDeck.length > 0);
+
       setLeftFood(newLeft);
       setRightFood(newRight);
+      setDeck(newDeck);
       setRevealed(false);
     }, 1000);
   };
 
   const handleRestart = () => {
-    const left = getRandomFood();
-    let right = getRandomFood([left]);
-    while (right.name === left.name) right = getRandomFood([left]);
+    const shuffled = shuffleArray([...foodList]);
+    const left = shuffled[0];
+    const right = shuffled[1] || getRandomFood([left]);
     setLeftFood(left);
     setRightFood(right);
+    setDeck(shuffled.slice(2));
     setScore(0);
     setRevealed(false);
     setGameOver(false);
