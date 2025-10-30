@@ -15,7 +15,7 @@ export default function Agenda(): React.ReactElement {
     startReservar, cancelReservar, confirmReservar,
     isEditing, nota, setNota,
     cancelar,
-    nextWeek, prevWeek,
+    nextWeek, prevWeek, prevDisabled,
     localDateFromISO,
   } = useAgenda();
 
@@ -48,8 +48,18 @@ export default function Agenda(): React.ReactElement {
               <option value="otro">Otro</option>
             </select>
 
-            <button className={styles.btn} type="button" onClick={prevWeek}>⟵ Semana previa</button>
-            <button className={styles.btn} type="button" onClick={nextWeek}>Semana siguiente ⟶</button>
+            <button
+              className={styles.btn}
+              type="button"
+              onClick={prevWeek}
+              disabled={prevDisabled}
+              title={prevDisabled ? "No podés ir a semanas pasadas" : "Semana previa"}
+            >
+              ⟵ Semana previa
+            </button>
+            <button className={styles.btn} type="button" onClick={nextWeek}>
+              Semana siguiente ⟶
+            </button>
           </div>
         </div>
 
@@ -123,7 +133,6 @@ export default function Agenda(): React.ReactElement {
                           </div>
                         </div>
 
-                        {/* Reserva de espacio para altura fija */}
                         <div className={styles.rowReserveSpace}></div>
                       </div>
                     );
