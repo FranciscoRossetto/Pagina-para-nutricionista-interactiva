@@ -86,7 +86,7 @@ export function useAgenda() {
     const from = weekDays[0], to = weekDays[4];
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments?from=${from}&to=${to}`, {
+        const r = await fetch(`${API}/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!r.ok) { setMisTurnos([]); return; }
@@ -102,7 +102,7 @@ export function useAgenda() {
     const from = weekDays[0], to = weekDays[4];
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`);
+        const r = await fetch(`${API}/appointments/taken?from=${from}&to=${to}`);
         if (!r.ok) { setOcupados({}); return; }
         const data: Array<{ fecha:string; slots:string[] }> = await r.json();
         const map: Record<string, Set<string>> = {};
@@ -132,7 +132,7 @@ export function useAgenda() {
     const { fecha, hora } = editSlot;
     if (isPastSlot(fecha, hora)) { alert("No podés reservar en una fecha u hora pasada."); return; }
     try {
-      const r = await fetch(`${API}/api/appointments`, {
+      const r = await fetch(`${API}/appointments`, {
         method: "POST",
         headers: { "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body: JSON.stringify({
@@ -144,8 +144,8 @@ export function useAgenda() {
       // refresh semana
       const [from,to] = [weekDays[0], weekDays[4]];
       const [mineR, takenR] = await Promise.all([
-        fetch(`${API}/api/appointments?from=${from}&to=${to}`, { headers:{ Authorization:`Bearer ${token}` }}),
-        fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`),
+        fetch(`${API}/appointments?from=${from}&to=${to}`, { headers:{ Authorization:`Bearer ${token}` }}),
+        fetch(`${API}/appointments/taken?from=${from}&to=${to}`),
       ]);
       const mineRows: ApiAppointment[] = await mineR.json();
       const takenRows: Array<{fecha:string;slots:string[]}> = await takenR.json();
@@ -160,13 +160,13 @@ export function useAgenda() {
   async function cancelar(id: string) {
     if (!token) return alert("Iniciá sesión para cancelar.");
     try {
-      const r = await fetch(`${API}/api/appointments/${id}`, { method: "DELETE", headers: { Authorization:`Bearer ${token}` } });
+      const r = await fetch(`${API}/appointments/${id}`, { method: "DELETE", headers: { Authorization:`Bearer ${token}` } });
       if (!r.ok) return alert(await r.text());
       setMisTurnos(prev => prev.filter(t => t.id !== id));
       // actualizar ocupados
       const [from,to] = [weekDays[0], weekDays[4]];
       const takenRows: Array<{fecha:string;slots:string[]}> =
-        await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`).then(res=>res.json());
+        await fetch(`${API}/appointments/taken?from=${from}&to=${to}`).then(res=>res.json());
       const map: Record<string, Set<string>> = {};
       takenRows.forEach(d => { map[d.fecha] = new Set(d.slots); });
       setOcupados(map);
