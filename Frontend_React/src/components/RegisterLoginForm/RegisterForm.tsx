@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
 import styles from "./RegisterLoginForm.module.css";
+import { API } from "../../config/api";
 
 interface RegisterValues {
   username: string;
@@ -36,7 +37,7 @@ export default function RegisterForm() {
 
   const handleSubmit = async (values: RegisterValues) => {
     try {
-      const res = await axios.post("http://localhost:4000/api/users/register", {
+      const res = await axios.post(`${API}/users/register`, {
         username: values.username,
         password: values.password,
       });

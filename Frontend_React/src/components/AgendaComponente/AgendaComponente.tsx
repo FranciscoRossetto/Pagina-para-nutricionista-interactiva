@@ -1,5 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useUser } from "../../contexts/UserContext";
+import { API } from "../../config/api";
+
 
 export type Motivo = "consulta" | "control" | "plan" | "otro";
 export type Turno = {
@@ -10,8 +12,6 @@ type ApiAppointment = {
   _id: string; fecha: string; inicio: string; fin: string;
   paciente: string; motivo: Motivo; notas?: string;
 };
-
-const API = "http://localhost:4000";
 
 // Fechas (local)
 export function hoyISO(): string {

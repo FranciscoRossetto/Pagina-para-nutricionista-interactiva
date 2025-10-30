@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
 import styles from "./RegisterLoginForm.module.css";
+import { API } from "../../config/api";
 
 interface LoginValues {
   username: string;
@@ -26,7 +27,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (values: LoginValues) => {
     try {
-      const res = await axios.post("http://localhost:4000/api/users/login", values);
+      const res = await axios.post(`${API}/users/login`, values);
       // Backend debe devolver { token, username }
       login(res.data.username, res.data.token);
       navigate("/");
