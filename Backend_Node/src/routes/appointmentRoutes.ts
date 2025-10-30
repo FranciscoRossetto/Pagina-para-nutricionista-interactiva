@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { createAppointment, listAppointments, deleteAppointment } from "../controllers/appointmentController";
-import { auth } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/", auth, listAppointments);
-router.post("/", auth, createAppointment);
-router.delete("/:id", auth, deleteAppointment);
+router.get("/", authMiddleware, listAppointments);
+router.post("/", authMiddleware, createAppointment);
+router.delete("/:id", authMiddleware, deleteAppointment);
 
 export default router;

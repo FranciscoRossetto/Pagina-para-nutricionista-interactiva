@@ -48,7 +48,7 @@ export const getRecipeLikes = async (req: Request, res: Response) => {
         const exists = await RecipeLike.findOne({ recipeId, userId: decoded.id });
         likedByUser = !!exists;
       } catch {
-        
+        // token inválido o vencido => no hace falta cortar
       }
     }
 

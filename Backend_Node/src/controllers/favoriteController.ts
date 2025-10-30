@@ -1,11 +1,11 @@
-
+// src/controllers/favoriteController.ts
 import { Request, Response } from "express";
 import { Favorite } from "../models/Favorite";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret123";
 
-
+// Toggle favorito
 export const toggleFavorite = async (req: Request, res: Response) => {
   try {
     const authHeader = req.header("Authorization");
@@ -34,7 +34,7 @@ export const toggleFavorite = async (req: Request, res: Response) => {
   }
 };
 
-
+// Obtener favoritos del usuario
 export const getUserFavorites = async (req: Request, res: Response) => {
   try {
     const authHeader = req.header("Authorization");
@@ -60,7 +60,7 @@ export const getUserFavorites = async (req: Request, res: Response) => {
   }
 };
 
-
+// Saber si esta receta es favorita del usuario
 export const getRecipeFavorite = async (req: Request, res: Response) => {
   try {
     const { recipeId } = req.params;
