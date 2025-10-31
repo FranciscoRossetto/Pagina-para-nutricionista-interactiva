@@ -21,7 +21,6 @@ import { useTheme } from "@mui/material/styles";
 import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 
-// Tipado seguro para usuario
 interface User {
   name: string;
   email?: string;
@@ -55,7 +54,7 @@ export default function Navbar() {
     navigate("/");
   };
 
-  // Render links (Desktop)
+  // links
   const renderLinks = () =>
     links.map((link) => (
       <Button
@@ -98,7 +97,7 @@ export default function Navbar() {
             NutriApp 🥗
           </Typography>
 
-          {/* Links Desktop + Auth */}
+          {/* links y auth */}
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {renderLinks()}
@@ -133,7 +132,7 @@ export default function Navbar() {
             </Box>
           )}
 
-          {/* Icono Mobile */}
+          {/* adaptacion */}
           {isMobile && (
             <IconButton onClick={() => setDrawerOpen(true)}>
               <MenuIcon sx={{ color: "#2b7a78" }} />
@@ -142,7 +141,7 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer Mobile */}
+      {/* adaptacion */}
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <Box sx={{ width: 250, p: 2 }}>
           <List>

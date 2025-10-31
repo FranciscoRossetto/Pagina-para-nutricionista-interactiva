@@ -1,6 +1,4 @@
-/* src/pages/Agenda/Agenda.module.css */
-
-/* ===== Base ===== */
+/*fondo*/
 .bg {
   background-image: linear-gradient(180deg, #ffe4f1 0%, #ffd1ea 40%, #ffc2e4 100%);
   min-height: 100vh;
@@ -23,13 +21,13 @@
   padding: 12px;
 }
 
-/* ===== Header ===== */
+/*head*/
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;  /* permite caer a 2 líneas en pantallas chicas */
+  flex-wrap: wrap;  
   margin-bottom: 14px;
 }
 
@@ -53,7 +51,7 @@
 
 .headerRight {
   display: flex;
-  align-items: center;   /* alinea Y de los 3 botones */
+  align-items: center;
   gap: 10px;
 }
 
@@ -80,10 +78,10 @@
   cursor: not-allowed;
 }
 
-/* ===== Grid semana ===== */
+/*semana*/
 .gridWrap {
   margin-top: 10px;
-  overflow: hidden; /* se controla con media queries */
+  overflow: hidden;
 }
 
 .grid {
@@ -97,7 +95,7 @@
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.98);
   padding: 8px;
-  min-height: 520px;           /* altura consistente */
+  min-height: 520px;     
   display: flex;
   flex-direction: column;
 }
@@ -110,10 +108,10 @@
   margin-bottom: 6px;
 }
 
-/* ===== Filas de hora ===== */
+/*horas*/
 .hourRow {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* hora | acción */
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 8px;
   border: 1px solid #fbcfe8;
@@ -121,7 +119,7 @@
   background: #fff;
   padding: 8px;
   margin-bottom: 8px;
-  min-height: 74px;            /* tamaño fijo en todas las semanas */
+  min-height: 74px;         
 }
 
 .hourLeft {
@@ -156,11 +154,11 @@
   opacity: 0.45;
 }
 
-/* área de notas: siempre reserva el espacio, input solo al reservar */
+/*notas*/
 .noteSpace {
   grid-column: 1 / -1;
   margin-top: 6px;
-  min-height: 40px;            /* mantiene altura estable */
+  min-height: 40px;         
   display: flex;
   align-items: center;
 }
@@ -181,21 +179,18 @@
   align-items: center;
 }
 
-/* ===== Scrollbars (opcionales) ===== */
+/*scrollbar*/
 .gridWrap::-webkit-scrollbar { height: 8px; }
 .gridWrap::-webkit-scrollbar-thumb {
   background: #f9a8d4;
   border-radius: 999px;
 }
 
-/* ====== Responsivo ====== */
-
-/* <= 1024px: columnas más angostas */
+/*adaptacion*/
 @media (max-width: 1024px) {
   .grid { grid-template-columns: repeat(5, minmax(180px, 1fr)); }
 }
 
-/* <= 820px: scroll horizontal por días, buen uso mobile landscape */
 @media (max-width: 820px) {
   .header { gap: 8px; }
   .title { font-size: 16px; }
@@ -207,21 +202,21 @@
   }
 
   .gridWrap {
-    overflow-x: auto;         /* habilita swipe horizontal */
+    overflow-x: auto;    
     padding-bottom: 8px;
   }
   .grid {
     display: grid;
-    grid-auto-flow: column;   /* días en fila */
-    grid-auto-columns: 82vw;  /* un día ocupa ~82% del ancho */
+    grid-auto-flow: column;
+    grid-auto-columns: 82vw; 
     gap: 12px;
-    grid-template-columns: unset; /* lo maneja auto-columns */
+    grid-template-columns: unset; 
   }
 
   .dayCol { min-width: 82vw; }
 }
 
-/* <= 480px: controles más altos y targets táctiles */
+
 @media (max-width: 480px) {
   .cont { padding: 12px; }
   .select, .navBtn { height: 40px; }

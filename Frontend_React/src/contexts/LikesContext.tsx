@@ -39,7 +39,6 @@ export function LikesProvider({ children }: { children: ReactNode }) {
   }, [token, setOne]);
 
   const toggle = useCallback(async (recipeId: string) => {
-    // optimista: invierte liked y ajusta contador
     const cur = store[recipeId];
     if (cur) {
       const liked = !cur.likedByUser;
@@ -47,13 +46,12 @@ export function LikesProvider({ children }: { children: ReactNode }) {
       setOne(recipeId, { likedByUser: liked, likes, loaded: true });
     }
     await apiToggleLike(recipeId, token || "");
-    // revalida server
+    // revalida sv
     await refresh(recipeId);
   }, [store, token, refresh, setOne]);
 
   const get = useCallback((id: string) => store[id], [store]);
 
-  // Si el usuario cambia, invalida cache básica
   useEffect(() => {
     setStore({});
   }, [token]);

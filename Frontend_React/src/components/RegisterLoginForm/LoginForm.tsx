@@ -28,7 +28,7 @@ export default function LoginForm() {
   const handleSubmit = async (values: LoginValues) => {
     try {
       const res = await axios.post(`${API}/users/login`, values);
-      // Backend debe devolver { token, username }
+      // Backend tien q devolver { token y username }
       login(res.data.username, res.data.token);
       navigate("/");
     } catch (err: any) {

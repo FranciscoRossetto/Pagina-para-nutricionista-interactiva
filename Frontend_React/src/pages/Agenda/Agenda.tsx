@@ -1,14 +1,13 @@
 // src/pages/Agenda/Agenda.tsx
-// @ts-nocheck
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Agenda.module.css";
 import { useUser } from "../../contexts/UserContext";
 import { API } from "../../config/api";
 
 
-const SLOTS = ["09:00","10:00","11:00","12:00","13:00","15:00","16:00","17:00","18:00"];
+const SLOTS = ["09:00", "10:00", "11:00", "12:00", "13:00", "15:00", "16:00", "17:00", "18:00"];
 
-/* ===== Helpers de fecha ===== */
+/*fechas*/
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
 function toISODate(d: Date): string {
@@ -28,7 +27,7 @@ function addDaysISO(iso: string, delta: number): string {
 function startOfMonday(d: Date): Date {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const day = x.getDay(); // 0..6  (0=Domingo)
-  const diff = day === 0 ? -6 : 1 - day; // mover a lunes
+  const diff = day === 0 ? -6 : 1 - day; // mueve a lunes
   x.setDate(x.getDate() + diff);
   x.setHours(0, 0, 0, 0);
   return x;
@@ -46,7 +45,7 @@ function isPastDateTime(isoDate: string, hhmm: string): boolean {
   return dt.getTime() < Date.now();
 }
 
-/* ===== Tipos mínimos ===== */
+/*motivos*/
 type Motivo = "consulta" | "control" | "plan" | "otro";
 type ApiAppointment = {
   _id: string;
@@ -57,11 +56,11 @@ type ApiAppointment = {
   notas?: string;
 };
 
-/* ===== Componente ===== */
+/*component*/
 export default function Agenda(): React.ReactElement {
   const { token, user } = useUser();
 
-  // estado de semana actual y navegación
+  // estado d semana y navegación
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -72,13 +71,12 @@ export default function Agenda(): React.ReactElement {
   const [weekMondayISO, setWeekMondayISO] = useState<string>(currentMondayISO);
   const [motivo, setMotivo] = useState<Motivo>("consulta");
 
-  // ocupación de toda la semana: { "YYYY-MM-DD": Set("HH:mm", ...) }
+  // ocupación d la semana
   const [takenMap, setTakenMap] = useState<Record<string, Set<string>>>({});
-  // mis turnos en la semana para pintar "Cancelar"
-  const [myAppointments, setMyAppointments] = useState<Record<string, string>>({}); // key: date|slot -> apptId
 
-  // edición puntual (al presionar Reservar)
-  const [editingKey, setEditingKey] = useState<string | null>(null); // `${iso}|${slot}`
+  const [myAppointments, setMyAppointments] = useState<Record<string, string>>({}); 
+
+  const [editingKey, setEditingKey] = useState<string | null>(null);
   const [notaTmp, setNotaTmp] = useState<string>("");
 
   // días L–V visibles
@@ -88,7 +86,6 @@ export default function Agenda(): React.ReactElement {
     return out;
   }, [weekMondayISO]);
 
-  /* ===== Carga ocupación pública ===== */
   useEffect(() => {
     const from = weekMondayISO;
     const to = addDaysISO(weekMondayISO, 4);
@@ -106,7 +103,7 @@ export default function Agenda(): React.ReactElement {
     })();
   }, [weekMondayISO]);
 
-  /* ===== Carga mis turnos de la semana ===== */
+  /*carga mis turnos de la semana*/
   useEffect(() => {
     if (!token) {
       setMyAppointments({});
@@ -135,13 +132,11 @@ export default function Agenda(): React.ReactElement {
     })();
   }, [token, weekMondayISO]);
 
-  /* ===== Acciones ===== */
+  /*Acciones*/
   function onPrevWeek() {
-    // no permitir ir antes del lunes actual
     const prev = addDaysISO(weekMondayISO, -7);
     if (prev < currentMondayISO) return;
     setWeekMondayISO(prev);
-    // limpiar edición al cambiar de semana
     setEditingKey(null);
     setNotaTmp("");
   }
@@ -187,13 +182,11 @@ export default function Agenda(): React.ReactElement {
         alert(`Error al reservar: ${msg}`);
         return;
       }
-      // refrescar ocupación + mis turnos
       setEditingKey(null);
       setNotaTmp("");
       // recargar datos de la semana
       const from = weekMondayISO;
       const to = addDaysISO(weekMondayISO, 4);
-      // taken
       {
         const rt = await fetch(`${API}/appointments/taken?from=${from}&to=${to}`);
         if (rt.ok) {
@@ -203,7 +196,6 @@ export default function Agenda(): React.ReactElement {
           setTakenMap(map);
         }
       }
-      // mine
       {
         const rm = await fetch(`${API}/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -235,7 +227,7 @@ export default function Agenda(): React.ReactElement {
         alert(`No se pudo cancelar: ${msg}`);
         return;
       }
-      // actualizar estado local rápido
+      // actualiza estado local
       setMyAppointments((prev) => {
         const n = { ...prev };
         delete n[key];
@@ -257,7 +249,7 @@ export default function Agenda(): React.ReactElement {
     }
   }
 
-  /* ===== Render ===== */
+  /*render*/
   const weekLabel = formatWeekRange(weekMondayISO);
   const prevDisabled = addDaysISO(weekMondayISO, -7) < currentMondayISO;
 
@@ -322,9 +314,8 @@ export default function Agenda(): React.ReactElement {
                   return (
                     <div
                       key={key}
-                      className={`${styles.hourRow} ${past ? styles.pastSlot : ""} ${
-                        isTaken ? styles.occupied : ""
-                      }`}
+                      className={`${styles.hourRow} ${past ? styles.pastSlot : ""} ${isTaken ? styles.occupied : ""
+                        }`}
                     >
                       <div className={styles.hourLeft}>{slot}</div>
 
@@ -352,7 +343,7 @@ export default function Agenda(): React.ReactElement {
                         )}
                       </div>
 
-                      {/* Área de notas: espacio fijo. Input solo al reservar ese slot */}
+                      {/*notas*/}
                       <div className={styles.noteSpace}>
                         {editingKey === key && !isTaken && !isMine && !past && (
                           <>

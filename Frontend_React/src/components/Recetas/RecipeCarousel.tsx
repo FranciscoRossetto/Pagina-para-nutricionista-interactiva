@@ -11,12 +11,14 @@ export default function RecipeCarousel({
   onUpdateFavorites,
   likeTick,
   bumpLike,
-}: {
+}:
+
+{
   title: string;
   data: Recipe[];
   onUpdateFavorites?: () => void;
-  likeTick: number;              // ⬅️ nuevo
-  bumpLike: () => void;          // ⬅️ nuevo
+  likeTick: number;             
+  bumpLike: () => void;        
 }) {
   const [sliderRef] = useKeenSlider<HTMLDivElement>({
     loop: true,
@@ -44,8 +46,8 @@ export default function RecipeCarousel({
                 setFlippedCard(flippedCard === recipe.id ? null : recipe.id)
               }
               onUpdateFavorites={onUpdateFavorites}
-              likeTick={likeTick}     // ⬅️ prop hacia la tarjeta
-              bumpLike={bumpLike}     // ⬅️ prop hacia la tarjeta
+              likeTick={likeTick}    
+              bumpLike={bumpLike} 
             />
           </div>
         ))}

@@ -22,7 +22,7 @@ export default function Recetas() {
   const [favoritesKey, setFavoritesKey] = useState(0);
   const [filteredKey, setFilteredKey] = useState(0);
 
-  // 🔁 likeTick global para forzar re-fetch en TODAS las tarjetas
+  // refresh likes
   const [likeTick, setLikeTick] = useState(0);
   const bumpLike = () => setLikeTick((x) => x + 1);
 
@@ -73,7 +73,7 @@ export default function Recetas() {
         <FilterMenu filters={filtersList} selected={selected} onToggle={toggleFilter} />
       )}
 
-      {/* === RECETAS FILTRADAS === */}
+      {/*recetas*/}
       {selected.length > 0 && filtered.length > 0 && (
         <RecipeCarousel
           key={filteredKey}
@@ -87,7 +87,7 @@ export default function Recetas() {
         />
       )}
 
-      {/* === FAVORITOS === */}
+      {/*FAV*/}
       {user && (
         <section style={{ marginTop: "2rem", width: "100%" }}>
           <h2
@@ -118,7 +118,7 @@ export default function Recetas() {
         </section>
       )}
 
-      {/*  CARRUSEL CON TODAS LAS COMIDAS */}
+      {/*carrusel d comidas*/}
       <RecipeCarousel
         title="🍽️ Todas las comidas"
         data={recipes}
@@ -127,7 +127,7 @@ export default function Recetas() {
         bumpLike={bumpLike}
       />
 
-      {/* === CARRUSELES POR TIPO === */}
+      {/*carrusel filtro*/}
       {grouped.map(
         (g) =>
           g.data.length > 0 && (

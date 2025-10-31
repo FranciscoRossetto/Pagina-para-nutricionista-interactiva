@@ -16,7 +16,7 @@ export default function Home({ setSection }: HomeProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      {/* === HERO SECTION === */}
+      {/*inicio*/}
       <section className={styles.hero}>
         <motion.div
           className={styles.heroContent}
@@ -41,7 +41,7 @@ export default function Home({ setSection }: HomeProps) {
           )}
         </motion.div>
 
-        {/* Imagen ilustrativa */}
+        {/*foto*/}
         <motion.img
           src={heroImage}
           alt="Nutrición saludable"
@@ -52,7 +52,7 @@ export default function Home({ setSection }: HomeProps) {
         />
       </section>
 
-      {/* === POR QUÉ ELEGIRNOS === */}
+      {/*porque?*/}
       <section className={styles.why}>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -111,7 +111,7 @@ export default function Home({ setSection }: HomeProps) {
         </div>
       </section>
 
-      {/* === ACERCA DE GUADALUPE === */}
+      {/*acerca de*/}
       <motion.section
         className={styles.aboutGuadalupe}
         initial={{ opacity: 0, y: 40 }}
@@ -122,7 +122,7 @@ export default function Home({ setSection }: HomeProps) {
         <div className={styles.aboutContainer}>
           <div className={styles.aboutImageWrapper}>
             <img
-              src={heroImage} // Podés reemplazar con una foto real
+              src={heroImage}
               alt="Guadalupe"
               className={styles.aboutImage}
             />
@@ -170,7 +170,7 @@ export default function Home({ setSection }: HomeProps) {
         </div>
       </motion.section>
 
-      {/* === BURBUJA DE WHATSAPP === */}
+      {/*wpp*/}
       <WhatsAppBubble />
     </motion.div>
   );

@@ -4,7 +4,9 @@ export default function FilterMenu({
   filters,
   selected,
   onToggle,
-}: {
+}:
+
+{
   filters: { key: string; label: string }[];
   selected: string[];
   onToggle: (key: string) => void;
