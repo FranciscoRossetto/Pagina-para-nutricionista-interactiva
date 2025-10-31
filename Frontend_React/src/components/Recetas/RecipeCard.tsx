@@ -16,9 +16,11 @@ export default function RecipeCard({
   flipped,
   onFlip,
   onUpdateFavorites,
-  likeTick,          // ⬅️ llega desde arriba
-  bumpLike,          // ⬅️ función global que incrementa el tick
-}: {
+  likeTick,          
+  bumpLike,        
+}: 
+
+{
   recipe: Recipe;
   flipped: boolean;
   onFlip: () => void;
@@ -35,7 +37,7 @@ export default function RecipeCard({
 
   const recipeIdStr = recipe.id.toString();
 
-  // Re-fetch de likes también cuando cambia likeTick
+  // actualizacion de likes
   useEffect(() => {
     let mounted = true;
 
@@ -68,7 +70,6 @@ export default function RecipeCard({
     return () => {
       mounted = false;
     };
-    // ⬇️ clave: dependemos de likeTick para que TODAS las tarjetas se actualicen
   }, [user, token, recipeIdStr, likeTick]);
 
   const handleLike = async (e: React.MouseEvent) => {
@@ -78,11 +79,9 @@ export default function RecipeCard({
     try {
       setLikeAnim(true);
       await apiToggleLike(recipeIdStr, token);
-      // Reconsulta local
       const updated = await apiGetLikes(recipeIdStr, token);
       setLikesCount(updated.likes ?? 0);
       setLiked(!!updated.likedByUser);
-      // 🔁 Propaga actualización al resto
       bumpLike();
     } catch (err) {
       console.error("Error toggleLike:", err);
@@ -148,7 +147,7 @@ export default function RecipeCard({
             <span style={{ fontWeight: 600 }}>{likesCount}</span>
           </motion.button>
 
-          {/* FAVORITO */}
+          {/* FAV */}
           <motion.button
             whileTap={{ scale: 0.85 }}
             animate={favAnim ? { scale: [1, 1.25, 1] } : { scale: 1 }}

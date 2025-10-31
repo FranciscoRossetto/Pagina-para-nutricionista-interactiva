@@ -40,7 +40,7 @@ export default function IMCPage() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        Calculadora de IMC 💪
+        Calculadora de IMC
       </motion.h2>
 
       <motion.div

@@ -5,7 +5,7 @@
   width: 100%;
 }
 
-/* === HERO SECTION === */
+/*inicio*/
 .hero {
   display: flex;
   justify-content: center;
@@ -61,7 +61,7 @@
   z-index: 1;
 }
 
-/* === BUTTON === */
+/*boton*/
 .button {
   background-color: #ff6b81;
   border: none;
@@ -79,7 +79,7 @@
   box-shadow: 0 6px 18px rgba(255, 107, 129, 0.4);
 }
 
-/* === WHY SECTION === */
+/*porque?*/
 .why {
   padding: 60px 20px;
   max-width: 1000px;
@@ -100,7 +100,7 @@
   margin-bottom: 40px;
 }
 
-/* === CARDS === */
+/*secciones*/
 .cards {
   display: flex;
   justify-content: center;
@@ -133,7 +133,7 @@
   margin-bottom: 10px;
 }
 
-/* === ABOUT GUADALUPE ELEGANTE === */
+/*acerca de*/
 .aboutGuadalupe {
   padding: 80px 20px;
   background: linear-gradient(135deg, #fef9f9, #fff8f0);
@@ -182,7 +182,6 @@
   margin-bottom: 30px;
 }
 
-/* Valores / Filosofía */
 .aboutValues {
   display: flex;
   flex-wrap: wrap;

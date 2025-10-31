@@ -6,18 +6,18 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        {/* Logo y lema */}
+        {/* inicio */}
         <div className={styles.brand}>
 
           <div>
             <h3 className={styles.title}>NutriApp</h3>
             <p className={styles.slogan}>
-              Cuidá tu cuerpo, nutrí tu mente 🍎
+              Cuidá tu cuerpo, nutrí tu mente
             </p>
           </div>
         </div>
 
-        {/* Enlaces rápidos */}
+        {/* links */}
         <div className={styles.links}>
           <h4>Enlaces rápidos</h4>
           <ul>

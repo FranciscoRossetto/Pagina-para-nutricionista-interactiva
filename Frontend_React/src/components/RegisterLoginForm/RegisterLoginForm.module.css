@@ -1,5 +1,3 @@
-/* RegisterForm.module.css */
-
 .container {
   max-width: 400px;
   margin: 50px auto;
@@ -43,12 +41,12 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #4caf50; /* verde para resaltar */
+  border-color: #4caf50; 
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 .error {
-  color: #e53935; /* rojo para errores */
+  color: #e53935; /* rojo para error */
   font-size: 12px;
   margin-top: 3px;
 }
@@ -74,7 +72,7 @@ input:focus {
   cursor: not-allowed;
 }
 
-/* Wrapper para el input de contraseña y el botón */
+/*adaptacion*/
 .passwordWrapper {
   position: relative;
   display: flex;

@@ -3,7 +3,9 @@ import styles from "../../pages/Recetas/Recetas.module.css";
 export default function HeaderRecetas({
   onToggleMenu,
   showMenu,
-}: {
+}:
+
+{
   onToggleMenu: () => void;
   showMenu: boolean;
 }) {

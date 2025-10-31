@@ -9,7 +9,7 @@ async function fetchJSON(url: string, options: RequestInit = {}) {
   return res.json();
 }
 
-// === USERS ===
+// usuarios
 export const registerUser = (username: string, password: string) =>
   fetchJSON(`${BASE_URL}/users/register`, {
     method: "POST",
@@ -24,7 +24,7 @@ export const loginUser = (username: string, password: string) =>
     body: JSON.stringify({ username, password }),
   });
 
-// === LIKES ===
+// likes
 export const toggleLike = (recipeId: string, token: string) =>
   fetchJSON(`${BASE_URL}/likes`, {
     method: "POST",
@@ -48,7 +48,7 @@ export const getRecipeLikes = async (recipeId: string, token?: string) => {
   }
 };
 
-// === FAVORITES ===
+// FAVS
 export const toggleFavorite = (recipeId: string, token: string) =>
   fetchJSON(`${BASE_URL}/favorites/toggle`, {
     method: "POST",
@@ -82,7 +82,7 @@ export const getRecipeFavorite = async (recipeId: string, token?: string) => {
   }
 };
 
-// === HIGHSCORE ===
+// highscore
 export const getHighScore = (username?: string) =>
   fetchJSON(
     username
@@ -97,7 +97,7 @@ export const postHighScore = (player: string, score: number) =>
     body: JSON.stringify({ player, score }),
   });
 
-// === APPOINTMENTS ===
+// appointments
 export const fetchAppointments = (from: string, to: string, token: string) =>
   fetchJSON(`${BASE_URL}/appointments?from=${from}&to=${to}`, {
     headers: { Authorization: `Bearer ${token}` },

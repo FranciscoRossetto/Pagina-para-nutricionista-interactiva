@@ -41,7 +41,7 @@ export default function RegisterForm() {
         username: values.username,
         password: values.password,
       });
-      // Backend debe devolver { token, username }
+      // Backend tiene q devolver { token y username }
       login(res.data.username, res.data.token);
       navigate("/");
     } catch (err: any) {

@@ -76,7 +76,7 @@
   margin-bottom: 1rem;
 }
 
-/* === NUEVO: scroll horizontal === */
+/*scroll horizontal*/
 .sliderContainer {
   width: 100%;
   display: flex;
@@ -85,18 +85,16 @@
   scroll-snap-type: x mandatory;
   padding-bottom: 1rem;
   -webkit-overflow-scrolling: touch;
-  /* scroll suave en iOS */
   scroll-behavior: smooth;
 }
 
 .slide {
   flex: 0 0 auto;
-  /* ancho fijo */
   width: 250px;
   scroll-snap-align: start;
 }
 
-/* === Cards === */
+/*tarjetas*/
 .card {
   width: 100%;
   aspect-ratio: 3 / 2.8;

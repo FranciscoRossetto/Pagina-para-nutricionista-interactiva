@@ -23,7 +23,7 @@
   }
 }
 
-/* Marca */
+/*Marca*/
 .brand {
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@
   max-width: 250px;
 }
 
-/* Enlaces rápidos */
+/*Links*/
 .links {
   display: flex;
   flex-direction: column;
@@ -95,7 +95,7 @@
   transform: translateX(4px);
 }
 
-/* Contacto */
+/*Contacto*/
 .contact {
   display: flex;
   flex-direction: column;
@@ -117,7 +117,7 @@
   letter-spacing: 0.5px;
 }
 
-/* Redes */
+/*Redes*/
 .socials {
   display: flex;
   justify-content: center;
@@ -141,7 +141,7 @@
   transform: translateY(-3px);
 }
 
-/* Línea final */
+/*Final*/
 .copy {
   font-size: 0.85rem;
   color: #777;
