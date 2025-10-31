@@ -7,8 +7,17 @@ import highScoreRoutes from "./routes/highScoreRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
 import appointmentRoutes from "./routes/appointmentRoutes";
 
+const allowedOrigins = [
+  "https://pagina-para-nutricionista-interacti.vercel.app",
+  "http://localhost:5173" // opcional para desarrollo local
+];
+
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET","POST","PUT","DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 // Rutas
