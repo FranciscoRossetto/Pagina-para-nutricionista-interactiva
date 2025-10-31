@@ -52,8 +52,8 @@ export default function Footer() {
             <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">
               <FaLinkedin />
             </a>
-            <a 
-              href="mailto:frossetto@lasalleflorida.edu.ar?subject=Consulta%20desde%20NutriApp&body=Hola%20Guadalupe,%20quisiera%20hacer%20una%20consulta..."
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=frossetto@lasalleflorida.edu.ar&su=Consulta%20NutriApp&body=Hola%20Guadalupe,"
               target="_blank"
               rel="noopener noreferrer"
             >
