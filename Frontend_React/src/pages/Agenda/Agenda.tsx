@@ -1,150 +1,74 @@
 // src/pages/Agenda/Agenda.tsx
+// @ts-nocheck
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Agenda.module.css";
 import { useUser } from "../../contexts/UserContext";
 
-/* ===== Config ===== */
+/* Config */
 const API = "http://localhost:4000";
 const SLOTS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
 
-<<<<<<< HEAD
-/* ===== Helpers seguros (sin UTC) ===== */
-=======
-<<<<<<< HEAD
-const SLOTS = ["09:00", "10:00", "11:00", "12:00", "13:00", "15:00", "16:00", "17:00", "18:00"];
-
-/*fechas*/
-const pad2 = (n: number) => String(n).padStart(2, "0");
-
-function toISODate(d: Date): string {
-  const yyyy = d.getFullYear();
-  const mm = pad2(d.getMonth() + 1);
-  const dd = pad2(d.getDate());
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-function addDaysISO(iso: string, delta: number): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  const dt = new Date(y, m - 1, d);
-  dt.setDate(dt.getDate() + delta);
-=======
-/* ===== Helpers de fecha (robustos a huso/UTC) ===== */
->>>>>>> f5da8251bd1dabf191e27a5dc497dab90a7b22dd
+/* Helpers locales (sin UTC) */
 const pad2 = (n:number) => String(n).padStart(2,"0");
 const toISODate = (d:Date) => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
-/* parse local de 'YYYY-MM-DD' */
 function localDateFromISO(iso:string): Date {
   const [y,m,d] = iso.split("-").map(Number);
   return new Date(y, m-1, d, 0, 0, 0, 0); // local
 }
-
 function addDaysISO(iso:string, delta:number):string {
   const dt = localDateFromISO(iso);
   dt.setDate(dt.getDate()+delta);
-<<<<<<< HEAD
-=======
-  dt.setHours(0,0,0,0);
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
->>>>>>> f5da8251bd1dabf191e27a5dc497dab90a7b22dd
   return toISODate(dt);
 }
 function startOfMonday(d:Date):Date {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-<<<<<<< HEAD
   const day = x.getDay();              // 0=Dom
-=======
-<<<<<<< HEAD
-  const day = x.getDay(); // 0..6  (0=Domingo)
-  const diff = day === 0 ? -6 : 1 - day; // mueve a lunes
-  x.setDate(x.getDate() + diff);
-  x.setHours(0, 0, 0, 0);
-=======
-  const day = x.getDay();             // 0=Dom
->>>>>>> f5da8251bd1dabf191e27a5dc497dab90a7b22dd
   const diff = day === 0 ? -6 : 1 - day;
   x.setDate(x.getDate()+diff);
   x.setHours(0,0,0,0);
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
   return x;
 }
 function formatWeekRange(mondayISO:string){ return `${mondayISO} — ${addDaysISO(mondayISO,4)}`; }
 
-/* comparaciones por fecha pura */
-function hoyISO(): string {
-  const n = new Date(); n.setHours(0,0,0,0);
-  return toISODate(n);
-}
-function isPastDay(iso:string, todayISO:string){ return iso < todayISO; }
-function nowHHMM():string {
-  const n = new Date();
-  return `${pad2(n.getHours())}:${pad2(n.getMinutes())}`;
-}
+function hoyISO(): string { const n=new Date(); n.setHours(0,0,0,0); return toISODate(n); }
+function nowHHMM():string { const n=new Date(); return `${pad2(n.getHours())}:${pad2(n.getMinutes())}`; }
+
+/* Pasado: fecha<today o fecha=today y hora<=ahora */
 function isPastDateTime(iso:string, hhmm:string, todayISO:string):boolean {
   if (iso < todayISO) return true;
   if (iso > todayISO) return false;
   return hhmm <= nowHHMM();
 }
-/* label local sin UTC */
+
 function labelFromISO(iso:string): string {
   const d = localDateFromISO(iso);
   return d.toLocaleDateString(undefined, { weekday:"long", day:"2-digit", month:"2-digit" });
 }
 
-/*motivos*/
+/* Tipos mínimos */
 type Motivo = "consulta" | "control" | "plan" | "otro";
 type ApiAppointment = { _id:string; fecha:string; inicio:string; fin:string; motivo:Motivo; notas?:string };
 
-/*component*/
+/* Componente */
 export default function Agenda(): React.ReactElement {
   const { token, user } = useUser();
 
-<<<<<<< HEAD
   const currentMondayISO = useMemo(() => toISODate(startOfMonday(new Date())), []);
-=======
-<<<<<<< HEAD
-  // estado d semana y navegación
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
-=======
-  const today = useMemo(() => { const d=new Date(); d.setHours(0,0,0,0); return d; }, []);
-  const todayISO = useMemo(() => toISODate(new Date()), []); // solo fecha de “hoy”
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
-  const currentMondayISO = useMemo(() => toISODate(startOfMonday(today)), [today]);
+  const todayISO = useMemo(() => hoyISO(), []);
 
->>>>>>> f5da8251bd1dabf191e27a5dc497dab90a7b22dd
   const [weekMondayISO, setWeekMondayISO] = useState<string>(currentMondayISO);
   const [motivo, setMotivo] = useState<Motivo>("consulta");
-  const [showPast, setShowPast] = useState(false);
 
-<<<<<<< HEAD
-  // ocupación d la semana
-  const [takenMap, setTakenMap] = useState<Record<string, Set<string>>>({});
-
-  const [myAppointments, setMyAppointments] = useState<Record<string, string>>({}); 
-
-  const [editingKey, setEditingKey] = useState<string | null>(null);
-=======
   const [takenMap, setTakenMap] = useState<Record<string, Set<string>>>({});
   const [myAppointments, setMyAppointments] = useState<Record<string,string>>({});
   const [editingKey, setEditingKey] = useState<string|null>(null);
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
   const [notaTmp, setNotaTmp] = useState<string>("");
 
-  const todayISO = useMemo(() => hoyISO(), []);
+  /* L–V fijo */
+  const daysISO = useMemo(() => Array.from({length:5},(_,i)=>addDaysISO(weekMondayISO,i)), [weekMondayISO]);
 
-  /* L–V base */
-  const baseDaysISO = useMemo(() => Array.from({length:5},(_,i)=>addDaysISO(weekMondayISO,i)), [weekMondayISO]);
-
-  /* Días visibles */
-  const daysISO = useMemo(
-    () => showPast ? baseDaysISO : baseDaysISO.filter(iso => !isPastDay(iso, todayISO)),
-    [baseDaysISO, showPast, todayISO]
-  );
-
+  /* Carga ocupación */
   useEffect(() => {
     const from = weekMondayISO, to = addDaysISO(weekMondayISO,4);
     (async () => {
@@ -153,22 +77,13 @@ export default function Agenda(): React.ReactElement {
         if (!r.ok) throw new Error(await r.text());
         const rows: { fecha:string; slots:string[] }[] = await r.json();
         const map: Record<string, Set<string>> = {};
-        for (const row of rows) {
-          const keep = showPast
-            ? row.slots
-            : row.slots.filter((s) => !isPastDateTime(row.fecha, s, todayISO));
-          if (keep.length) map[row.fecha] = new Set(keep);
-        }
+        for (const row of rows) map[row.fecha] = new Set(row.slots);
         setTakenMap(map);
       } catch { setTakenMap({}); }
     })();
-  }, [weekMondayISO, showPast, todayISO]);
+  }, [weekMondayISO]);
 
-<<<<<<< HEAD
-  /*carga mis turnos de la semana*/
-=======
-  /* ===== Carga mis turnos ===== */
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
+  /* Carga mis turnos */
   useEffect(() => {
     if (!token) { setMyAppointments({}); return; }
     const from = weekMondayISO, to = addDaysISO(weekMondayISO,4);
@@ -178,36 +93,24 @@ export default function Agenda(): React.ReactElement {
         if (!r.ok) { setMyAppointments({}); return; }
         const rows: ApiAppointment[] = await r.json();
         const map: Record<string,string> = {};
-        for (const appt of rows) {
-          if (!showPast && isPastDateTime(appt.fecha, appt.inicio, todayISO)) continue;
-          map[`${appt.fecha}|${appt.inicio}`] = appt._id;
-        }
+        for (const appt of rows) map[`${appt.fecha}|${appt.inicio}`] = appt._id;
         setMyAppointments(map);
       } catch { setMyAppointments({}); }
     })();
-  }, [token, weekMondayISO, showPast, todayISO]);
+  }, [token, weekMondayISO]);
 
-<<<<<<< HEAD
-  /*Acciones*/
-  function onPrevWeek() {
-    const prev = addDaysISO(weekMondayISO, -7);
-    if (prev < currentMondayISO) return;
-    setWeekMondayISO(prev);
-    setEditingKey(null);
-    setNotaTmp("");
-=======
-  /* ===== Acciones ===== */
+  /* Acciones */
   function onPrevWeek(){
     const prev = addDaysISO(weekMondayISO,-7);
     if (prev < currentMondayISO) return;
     setWeekMondayISO(prev); setEditingKey(null); setNotaTmp("");
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
   }
   function onNextWeek(){
     setWeekMondayISO(addDaysISO(weekMondayISO,7)); setEditingKey(null); setNotaTmp("");
   }
   function clickReserve(iso:string, slot:string){
     if (!token) { alert("Debes iniciar sesión para poder sacar un turno."); return; }
+    if (isPastDateTime(iso, slot, todayISO)) return; // no abrir editor en pasado
     setEditingKey(`${iso}|${slot}`); setNotaTmp("");
   }
   async function confirmReserve(iso:string, slot:string){
@@ -219,45 +122,8 @@ export default function Agenda(): React.ReactElement {
         headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body: JSON.stringify({ fecha: iso, inicio: slot, paciente: user || "usuario", motivo, notas: notaTmp || undefined }),
       });
-<<<<<<< HEAD
-      if (!r.ok) {
-        const msg = await r.text();
-        alert(`Error al reservar: ${msg}`);
-        return;
-      }
-      setEditingKey(null);
-      setNotaTmp("");
-      // recargar datos de la semana
-      const from = weekMondayISO;
-      const to = addDaysISO(weekMondayISO, 4);
-      {
-        const rt = await fetch(`${API}/appointments/taken?from=${from}&to=${to}`);
-        if (rt.ok) {
-          const rows: { fecha: string; slots: string[] }[] = await rt.json();
-          const map: Record<string, Set<string>> = {};
-          for (const row of rows) map[row.fecha] = new Set(row.slots);
-          setTakenMap(map);
-        }
-      }
-      {
-        const rm = await fetch(`${API}/appointments?from=${from}&to=${to}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (rm.ok) {
-          const rows: ApiAppointment[] = await rm.json();
-          const map: Record<string, string> = {};
-          for (const appt of rows) map[`${appt.fecha}|${appt.inicio}`] = appt._id;
-          setMyAppointments(map);
-        }
-      }
-    } catch {
-      alert("No se pudo conectar para reservar.");
-    }
-  }
-=======
       if (!r.ok) { alert(`Error al reservar: ${await r.text()}`); return; }
       setEditingKey(null); setNotaTmp("");
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 
       const from = weekMondayISO, to = addDaysISO(weekMondayISO,4);
       const [rt, rm] = await Promise.all([
@@ -267,19 +133,13 @@ export default function Agenda(): React.ReactElement {
       if (rt.ok){
         const rows: { fecha:string; slots:string[] }[] = await rt.json();
         const map: Record<string, Set<string>> = {};
-        for (const row of rows){
-          const keep = showPast ? row.slots : row.slots.filter((s)=>!isPastDateTime(row.fecha,s,todayISO));
-          if (keep.length) map[row.fecha] = new Set(keep);
-        }
+        for (const row of rows) map[row.fecha] = new Set(row.slots);
         setTakenMap(map);
       }
       if (rm.ok){
         const rows: ApiAppointment[] = await rm.json();
         const mine: Record<string,string> = {};
-        for (const appt of rows){
-          if (!showPast && isPastDateTime(appt.fecha, appt.inicio, todayISO)) continue;
-          mine[`${appt.fecha}|${appt.inicio}`] = appt._id;
-        }
+        for (const appt of rows) mine[`${appt.fecha}|${appt.inicio}`] = appt._id;
         setMyAppointments(mine);
       }
     } catch { alert("No se pudo conectar para reservar."); }
@@ -296,39 +156,11 @@ export default function Agenda(): React.ReactElement {
         const n={...prev}; const s=new Set(n[iso]||[]);
         s.delete(slot); if (s.size) n[iso]=s; else delete n[iso]; return n;
       });
-<<<<<<< HEAD
-      if (!r.ok) {
-        const msg = await r.text();
-        alert(`No se pudo cancelar: ${msg}`);
-        return;
-      }
-      // actualiza estado local
-      setMyAppointments((prev) => {
-        const n = { ...prev };
-        delete n[key];
-        return n;
-      });
-      setTakenMap((prev) => {
-        const n = { ...prev };
-        const set = new Set(n[iso] || []);
-        set.delete(slot);
-        n[iso] = set;
-        return n;
-      });
-      if (editingKey === key) {
-        setEditingKey(null);
-        setNotaTmp("");
-      }
-    } catch {
-      alert("Error de conexión al cancelar.");
-    }
-=======
       if (editingKey === `${iso}|${slot}`){ setEditingKey(null); setNotaTmp(""); }
     } catch { alert("Error de conexión al cancelar."); }
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
   }
 
-  /*render*/
+  /* Render */
   const weekLabel = formatWeekRange(weekMondayISO);
   const prevDisabled = addDaysISO(weekMondayISO,-7) < currentMondayISO;
 
@@ -363,180 +195,73 @@ export default function Agenda(): React.ReactElement {
             <button type="button" className={styles.navBtn} onClick={onNextWeek}>
               Semana siguiente →
             </button>
-
-            <button
-              type="button"
-              className={styles.togglePast}
-              aria-pressed={showPast}
-              onClick={()=>setShowPast(v=>!v)}
-              title={showPast ? "Ocultar pasados" : "Mostrar pasados"}
-            >
-              {showPast ? "Ocultar pasados" : "Mostrar pasados"}
-            </button>
           </div>
         </div>
 
         <div className={`${styles.panel} ${styles.gridWrap}`}>
           <div className={styles.grid}>
-            {daysISO.map((iso) => {
-              const dayIsPast = isPastDay(iso, todayISO);
-              const isToday = iso === todayISO;
-              const daySlots = showPast ? SLOTS : SLOTS.filter(s => !(isToday && isPastDateTime(iso, s, todayISO)));
-
-              return (
-                <div key={iso} className={`${styles.dayCol} ${dayIsPast ? styles.pastDay : ""}`}>
-                  <div className={styles.dayHeader}>
-                    <span>{labelFromISO(iso)}</span>
-                    {dayIsPast && <span className={styles.pastBadge}>Pasado</span>}
-                  </div>
-
-                  {daySlots.map((slot) => {
-                    const key = `${iso}|${slot}`;
-                    const isMine = !!myAppointments[key];
-                    const isTaken = (takenMap[iso]?.has(slot) ?? false) && !isMine;
-                    const past = isPastDateTime(iso, slot, todayISO);
-
-                    return (
-                      <div key={key} className={`${styles.hourRow} ${past ? styles.pastSlot : ""} ${isTaken ? styles.occupied : ""}`}>
-                        <div className={styles.hourLeft}>{slot}</div>
-
-                        <div className={styles.hourRight}>
-                          {isMine ? (
-                            <button type="button" className={styles.cancelBtn} onClick={()=>cancelMine(iso, slot)}>Cancelar</button>
-                          ) : isTaken ? (
-                            <span>Ocupado</span>
-                          ) : (
-                            <button
-                              type="button"
-                              className={styles.reserveBtn}
-                              onClick={()=>!past && clickReserve(iso, slot)}
-                              disabled={past}
-                              title={past ? "Horario pasado" : "Reservar"}
-                            >
-                              Reservar
-                            </button>
-                          )}
-                        </div>
-
-                        <div className={styles.noteSpace}>
-                          {editingKey === key && !isTaken && !isMine && !past && (
-                            <>
-                              <input
-                                className={styles.noteInput}
-                                maxLength={15}
-                                placeholder="Notas (máx. 15)"
-                                value={notaTmp}
-                                onChange={(e)=>setNotaTmp(e.target.value)}
-                              />
-                              <div className={styles.noteHelp}>
-                                Máximo 15 caracteres.
-                                <button
-                                  type="button"
-                                  style={{ marginLeft:8, height:28, padding:"0 10px", borderRadius:8, border:"1px solid #ec4899", background:"#ec4899", color:"#fff", cursor:"pointer" }}
-                                  onClick={()=>confirmReserve(iso, slot)}
-                                >
-                                  Confirmar
-                                </button>
-                                <button
-                                  type="button"
-                                  style={{ marginLeft:6, height:28, padding:"0 10px", borderRadius:8, border:"1px solid #e5e7eb", background:"#fff", color:"#374151", cursor:"pointer" }}
-                                  onClick={()=>{ setEditingKey(null); setNotaTmp(""); }}
-                                >
-                                  Cancelar
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+            {daysISO.map((iso) => (
+              <div key={iso} className={styles.dayCol}>
+                <div className={styles.dayHeader}>
+                  <span>{labelFromISO(iso)}</span>
                 </div>
-<<<<<<< HEAD
 
                 {SLOTS.map((slot) => {
                   const key = `${iso}|${slot}`;
                   const isMine = !!myAppointments[key];
                   const isTaken = (takenMap[iso]?.has(slot) ?? false) && !isMine;
-                  const past = isPastDateTime(iso, slot);
+                  const past = isPastDateTime(iso, slot, todayISO);
 
                   return (
-                    <div
-                      key={key}
-                      className={`${styles.hourRow} ${past ? styles.pastSlot : ""} ${isTaken ? styles.occupied : ""
-                        }`}
-                    >
+                    <div key={key} className={`${styles.hourRow} ${past ? styles.pastSlot : ""} ${isTaken ? styles.occupied : ""}`}>
                       <div className={styles.hourLeft}>{slot}</div>
 
                       <div className={styles.hourRight}>
                         {isMine ? (
-                          <button
-                            type="button"
-                            className={styles.cancelBtn}
-                            onClick={() => cancelMine(iso, slot)}
-                          >
+                          <button type="button" className={styles.cancelBtn} onClick={()=>cancelMine(iso, slot)}>
                             Cancelar
                           </button>
                         ) : isTaken ? (
                           <span>Ocupado</span>
+                        ) : past ? (
+                          <button type="button" className={styles.pastBtn} disabled title="Horario pasado">
+                            Pasado
+                          </button>
                         ) : (
                           <button
                             type="button"
                             className={styles.reserveBtn}
-                            onClick={() => !past && clickReserve(iso, slot)}
-                            disabled={past}
-                            title={past ? "Horario pasado" : "Reservar"}
+                            onClick={()=>clickReserve(iso, slot)}
+                            title="Reservar"
                           >
                             Reservar
                           </button>
                         )}
                       </div>
 
-                      {/*notas*/}
                       <div className={styles.noteSpace}>
-                        {editingKey === key && !isTaken && !isMine && !past && (
+                        {editingKey === key && !isTaken && !past && !isMine && (
                           <>
                             <input
                               className={styles.noteInput}
                               maxLength={15}
                               placeholder="Notas (máx. 15)"
                               value={notaTmp}
-                              onChange={(e) => setNotaTmp(e.target.value)}
+                              onChange={(e)=>setNotaTmp(e.target.value)}
                             />
                             <div className={styles.noteHelp}>
                               Máximo 15 caracteres.
                               <button
                                 type="button"
-                                style={{
-                                  marginLeft: 8,
-                                  height: 28,
-                                  padding: "0 10px",
-                                  borderRadius: 8,
-                                  border: "1px solid #ec4899",
-                                  background: "#ec4899",
-                                  color: "#fff",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => confirmReserve(iso, slot)}
+                                style={{ marginLeft:8, height:28, padding:"0 10px", borderRadius:8, border:"1px solid #ec4899", background:"#ec4899", color:"#fff", cursor:"pointer" }}
+                                onClick={()=>confirmReserve(iso, slot)}
                               >
                                 Confirmar
                               </button>
                               <button
                                 type="button"
-                                style={{
-                                  marginLeft: 6,
-                                  height: 28,
-                                  padding: "0 10px",
-                                  borderRadius: 8,
-                                  border: "1px solid #e5e7eb",
-                                  background: "#fff",
-                                  color: "#374151",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => {
-                                  setEditingKey(null);
-                                  setNotaTmp("");
-                                }}
+                                style={{ marginLeft:6, height:28, padding:"0 10px", borderRadius:8, border:"1px solid #e5e7eb", background:"#fff", color:"#374151", cursor:"pointer" }}
+                                onClick={()=>{ setEditingKey(null); setNotaTmp(""); }}
                               >
                                 Cancelar
                               </button>
@@ -549,10 +274,6 @@ export default function Agenda(): React.ReactElement {
                 })}
               </div>
             ))}
-=======
-              );
-            })}
->>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
           </div>
         </div>
       </div>
