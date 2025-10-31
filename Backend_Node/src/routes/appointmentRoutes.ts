@@ -3,7 +3,7 @@ import {
   createAppointment,
   listAppointments,
   deleteAppointment,
-  takenSlots,            // << nuevo
+  takenSlots,
 } from "../controllers/appointmentController";
 import { authMiddleware } from "../middlewares/auth";
 

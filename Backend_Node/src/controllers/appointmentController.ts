@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Appointment } from "../models/Appointment";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret123";
+const JWT_SECRET = process.env.JWT_SECRET || "clave_super_secreta";
 
 interface JwtPayload { username: string; iat: number; exp: number; }
 

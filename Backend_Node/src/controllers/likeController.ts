@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { RecipeLike } from "../models/RecipeLike";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret123";
+const JWT_SECRET = process.env.JWT_SECRET || "clave_super_secreta";
 
 // 🔄 Da o quita like (solo con token)
 export const toggleLike = async (req: Request, res: Response) => {
