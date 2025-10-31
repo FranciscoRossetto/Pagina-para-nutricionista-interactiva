@@ -10,7 +10,7 @@
 
 .cont {
   font-family: Inter, system-ui, Arial, sans-serif;
-  padding: 20px;
+  padding: 16px;
   max-width: 1300px;
   margin: 0 auto;
 }
@@ -21,7 +21,7 @@
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 10px 30px rgba(219, 39, 119, 0.15);
   backdrop-filter: blur(3px);
-  padding: 14px;
+  padding: 12px;
 }
 
 /* ===== Header ===== */
@@ -37,11 +37,12 @@
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  min-height: 40px;
 }
 
 .title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
   color: #9d174d;
 }
@@ -51,57 +52,69 @@
   color: #7a2449;
 }
 
-/* Todo lo de la derecha alineado PERFECTO en Y */
 .headerRight {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  height: 40px;            /* altura común */
+  gap: 8px;
+  min-height: 40px;
 }
 
-/* Los hijos heredan centramiento vertical y altura */
 .headerRight > * {
   display: inline-flex;
   align-items: center;
   height: 40px;
 }
 
-/* Selector de motivo con la misma altura que los botones */
-.select {
+.select, .navBtn, .togglePast {
   height: 40px;
-  padding: 0 10px;
-  border: 1px solid #f472b6;
-  background: #fff;
-  color: #9d174d;
+  padding: 0 12px;
   border-radius: 12px;
-  line-height: 40px;        /* asegura centrado del texto */
+  background: #fff;
 }
 
-/* Botones semana */
+.select {
+  border: 1px solid #f472b6;
+  color: #9d174d;
+}
+
 .navBtn {
-  height: 40px;
-  padding: 0 14px;
   border: 1px solid #ec4899;
-  border-radius: 12px;
   cursor: pointer;
-  background: #fff;
   color: #9d174d;
   box-shadow: 0 2px 8px rgba(219, 39, 119, 0.15);
-  display: inline-flex;
-  align-items: center;
   gap: 8px;
-  user-select: none;
 }
 .navBtn:hover { background: #fff6fa; }
 .navBtnDisabled { opacity: .45; pointer-events: none; }
+
+.togglePast {
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  cursor: pointer;
+}
+.togglePast[aria-pressed="true"] {
+  border-color: #f59e0b;
+  color: #92400e;
+}
 
 /* ===== Grilla L–V ===== */
 .gridWrap { margin-top: 8px; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: 1fr; /* móvil */
   gap: 12px;
+}
+
+/* responsive */
+@media (min-width: 640px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 860px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1100px) {
+  .grid { grid-template-columns: repeat(5, 1fr); }
 }
 
 .dayCol {
@@ -124,19 +137,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 /* ===== Fila de hora ===== */
 .hourRow {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* hora izq / acciones der */
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   border: 1px solid #fbcfe8;
   border-radius: 12px;
   background: linear-gradient(180deg, #fff, #ffeaf5 100%);
   margin-bottom: 8px;
   padding: 8px;
-  min-height: 64px; /* alto estable */
+  min-height: 64px;
 }
 
 .hourLeft {
@@ -162,34 +176,53 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
 }
 .reserveBtn { background: #ec4899; color: #fff; border-color: #ec4899; }
 .cancelBtn  { background: #fff; color: #ef4444; border-color: #ef4444; }
 
-/* Área de notas: mantiene el espacio SIEMPRE, pero el input es opcional */
 .noteSpace {
   grid-column: 1 / -1;
   margin-top: 6px;
-  min-height: 30px;              /* evita “saltos” */
+  min-height: 30px;
   display: block;
 }
 
 .noteInput {
   width: 100%;
-  height: 28px;
+  height: 32px;
   border: 1px solid #fbcfe8;
   border-radius: 10px;
   padding: 0 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: #374151;
   background: #fff;
 }
 
 .noteHelp {
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
   color: #6b7280;
+}
+
+/* Pasados */
+.pastDay { opacity: .55; }
+.pastBadge {
+  margin-left: 8px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: #fde68a;
+  color: #92400e;
+  font-weight: 700;
 }
 
 .occupied { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
 .pastSlot { opacity: .45; pointer-events: none; }
+
+/* Mejoras de tocabilidad en móvil */
+@media (max-width: 639px) {
+  .hourRow { min-height: 56px; padding: 8px; }
+  .reserveBtn, .cancelBtn { height: 36px; padding: 0 12px; }
+  .select, .navBtn, .togglePast { height: 38px; }
+}

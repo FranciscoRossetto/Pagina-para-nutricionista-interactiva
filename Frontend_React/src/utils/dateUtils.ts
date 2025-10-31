@@ -7,7 +7,7 @@ export const pad2 = (n: number) => String(n).padStart(2, "0");
 export const hoyISO = (): string => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
-  return d.toISOString().split("T")[0];
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 };
 
 /* Suma/días a un ISO (conserva medianoche local) */
@@ -16,10 +16,10 @@ export const addDays = (iso: string, delta: number): string => {
   const dt = new Date(y, m - 1, d);
   dt.setDate(dt.getDate() + delta);
   dt.setHours(0, 0, 0, 0);
-  return dt.toISOString().split("T")[0];
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
 };
 
-/* Alias con el nombre que usa el hook */
+/* Alias con el nombre que usa el componente */
 export const addDaysISO = addDays;
 
 /* Date local desde ISO */
@@ -28,7 +28,7 @@ export const localDateFromISO = (iso: string): Date => {
   return new Date(y, m - 1, d);
 };
 
-/* Lunes de la semana de un ISO (tu versión) */
+/* Lunes de la semana de un ISO */
 export const weekMonday = (iso: string): string => {
   const dt = localDateFromISO(iso);
   const wd = dt.getDay();                // 0..6 (0=Dom)
@@ -40,20 +40,11 @@ export const weekMonday = (iso: string): string => {
 export const monToFri = (weekMonISO: string): string[] =>
   [0, 1, 2, 3, 4].map((n) => addDays(weekMonISO, n));
 
-/* Alias con el nombre que usa el hook */
-export const weekMonToFri = monToFri;
-
-/* ===== Nombres extra usados por el hook ===== */
-
-/* YYYY-MM-DD desde Date */
+/* ===== Nombres extra ===== */
 export function toISODate(d: Date): string {
-  const yyyy = d.getFullYear();
-  const mm = pad2(d.getMonth() + 1);
-  const dd = pad2(d.getDate());
-  return `${yyyy}-${mm}-${dd}`;
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
-/* Lunes de la semana dada una Date */
 export function startOfMonday(d: Date): Date {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const day = x.getDay();                 // 0..6
@@ -63,7 +54,6 @@ export function startOfMonday(d: Date): Date {
   return x;
 }
 
-/* Rango legible de semana */
 export function formatWeekRange(mondayISO: string): string {
   const end = addDays(mondayISO, 4);
   return `${mondayISO} — ${end}`;
@@ -72,9 +62,10 @@ export function formatWeekRange(mondayISO: string): string {
 /* ===== Slots y tiempo ===== */
 
 /* Horas en punto 09:00..18:00 */
-export const SLOTS = Array.from({ length: 10 }, (_, i) =>
-  `${String(9 + i).padStart(2, "0")}:00`
-);
+export const SLOTS = [
+  "09:00","10:00","11:00","12:00","13:00",
+  "14:00","15:00","16:00","17:00","18:00",
+];
 
 /* Suma una hora a HH:mm */
 export const addOneHour = (hhmm: string): string => {
@@ -84,14 +75,12 @@ export const addOneHour = (hhmm: string): string => {
   return `${pad2(end.getHours())}:${pad2(end.getMinutes())}`;
 };
 
-/* ¿Fecha/hora en pasado? (tu firma) */
+/* ¿Fecha/hora en pasado? */
 export const isPastSlot = (fecha: string, hora: string): boolean => {
   const [y, m, d] = fecha.split("-").map(Number);
   const [hh, mm] = hora.split(":").map(Number);
   return new Date(y, m - 1, d, hh, mm).getTime() <= Date.now();
 };
 
-/* Alias con el nombre que usa el hook */
-export function isPastDateTime(isoDate: string, hhmm: string): boolean {
-  return isPastSlot(isoDate, hhmm);
-}
+/* Alias */
+export const isPastDateTime = isPastSlot;
