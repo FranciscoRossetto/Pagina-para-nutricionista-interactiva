@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 /*fondo*/
+=======
+/* src/pages/Agenda/Agenda.module.css */
+
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 .bg {
   background-image: linear-gradient(180deg, #ffe4f1 0%, #ffd1ea 40%, #ffc2e4 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
   min-height: 100vh;
   width: 100%;
 }
@@ -8,14 +15,14 @@
 .cont {
   font-family: Inter, system-ui, Arial, sans-serif;
   padding: 16px;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
 .panel {
   border: 1px solid #f9a8d4;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 10px 30px rgba(219, 39, 119, 0.15);
   backdrop-filter: blur(3px);
   padding: 12px;
@@ -27,133 +34,191 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+<<<<<<< HEAD
   flex-wrap: wrap;  
   margin-bottom: 14px;
+=======
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 220px;
+  min-height: 40px;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 900;
   color: #9d174d;
 }
 
 .weekRange {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 13px;
+  color: #7a2449;
 }
 
 .headerRight {
+<<<<<<< HEAD
   display: flex;
   align-items: center;
   gap: 10px;
+=======
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.headerRight > * {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+}
+
+.select, .navBtn, .togglePast {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: #fff;
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 }
 
 .select {
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid #fbcfe8;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid #f472b6;
+  color: #9d174d;
 }
 
 .navBtn {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #fbcfe8;
-  background: #fff;
-  color: #9d174d;
+  border: 1px solid #ec4899;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.12);
+  color: #9d174d;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.15);
+  gap: 8px;
 }
-.navBtnDisabled {
-  opacity: .45;
-  cursor: not-allowed;
+.navBtn:hover { background: #fff6fa; }
+.navBtnDisabled { opacity: .45; pointer-events: none; }
+
+.togglePast {
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  cursor: pointer;
+}
+.togglePast[aria-pressed="true"] {
+  border-color: #f59e0b;
+  color: #92400e;
 }
 
+<<<<<<< HEAD
 /*semana*/
 .gridWrap {
   margin-top: 10px;
   overflow: hidden;
 }
+=======
+/* ===== Grilla L–V ===== */
+.gridWrap { margin-top: 8px; }
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  grid-template-columns: 1fr; /* móvil */
   gap: 12px;
+}
+
+/* responsive */
+@media (min-width: 640px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 860px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1100px) {
+  .grid { grid-template-columns: repeat(5, 1fr); }
 }
 
 .dayCol {
   border: 1px dashed #f9a8d4;
   border-radius: 14px;
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.98);
   padding: 8px;
   min-height: 520px;     
+=======
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  min-height: 520px;
+  box-shadow: 0 4px 10px rgba(244, 114, 182, 0.12);
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
   display: flex;
   flex-direction: column;
 }
 
 .dayHeader {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   color: #9d174d;
-  text-transform: capitalize;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
+<<<<<<< HEAD
 /*horas*/
+=======
+/* ===== Fila de hora ===== */
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 .hourRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 8px;
   border: 1px solid #fbcfe8;
   border-radius: 12px;
-  background: #fff;
-  padding: 8px;
+  background: linear-gradient(180deg, #fff, #ffeaf5 100%);
   margin-bottom: 8px;
+<<<<<<< HEAD
   min-height: 74px;         
+=======
+  padding: 8px;
+  min-height: 64px;
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 }
 
 .hourLeft {
   font-weight: 800;
   color: #831843;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .hourRight {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-.reserveBtn,
-.cancelBtn {
+.reserveBtn, .cancelBtn {
   height: 32px;
-  padding: 0 12px;
+  padding: 0 10px;
   border-radius: 10px;
-  border: 1px solid #ec4899;
-  background: #ec4899;
-  color: #fff;
+  border: 1px solid transparent;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
-.cancelBtn {
-  border-color: #ef4444;
-  background: #ef4444;
-}
-.occupied {
-  opacity: 0.60;
-}
-.pastSlot {
-  opacity: 0.45;
-}
+.reserveBtn { background: #ec4899; color: #fff; border-color: #ec4899; }
+.cancelBtn  { background: #fff; color: #ef4444; border-color: #ef4444; }
 
+<<<<<<< HEAD
 /*notas*/
 .noteSpace {
   grid-column: 1 / -1;
@@ -161,24 +226,45 @@
   min-height: 40px;         
   display: flex;
   align-items: center;
+=======
+.noteSpace {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  min-height: 30px;
+  display: block;
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 }
 
 .noteInput {
-  flex: 1;
-  height: 30px;
-  padding: 0 10px;
+  width: 100%;
+  height: 32px;
   border: 1px solid #fbcfe8;
-  border-radius: 8px;
-  outline: none;
-}
-.noteHelp {
-  font-size: 11px;
-  color: #6b7280;
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
+  border-radius: 10px;
+  padding: 0 8px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
 }
 
+.noteHelp {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Pasados */
+.pastDay { opacity: .55; }
+.pastBadge {
+  margin-left: 8px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: #fde68a;
+  color: #92400e;
+  font-weight: 700;
+}
+
+<<<<<<< HEAD
 /*scrollbar*/
 .gridWrap::-webkit-scrollbar { height: 8px; }
 .gridWrap::-webkit-scrollbar-thumb {
@@ -223,4 +309,14 @@
   .reserveBtn, .cancelBtn { height: 36px; }
   .hourRow { min-height: 78px; }
   .noteInput { height: 34px; }
+=======
+.occupied { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+.pastSlot { opacity: .45; pointer-events: none; }
+
+/* Mejoras de tocabilidad en móvil */
+@media (max-width: 639px) {
+  .hourRow { min-height: 56px; padding: 8px; }
+  .reserveBtn, .cancelBtn { height: 36px; padding: 0 12px; }
+  .select, .navBtn, .togglePast { height: 38px; }
+>>>>>>> bb5e0ec2ff4689ff7a668b4faab5e8849822ec98
 }
