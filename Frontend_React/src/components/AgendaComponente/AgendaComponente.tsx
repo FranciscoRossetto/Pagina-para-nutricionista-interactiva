@@ -1,7 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
 import { useUser } from "../../contexts/UserContext";
-import { API } from "../../config/api";
-
 
 export type Motivo = "consulta" | "control" | "plan" | "otro";
 export type Turno = {
@@ -13,7 +11,9 @@ type ApiAppointment = {
   paciente: string; motivo: Motivo; notas?: string;
 };
 
-// Fechas (local)
+const API = "http://localhost:4000";
+
+/* ===== fechas (local) ===== */
 export function hoyISO(): string {
   const d = new Date(); d.setHours(0,0,0,0);
   const m = (d.getMonth()+1).toString().padStart(2,"0");
@@ -42,7 +42,7 @@ export function monToFri(weekMonISO: string): string[] {
   return [0,1,2,3,4].map(n => addDays(weekMonISO, n));
 }
 
-//Slots
+/* ===== slots 1h 09–19 ===== */
 export const SLOTS: string[] = Array.from({ length: 10 }, (_, i) =>
   String(9 + i).padStart(2, "0") + ":00"
 );
@@ -55,7 +55,7 @@ function toTurno(a: ApiAppointment): Turno {
   return { id:a._id, fecha:a.fecha, inicio:a.inicio, fin:a.fin, paciente:a.paciente, motivo:a.motivo, notas:a.notas };
 }
 
-//Slot pasado
+/* slot pasado: fecha < hoy, o igual y hora <= ahora */
 function isPastSlot(fecha: string, hora: string): boolean {
   const [y,m,d] = fecha.split("-").map(Number);
   const [hh,mm] = hora.split(":").map(Number);
@@ -64,7 +64,7 @@ function isPastSlot(fecha: string, hora: string): boolean {
   return slot.getTime() <= now.getTime();
 }
 
-//Hook semanal
+/* ===== Hook semanal L–V ===== */
 export function useAgenda() {
   const { token, user } = useUser();
 
@@ -76,11 +76,11 @@ export function useAgenda() {
   const [misTurnos, setMisTurnos] = useState<Turno[]>([]);
   const [ocupados, setOcupados] = useState<Record<string, Set<string>>>({}); // {fecha:Set(horas)}
 
-  //Edicion
+  // edición
   const [editSlot, setEditSlot] = useState<{ fecha: string; hora: string } | null>(null);
   const [nota, setNota] = useState<string>("");
 
-  //Cargar mis turnos
+  // cargar mis turnos
   useEffect(() => {
     if (!token || weekDays.length === 0) { setMisTurnos([]); return; }
     const from = weekDays[0], to = weekDays[4];
