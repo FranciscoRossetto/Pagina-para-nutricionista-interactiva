@@ -1,3 +1,4 @@
+// src/utils/api.ts
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 console.log("BASE_URL:", BASE_URL);
@@ -27,41 +28,67 @@ export const loginUser = (username: string, password: string) =>
 export const toggleLike = (recipeId: string, token: string) =>
   fetchJSON(`${BASE_URL}/likes`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ recipeId }),
   });
 
-export const getRecipeLikes = (recipeId: string, token?: string) =>
-  fetchJSON(`${BASE_URL}/likes/${recipeId}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+export const getRecipeLikes = async (recipeId: string, token?: string) => {
+  // Evita error si no hay sesión
+  try {
+    const res = await fetchJSON(`${BASE_URL}/likes/${recipeId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    return res;
+  } catch (err) {
+    console.warn("Error cargando likes:", err);
+    return { likes: 0 };
+  }
+};
 
 // === FAVORITES ===
 export const toggleFavorite = (recipeId: string, token: string) =>
   fetchJSON(`${BASE_URL}/favorites/toggle`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ recipeId }),
   });
 
 export const getUserFavorites = async (token: string) => {
-  if (!token) {
-    return { isFavorite: false };
-  }
   const data = await fetchJSON(`${BASE_URL}/favorites/user`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return Array.isArray(data.favorites) ? data.favorites : [];
 };
 
-export const getRecipeFavorite = (recipeId: string, token?: string) =>
-  fetchJSON(`${BASE_URL}/favorites/${recipeId}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+export const getRecipeFavorite = async (recipeId: string, token?: string) => {
+  if (!token) {
+    // Si no hay sesión, devolvemos por defecto "no favorito"
+    return { isFavorite: false };
+  }
+
+  try {
+    return await fetchJSON(`${BASE_URL}/favorites/${recipeId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (err) {
+    console.warn("Error cargando favorito:", err);
+    return { isFavorite: false };
+  }
+};
 
 // === HIGHSCORE ===
 export const getHighScore = (username?: string) =>
-  fetchJSON(username ? `${BASE_URL}/highscore/${username}` : `${BASE_URL}/highscore`);
+  fetchJSON(
+    username
+      ? `${BASE_URL}/highscore/${username}`
+      : `${BASE_URL}/highscore`
+  );
 
 export const postHighScore = (player: string, score: number) =>
   fetchJSON(`${BASE_URL}/highscore`, {
@@ -82,7 +109,10 @@ export const fetchTakenSlots = (from: string, to: string) =>
 export const postAppointment = (data: any, token: string) =>
   fetchJSON(`${BASE_URL}/appointments`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(data),
   });
 
