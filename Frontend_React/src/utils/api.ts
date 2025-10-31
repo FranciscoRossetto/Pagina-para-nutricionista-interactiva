@@ -45,6 +45,9 @@ export const toggleFavorite = (recipeId: string, token: string) =>
   });
 
 export const getUserFavorites = async (token: string) => {
+  if (!token) {
+    return { isFavorite: false };
+  }
   const data = await fetchJSON(`${BASE_URL}/favorites/user`, {
     headers: { Authorization: `Bearer ${token}` },
   });
