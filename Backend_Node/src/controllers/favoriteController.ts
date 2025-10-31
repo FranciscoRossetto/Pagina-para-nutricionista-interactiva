@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { Favorite } from "../models/Favorite";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret123";
+const JWT_SECRET = process.env.JWT_SECRET || "clave_super_secreta";
 
 // Toggle favorito
 export const toggleFavorite = async (req: Request, res: Response) => {

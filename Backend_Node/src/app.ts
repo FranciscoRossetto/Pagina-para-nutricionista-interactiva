@@ -21,4 +21,8 @@ app.use("/api/appointments", appointmentRoutes);
 // Middleware de errores
 app.use(errorHandler);
 
+app.get("/", (req, res) => {
+  res.send("Servidor funcionando correctamente 🚀");
+});
+
 export default app;

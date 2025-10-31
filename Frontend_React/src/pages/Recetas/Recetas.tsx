@@ -22,6 +22,10 @@ export default function Recetas() {
   const [favoritesKey, setFavoritesKey] = useState(0);
   const [filteredKey, setFilteredKey] = useState(0);
 
+  // 🔁 likeTick global para forzar re-fetch en TODAS las tarjetas
+  const [likeTick, setLikeTick] = useState(0);
+  const bumpLike = () => setLikeTick((x) => x + 1);
+
   const { user, token } = useUser();
 
   const toggleFilter = (key: string) =>
@@ -69,8 +73,6 @@ export default function Recetas() {
         <FilterMenu filters={filtersList} selected={selected} onToggle={toggleFilter} />
       )}
 
-
-
       {/* === RECETAS FILTRADAS === */}
       {selected.length > 0 && filtered.length > 0 && (
         <RecipeCarousel
@@ -80,6 +82,8 @@ export default function Recetas() {
             .join(", ")}`}
           data={filtered}
           onUpdateFavorites={fetchFavorites}
+          likeTick={likeTick}
+          bumpLike={bumpLike}
         />
       )}
 
@@ -103,6 +107,8 @@ export default function Recetas() {
               title=""
               data={favorites}
               onUpdateFavorites={fetchFavorites}
+              likeTick={likeTick}
+              bumpLike={bumpLike}
             />
           ) : (
             <p style={{ textAlign: "center", color: "#777", marginBottom: "2rem" }}>
@@ -117,6 +123,8 @@ export default function Recetas() {
         title="🍽️ Todas las comidas"
         data={recipes}
         onUpdateFavorites={fetchFavorites}
+        likeTick={likeTick}
+        bumpLike={bumpLike}
       />
 
       {/* === CARRUSELES POR TIPO === */}
@@ -128,6 +136,8 @@ export default function Recetas() {
               title={g.title}
               data={g.data}
               onUpdateFavorites={fetchFavorites}
+              likeTick={likeTick}
+              bumpLike={bumpLike}
             />
           )
       )}

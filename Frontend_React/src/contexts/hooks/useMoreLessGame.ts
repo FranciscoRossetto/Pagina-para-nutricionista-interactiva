@@ -3,8 +3,7 @@ import type { Food } from "../../assets/data/foodData";
 import { getRandomFood, foodList } from "../../assets/data/foodData";
 import { useUser } from "../../contexts/UserContext";
 import axios from "axios";
-
-const API_URL = "http://localhost:4000/api";
+import { API } from "../../config/api";
 
 export default function useMoreLessGame() {
   const { user } = useUser();
@@ -41,7 +40,7 @@ export default function useMoreLessGame() {
     const fetchHighScore = async () => {
       if (user && user.trim() !== "") {
         try {
-          const res = await axios.get(`${API_URL}/highscore/${user}`);
+          const res = await axios.get(`${API}/highscore/${user}`);
           setHighScore(res.data?.score || 0);
         } catch (err) {
           console.error("Error al obtener highscore:", err);
@@ -60,7 +59,7 @@ export default function useMoreLessGame() {
         setHighScore(score);
         if (user && user.trim() !== "") {
           try {
-            await axios.post(`${API_URL}/highscore`, { player: user, score });
+            await axios.post(`${API}/highscore`, { player: user, score });
           } catch (err) {
             console.error("Error al guardar highscore:", err);
           }
