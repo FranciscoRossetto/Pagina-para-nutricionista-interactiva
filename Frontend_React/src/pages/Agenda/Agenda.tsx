@@ -94,7 +94,7 @@ export default function Agenda(): React.ReactElement {
     const to = addDaysISO(weekMondayISO, 4);
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`);
+        const r = await fetch(`${API}/appointments/taken?from=${from}&to=${to}`);
         if (!r.ok) throw new Error(await r.text());
         const rows: { fecha: string; slots: string[] }[] = await r.json();
         const map: Record<string, Set<string>> = {};
@@ -116,7 +116,7 @@ export default function Agenda(): React.ReactElement {
     const to = addDaysISO(weekMondayISO, 4);
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments?from=${from}&to=${to}`, {
+        const r = await fetch(`${API}/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!r.ok) {
@@ -171,7 +171,7 @@ export default function Agenda(): React.ReactElement {
     if (isPastDateTime(iso, slot)) return;
 
     try {
-      const r = await fetch(`${API}/api/appointments`, {
+      const r = await fetch(`${API}/appointments`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -195,7 +195,7 @@ export default function Agenda(): React.ReactElement {
       const to = addDaysISO(weekMondayISO, 4);
       // taken
       {
-        const rt = await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`);
+        const rt = await fetch(`${API}/appointments/taken?from=${from}&to=${to}`);
         if (rt.ok) {
           const rows: { fecha: string; slots: string[] }[] = await rt.json();
           const map: Record<string, Set<string>> = {};
@@ -205,7 +205,7 @@ export default function Agenda(): React.ReactElement {
       }
       // mine
       {
-        const rm = await fetch(`${API}/api/appointments?from=${from}&to=${to}`, {
+        const rm = await fetch(`${API}/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (rm.ok) {
@@ -226,7 +226,7 @@ export default function Agenda(): React.ReactElement {
     const id = myAppointments[key];
     if (!id) return;
     try {
-      const r = await fetch(`${API}/api/appointments/${id}`, {
+      const r = await fetch(`${API}/appointments/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
