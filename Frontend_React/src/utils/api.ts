@@ -1,6 +1,3 @@
-import { useUser } from "../contexts/UserContext";
-import { useEffect } from "react";
-
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 console.log("BASE_URL:", BASE_URL);
@@ -48,12 +45,6 @@ export const toggleFavorite = (recipeId: string, token: string) =>
   });
 
 export const getUserFavorites = async (token: string) => {
-  const { user } = useUser();
-
-  useEffect(() => {
-    if (!user) return;
-  }, [user]);
-
   const data = await fetchJSON(`${BASE_URL}/favorites/user`, {
     headers: { Authorization: `Bearer ${token}` },
   });
