@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/components/Navbar/Navbar.tsx
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -13,15 +14,22 @@ import {
   List,
   ListItem,
   ListItemText,
+  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useTheme } from "@mui/material/styles";
 import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 
+// Tipado seguro para usuario
+interface User {
+  name: string;
+  email?: string;
+  avatar?: string;
+}
+
 export default function Navbar() {
-  const { user, logout } = useUser();
+  const { user, logout } = useUser() as { user: User | null; logout: () => void };
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,180 +46,134 @@ export default function Navbar() {
     { label: "Calculadora IMC", path: "/imc" },
   ];
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-
   const handleLogout = () => {
     logout();
     handleClose();
+    setDrawerOpen(false);
     navigate("/");
   };
 
+  // Render links (Desktop)
+  const renderLinks = () =>
+    links.map((link) => (
+      <Button
+        key={link.path}
+        component={RouterLink}
+        to={link.path}
+        sx={{
+          color: location.pathname === link.path ? "primary.main" : "text.primary",
+          fontWeight: 600,
+          textTransform: "none",
+        }}
+      >
+        {link.label}
+      </Button>
+    ));
+
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        backgroundColor: "rgba(255,255,255,0.9)",
-        backdropFilter: "blur(10px)",
-        color: "#17252a",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-      }}
-    >
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {/* LOGO */}
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 800,
-            color: "#2b7a78",
-            cursor: "pointer",
-            "&:hover": { color: "#3aafa9" },
-          }}
-          onClick={() => navigate("/")}
-        >
-          NutriApp 🥗
-        </Typography>
+    <>
+      <AppBar
+        position="sticky"
+        sx={{
+          backgroundColor: "rgba(255,255,255,0.9)",
+          backdropFilter: "blur(10px)",
+          color: "#17252a",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+        }}
+      >
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          {/* LOGO */}
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 800,
+              color: "#2b7a78",
+              cursor: "pointer",
+              "&:hover": { color: "#3aafa9" },
+            }}
+            onClick={() => navigate("/")}
+          >
+            NutriApp 🥗
+          </Typography>
 
-        {/* LINKS + USER/AUTH (Desktop) */}
-        {!isMobile && (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {links.map((link) => (
-              <Button
-                key={link.path}
-                component={RouterLink}
-                to={link.path}
-                sx={{
-                  color: location.pathname === link.path ? "#2b7a78" : "#17252a",
-                  fontWeight: 600,
-                  textTransform: "none",
-                  fontSize: "1rem",
-                  height: "48px",
-                  borderRadius: "10px",
-                  "&:hover": { color: "#2b7a78", backgroundColor: "transparent" },
-                }}
-              >
-                {link.label}
-              </Button>
-            ))}
+          {/* Links Desktop + Auth */}
+          {!isMobile && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              {renderLinks()}
+              {user ? (
+                <>
+                  <IconButton onClick={handleMenu}>
+                    <Avatar src={user.avatar} alt={user.name} />
+                  </IconButton>
+                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                    <MenuItem disabled>{user.name}</MenuItem>
+                    <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="contained"
+                    sx={{ textTransform: "none", fontWeight: 600 }}
+                    onClick={() => navigate("/login")}
+                  >
+                    Iniciar sesión
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ textTransform: "none", fontWeight: 600 }}
+                    onClick={() => navigate("/register")}
+                  >
+                    Registrarse
+                  </Button>
+                </>
+              )}
+            </Box>
+          )}
 
-            {/* USER / AUTH */}
-            {user ? (
-              <>
-                <IconButton
-                  onClick={handleMenu}
-                  sx={{
-                    color: "#2b7a78",
-                    "&:hover": { color: "#3aafa9" },
-                  }}
-                >
-                  <AccountCircle fontSize="large" />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  PaperProps={{
-                    sx: {
-                      borderRadius: 2,
-                      boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                      mt: 1,
-                    },
-                  }}
-                >
-                  <MenuItem disabled sx={{ opacity: 1, fontWeight: 600 }}>
-                    {user}
-                  </MenuItem>
-                  <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
-                </Menu>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#2b7a78",
-                    "&:hover": { backgroundColor: "#3aafa9" },
-                    textTransform: "none",
-                    fontWeight: 600,
-                    height: "48px",
-                    borderRadius: "10px",
-                  }}
-                  onClick={() => navigate("/login")}
-                >
-                  Iniciar sesión
-                </Button>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    borderColor: "#2b7a78",
-                    color: "#2b7a78",
-                    "&:hover": {
-                      backgroundColor: "#2b7a78",
-                      color: "white",
-                      borderColor: "#2b7a78",
-                    },
-                    textTransform: "none",
-                    fontWeight: 600,
-                    height: "48px",
-                    borderRadius: "10px",
-                  }}
-                  onClick={() => navigate("/register")}
-                >
-                  Registrarse
-                </Button>
-              </>
-            )}
-          </Box>
-        )}
+          {/* Icono Mobile */}
+          {isMobile && (
+            <IconButton onClick={() => setDrawerOpen(true)}>
+              <MenuIcon sx={{ color: "#2b7a78" }} />
+            </IconButton>
+          )}
+        </Toolbar>
+      </AppBar>
 
-        {/* MENU ICON (Mobile) */}
-        {isMobile && (
-          <IconButton onClick={() => setDrawerOpen(true)}>
-            <MenuIcon sx={{ color: "#2b7a78" }} />
-          </IconButton>
-        )}
-      </Toolbar>
-
-      {/* DRAWER (Mobile menu) */}
+      {/* Drawer Mobile */}
       <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <Box sx={{ width: 250, p: 2 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              mb: 2,
-              fontWeight: 700,
-              color: "#2b7a78",
-            }}
-          >
-            Menú
-          </Typography>
           <List>
             {links.map((link) => (
               <ListItem
-                button
                 key={link.path}
                 component={RouterLink}
                 to={link.path}
                 onClick={() => setDrawerOpen(false)}
+                sx={{
+                  borderRadius: 1,
+                  "&:hover": { backgroundColor: "rgba(43,122,120,0.1)" },
+                }}
               >
-                <ListItemText primary={link.label} />
+                <ListItemText
+                  primary={link.label}
+                  primaryTypographyProps={{
+                    fontWeight: 600,
+                    color: location.pathname === link.path ? "primary.main" : "text.primary",
+                  }}
+                />
               </ListItem>
             ))}
           </List>
-          <Box sx={{ mt: 2 }}>
+
+          <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1 }}>
             {!user ? (
               <>
                 <Button
                   fullWidth
                   variant="contained"
-                  sx={{
-                    mb: 1,
-                    backgroundColor: "#2b7a78",
-                    "&:hover": { backgroundColor: "#3aafa9" },
-                  }}
                   onClick={() => {
                     navigate("/login");
                     setDrawerOpen(false);
@@ -222,15 +184,6 @@ export default function Navbar() {
                 <Button
                   fullWidth
                   variant="outlined"
-                  sx={{
-                    borderColor: "#2b7a78",
-                    color: "#2b7a78",
-                    "&:hover": {
-                      backgroundColor: "#2b7a78",
-                      color: "white",
-                      borderColor: "#2b7a78",
-                    },
-                  }}
                   onClick={() => {
                     navigate("/register");
                     setDrawerOpen(false);
@@ -241,25 +194,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    mb: 1,
-                    textAlign: "center",
-                    color: "#2b7a78",
-                  }}
-                >
-                  {user}
-                </Typography>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="error"
-                  onClick={() => {
-                    handleLogout();
-                    setDrawerOpen(false);
-                  }}
-                >
+                <Typography sx={{ fontWeight: 600, textAlign: "center" }}>{user.name}</Typography>
+                <Button fullWidth variant="contained" color="error" onClick={handleLogout}>
                   Cerrar sesión
                 </Button>
               </>
@@ -267,6 +203,6 @@ export default function Navbar() {
           </Box>
         </Box>
       </Drawer>
-    </AppBar>
+    </>
   );
 }

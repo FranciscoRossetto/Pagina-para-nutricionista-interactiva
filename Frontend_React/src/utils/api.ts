@@ -1,88 +1,90 @@
-const BASE_URL = "http://localhost:4000/api";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-// === USUARIOS ===
-export const registerUser = async (username: string, password: string) => {
-  const res = await fetch(`${BASE_URL}/users/register`, {
+console.log("BASE_URL:", BASE_URL);
+
+async function fetchJSON(url: string, options: RequestInit = {}) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+// === USERS ===
+export const registerUser = (username: string, password: string) =>
+  fetchJSON(`${BASE_URL}users/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  return res.json();
-};
 
-export const loginUser = async (username: string, password: string) => {
-  const res = await fetch(`${BASE_URL}/users/login`, {
+export const loginUser = (username: string, password: string) =>
+  fetchJSON(`${BASE_URL}users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  return res.json();
-};
 
 // === LIKES ===
-export const toggleLike = async (recipeId: string, token: string) => {
-  const res = await fetch(`${BASE_URL}/likes`, {
+export const toggleLike = (recipeId: string, token: string) =>
+  fetchJSON(`${BASE_URL}likes`, {
     method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}` 
-    },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify({ recipeId }),
   });
-  return res.json();
-};
 
-export const getRecipeLikes = async (recipeId: string, token?: string) => {
-  const headers: any = {};
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-
-  const res = await fetch(`${BASE_URL}/likes/${recipeId}`, {
-    method: "GET",
-    headers,
+export const getRecipeLikes = (recipeId: string, token?: string) =>
+  fetchJSON(`${BASE_URL}likes/${recipeId}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
-  return res.json();
-};
 
-// === FAVORITOS ===
-export const toggleFavorite = async (recipeId: string, token: string) => {
-  const res = await fetch(`${BASE_URL}/favorites/toggle`, {
+// === FAVORITES ===
+export const toggleFavorite = (recipeId: string, token: string) =>
+  fetchJSON(`${BASE_URL}favorites/toggle`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify({ recipeId }),
   });
-  return res.json();
-};
 
 export const getUserFavorites = async (token: string) => {
-  const res = await fetch(`${BASE_URL}/favorites/user`, {
+  const data = await fetchJSON(`${BASE_URL}favorites/user`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  const data = await res.json();
-  return Array.isArray(data.favorites) ? data.favorites : []; // 👈 devuelve array
+  return Array.isArray(data.favorites) ? data.favorites : [];
 };
 
-export const getRecipeFavorite = async (recipeId: string, token?: string) => {
-  const headers: any = {};
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(`${BASE_URL}/favorites/${recipeId}`, { headers });
-  return res.json();
-};
+export const getRecipeFavorite = (recipeId: string, token?: string) =>
+  fetchJSON(`${BASE_URL}favorites/${recipeId}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
 
-// === HIGHSCORE (opcional) ===
-export const getHighScore = async (username?: string) => {
-  const url = username ? `${BASE_URL}/highscore/${username}` : `${BASE_URL}/highscore`;
-  const res = await fetch(url);
-  return res.json();
-};
+// === HIGHSCORE ===
+export const getHighScore = (username?: string) =>
+  fetchJSON(username ? `${BASE_URL}highscore/${username}` : `${BASE_URL}highscore`);
 
-export const postHighScore = async (player: string, score: number) => {
-  const res = await fetch(`${BASE_URL}/highscore`, {
+export const postHighScore = (player: string, score: number) =>
+  fetchJSON(`${BASE_URL}highscore`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ player, score }),
   });
-  return res.json();
-};
+
+// === APPOINTMENTS ===
+export const fetchAppointments = (from: string, to: string, token: string) =>
+  fetchJSON(`${BASE_URL}appointments?from=${from}&to=${to}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const fetchTakenSlots = (from: string, to: string) =>
+  fetchJSON(`${BASE_URL}appointments/taken?from=${from}&to=${to}`);
+
+export const postAppointment = (data: any, token: string) =>
+  fetchJSON(`${BASE_URL}appointments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+
+export const deleteAppointment = (id: string, token: string) =>
+  fetchJSON(`${BASE_URL}appointments/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });

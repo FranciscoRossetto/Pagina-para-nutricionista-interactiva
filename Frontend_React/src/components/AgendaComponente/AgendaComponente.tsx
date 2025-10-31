@@ -1,5 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useUser } from "../../contexts/UserContext";
+import { API } from "../../config/api";
+
 
 export type Motivo = "consulta" | "control" | "plan" | "otro";
 export type Turno = {
@@ -11,9 +13,7 @@ type ApiAppointment = {
   paciente: string; motivo: Motivo; notas?: string;
 };
 
-const API = "http://localhost:4000";
-
-/* ===== fechas (local) ===== */
+// Fechas (local)
 export function hoyISO(): string {
   const d = new Date(); d.setHours(0,0,0,0);
   const m = (d.getMonth()+1).toString().padStart(2,"0");
@@ -42,7 +42,7 @@ export function monToFri(weekMonISO: string): string[] {
   return [0,1,2,3,4].map(n => addDays(weekMonISO, n));
 }
 
-/* ===== slots 1h 09–19 ===== */
+//Slots
 export const SLOTS: string[] = Array.from({ length: 10 }, (_, i) =>
   String(9 + i).padStart(2, "0") + ":00"
 );
@@ -55,7 +55,7 @@ function toTurno(a: ApiAppointment): Turno {
   return { id:a._id, fecha:a.fecha, inicio:a.inicio, fin:a.fin, paciente:a.paciente, motivo:a.motivo, notas:a.notas };
 }
 
-/* slot pasado: fecha < hoy, o igual y hora <= ahora */
+//Slot pasado
 function isPastSlot(fecha: string, hora: string): boolean {
   const [y,m,d] = fecha.split("-").map(Number);
   const [hh,mm] = hora.split(":").map(Number);
@@ -64,7 +64,7 @@ function isPastSlot(fecha: string, hora: string): boolean {
   return slot.getTime() <= now.getTime();
 }
 
-/* ===== Hook semanal L–V ===== */
+//Hook semanal
 export function useAgenda() {
   const { token, user } = useUser();
 
@@ -76,17 +76,17 @@ export function useAgenda() {
   const [misTurnos, setMisTurnos] = useState<Turno[]>([]);
   const [ocupados, setOcupados] = useState<Record<string, Set<string>>>({}); // {fecha:Set(horas)}
 
-  // edición
+  //Edicion
   const [editSlot, setEditSlot] = useState<{ fecha: string; hora: string } | null>(null);
   const [nota, setNota] = useState<string>("");
 
-  // cargar mis turnos
+  //Cargar mis turnos
   useEffect(() => {
     if (!token || weekDays.length === 0) { setMisTurnos([]); return; }
     const from = weekDays[0], to = weekDays[4];
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments?from=${from}&to=${to}`, {
+        const r = await fetch(`${API}api/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!r.ok) { setMisTurnos([]); return; }
@@ -102,7 +102,7 @@ export function useAgenda() {
     const from = weekDays[0], to = weekDays[4];
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`);
+        const r = await fetch(`${API}api/appointments/taken?from=${from}&to=${to}`);
         if (!r.ok) { setOcupados({}); return; }
         const data: Array<{ fecha:string; slots:string[] }> = await r.json();
         const map: Record<string, Set<string>> = {};
@@ -132,7 +132,7 @@ export function useAgenda() {
     const { fecha, hora } = editSlot;
     if (isPastSlot(fecha, hora)) { alert("No podés reservar en una fecha u hora pasada."); return; }
     try {
-      const r = await fetch(`${API}/api/appointments`, {
+      const r = await fetch(`${API}api/appointments`, {
         method: "POST",
         headers: { "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body: JSON.stringify({
@@ -144,8 +144,8 @@ export function useAgenda() {
       // refresh semana
       const [from,to] = [weekDays[0], weekDays[4]];
       const [mineR, takenR] = await Promise.all([
-        fetch(`${API}/api/appointments?from=${from}&to=${to}`, { headers:{ Authorization:`Bearer ${token}` }}),
-        fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`),
+        fetch(`${API}api/appointments?from=${from}&to=${to}`, { headers:{ Authorization:`Bearer ${token}` }}),
+        fetch(`${API}api/appointments/taken?from=${from}&to=${to}`),
       ]);
       const mineRows: ApiAppointment[] = await mineR.json();
       const takenRows: Array<{fecha:string;slots:string[]}> = await takenR.json();
@@ -160,13 +160,13 @@ export function useAgenda() {
   async function cancelar(id: string) {
     if (!token) return alert("Iniciá sesión para cancelar.");
     try {
-      const r = await fetch(`${API}/api/appointments/${id}`, { method: "DELETE", headers: { Authorization:`Bearer ${token}` } });
+      const r = await fetch(`${API}api/appointments/${id}`, { method: "DELETE", headers: { Authorization:`Bearer ${token}` } });
       if (!r.ok) return alert(await r.text());
       setMisTurnos(prev => prev.filter(t => t.id !== id));
       // actualizar ocupados
       const [from,to] = [weekDays[0], weekDays[4]];
       const takenRows: Array<{fecha:string;slots:string[]}> =
-        await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`).then(res=>res.json());
+        await fetch(`${API}api/appointments/taken?from=${from}&to=${to}`).then(res=>res.json());
       const map: Record<string, Set<string>> = {};
       takenRows.forEach(d => { map[d.fecha] = new Set(d.slots); });
       setOcupados(map);
