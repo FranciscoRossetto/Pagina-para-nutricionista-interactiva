@@ -109,7 +109,7 @@ export function useAgenda() {
     const [from, to] = [weekDays[0], weekDays[4]];
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments?from=${from}&to=${to}`, {
+        const r = await fetch(`${API}/appointments?from=${from}&to=${to}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!r.ok) {
@@ -132,7 +132,7 @@ export function useAgenda() {
     const [from, to] = [weekDays[0], weekDays[4]];
     (async () => {
       try {
-        const r = await fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`);
+        const r = await fetch(`${API}/appointments/taken?from=${from}&to=${to}`);
         if (!r.ok) {
           setOcupados({});
           return;
@@ -180,7 +180,7 @@ export function useAgenda() {
     if (isPastSlot(fecha, hora)) return;
 
     try {
-      const r = await fetch(`${API}/api/appointments`, {
+      const r = await fetch(`${API}/appointments`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -198,8 +198,8 @@ export function useAgenda() {
 
       const [from, to] = [weekDays[0], weekDays[4]];
       const [mineR, takenR] = await Promise.all([
-        fetch(`${API}/api/appointments?from=${from}&to=${to}`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API}/api/appointments/taken?from=${from}&to=${to}`),
+        fetch(`${API}/appointments?from=${from}&to=${to}`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API}/appointments/taken?from=${from}&to=${to}`),
       ]);
 
       if (mineR.ok) {
@@ -225,7 +225,7 @@ export function useAgenda() {
       return;
     }
     try {
-      const r = await fetch(`${API}/api/appointments/${id}`, {
+      const r = await fetch(`${API}/appointments/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -238,7 +238,7 @@ export function useAgenda() {
 
       const [from, to] = [weekDays[0], weekDays[4]];
       const takenRows: Array<{ fecha: string; slots: string[] }> = await fetch(
-        `${API}/api/appointments/taken?from=${from}&to=${to}`
+        `${API}/appointments/taken?from=${from}&to=${to}`
       ).then((res) => res.json());
       const map: Record<string, Set<string>> = {};
       for (const d of takenRows) map[d.fecha] = new Set(d.slots);
