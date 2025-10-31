@@ -8,20 +8,24 @@ import { useUser } from "../../contexts/UserContext";
 const API = "http://localhost:4000";
 const SLOTS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
 
-/* ===== Helpers de fecha (robustos a huso/UTC) ===== */
+/* ===== Helpers seguros (sin UTC) ===== */
 const pad2 = (n:number) => String(n).padStart(2,"0");
 const toISODate = (d:Date) => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
-function addDaysISO(iso:string, delta:number):string {
+/* parse local de 'YYYY-MM-DD' */
+function localDateFromISO(iso:string): Date {
   const [y,m,d] = iso.split("-").map(Number);
-  const dt = new Date(y, m-1, d);
+  return new Date(y, m-1, d, 0, 0, 0, 0); // local
+}
+
+function addDaysISO(iso:string, delta:number):string {
+  const dt = localDateFromISO(iso);
   dt.setDate(dt.getDate()+delta);
-  dt.setHours(0,0,0,0);
   return toISODate(dt);
 }
 function startOfMonday(d:Date):Date {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const day = x.getDay();             // 0=Dom
+  const day = x.getDay();              // 0=Dom
   const diff = day === 0 ? -6 : 1 - day;
   x.setDate(x.getDate()+diff);
   x.setHours(0,0,0,0);
@@ -29,14 +33,12 @@ function startOfMonday(d:Date):Date {
 }
 function formatWeekRange(mondayISO:string){ return `${mondayISO} — ${addDaysISO(mondayISO,4)}`; }
 
-/* Solo-fecha: pasado si iso < hoyISO (lexicográfico) */
+/* comparaciones por fecha pura */
+function hoyISO(): string {
+  const n = new Date(); n.setHours(0,0,0,0);
+  return toISODate(n);
+}
 function isPastDay(iso:string, todayISO:string){ return iso < todayISO; }
-
-/* Slot pasado:
-   - si fecha < hoy → pasado
-   - si fecha > hoy → futuro
-   - si fecha === hoy → compara HH:mm locales
-*/
 function nowHHMM():string {
   const n = new Date();
   return `${pad2(n.getHours())}:${pad2(n.getMinutes())}`;
@@ -45,6 +47,11 @@ function isPastDateTime(iso:string, hhmm:string, todayISO:string):boolean {
   if (iso < todayISO) return true;
   if (iso > todayISO) return false;
   return hhmm <= nowHHMM();
+}
+/* label local sin UTC */
+function labelFromISO(iso:string): string {
+  const d = localDateFromISO(iso);
+  return d.toLocaleDateString(undefined, { weekday:"long", day:"2-digit", month:"2-digit" });
 }
 
 /* ===== Tipos mínimos ===== */
@@ -55,10 +62,7 @@ type ApiAppointment = { _id:string; fecha:string; inicio:string; fin:string; mot
 export default function Agenda(): React.ReactElement {
   const { token, user } = useUser();
 
-  const today = useMemo(() => { const d=new Date(); d.setHours(0,0,0,0); return d; }, []);
-  const todayISO = useMemo(() => toISODate(new Date()), []); // solo fecha de “hoy”
-  const currentMondayISO = useMemo(() => toISODate(startOfMonday(today)), [today]);
-
+  const currentMondayISO = useMemo(() => toISODate(startOfMonday(new Date())), []);
   const [weekMondayISO, setWeekMondayISO] = useState<string>(currentMondayISO);
   const [motivo, setMotivo] = useState<Motivo>("consulta");
   const [showPast, setShowPast] = useState(false);
@@ -68,10 +72,16 @@ export default function Agenda(): React.ReactElement {
   const [editingKey, setEditingKey] = useState<string|null>(null);
   const [notaTmp, setNotaTmp] = useState<string>("");
 
-  // L–V base
+  const todayISO = useMemo(() => hoyISO(), []);
+
+  /* L–V base */
   const baseDaysISO = useMemo(() => Array.from({length:5},(_,i)=>addDaysISO(weekMondayISO,i)), [weekMondayISO]);
-  // Días visibles
-  const daysISO = useMemo(() => showPast ? baseDaysISO : baseDaysISO.filter(iso => !isPastDay(iso, todayISO)), [baseDaysISO, showPast, todayISO]);
+
+  /* Días visibles */
+  const daysISO = useMemo(
+    () => showPast ? baseDaysISO : baseDaysISO.filter(iso => !isPastDay(iso, todayISO)),
+    [baseDaysISO, showPast, todayISO]
+  );
 
   /* ===== Carga ocupación pública ===== */
   useEffect(() => {
@@ -181,7 +191,6 @@ export default function Agenda(): React.ReactElement {
   /* ===== Render ===== */
   const weekLabel = formatWeekRange(weekMondayISO);
   const prevDisabled = addDaysISO(weekMondayISO,-7) < currentMondayISO;
-  const todayOnlyISO = todayISO; // alias legible
 
   return (
     <div className={styles.bg}>
@@ -230,14 +239,14 @@ export default function Agenda(): React.ReactElement {
         <div className={`${styles.panel} ${styles.gridWrap}`}>
           <div className={styles.grid}>
             {daysISO.map((iso) => {
-              const dayIsPast = isPastDay(iso, todayOnlyISO);
-              const isToday = iso === todayOnlyISO;
-              const daySlots = showPast ? SLOTS : SLOTS.filter(s => !(isToday && isPastDateTime(iso, s, todayOnlyISO)));
+              const dayIsPast = isPastDay(iso, todayISO);
+              const isToday = iso === todayISO;
+              const daySlots = showPast ? SLOTS : SLOTS.filter(s => !(isToday && isPastDateTime(iso, s, todayISO)));
 
               return (
                 <div key={iso} className={`${styles.dayCol} ${dayIsPast ? styles.pastDay : ""}`}>
                   <div className={styles.dayHeader}>
-                    <span>{new Date(iso).toLocaleDateString(undefined, { weekday:"long", day:"2-digit", month:"2-digit" })}</span>
+                    <span>{labelFromISO(iso)}</span>
                     {dayIsPast && <span className={styles.pastBadge}>Pasado</span>}
                   </div>
 
@@ -245,7 +254,7 @@ export default function Agenda(): React.ReactElement {
                     const key = `${iso}|${slot}`;
                     const isMine = !!myAppointments[key];
                     const isTaken = (takenMap[iso]?.has(slot) ?? false) && !isMine;
-                    const past = isPastDateTime(iso, slot, todayOnlyISO);
+                    const past = isPastDateTime(iso, slot, todayISO);
 
                     return (
                       <div key={key} className={`${styles.hourRow} ${past ? styles.pastSlot : ""} ${isTaken ? styles.occupied : ""}`}>
