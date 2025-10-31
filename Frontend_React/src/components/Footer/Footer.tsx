@@ -43,16 +43,20 @@ export default function Footer() {
         <div className={styles.contact}>
           <h4>Contacto</h4>
           <div className={styles.socials}>
-            <a href="https://www.instagram.com/giulibernacchia/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/leomessi" target="_blank" rel="noopener noreferrer">
               <FaInstagram />
             </a>
-            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/franco.cappuccio.50" target="_blank" rel="noopener noreferrer">
               <FaFacebook />
             </a>
             <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">
               <FaLinkedin />
             </a>
-            <a href="mailto:contacto@nutriapp.com">
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=frossetto@lasalleflorida.edu.ar&su=Consulta%20NutriApp&body=Hola%20Guadalupe,"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <MdEmail />
             </a>
           </div>
