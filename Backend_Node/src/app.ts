@@ -13,11 +13,7 @@ const allowedOrigins = [
 ];
 
 const app = express();
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ["GET","POST","PUT","DELETE"],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 // Rutas
