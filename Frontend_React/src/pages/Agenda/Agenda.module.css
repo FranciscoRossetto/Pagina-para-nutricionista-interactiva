@@ -1,26 +1,27 @@
 /* src/pages/Agenda/Agenda.module.css */
 
-/* ===== Base ===== */
 .bg {
   background-image: linear-gradient(180deg, #ffe4f1 0%, #ffd1ea 40%, #ffc2e4 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
   min-height: 100vh;
   width: 100%;
 }
 
 .cont {
   font-family: Inter, system-ui, Arial, sans-serif;
-  padding: 16px;
-  max-width: 1200px;
+  padding: 20px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
 .panel {
   border: 1px solid #f9a8d4;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 10px 30px rgba(219, 39, 119, 0.15);
   backdrop-filter: blur(3px);
-  padding: 12px;
+  padding: 14px;
 }
 
 /* ===== Header ===== */
@@ -29,203 +30,166 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;  /* permite caer a 2 líneas en pantallas chicas */
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 220px;
+  gap: 12px;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 900;
   color: #9d174d;
 }
 
 .weekRange {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 13px;
+  color: #7a2449;
 }
 
+/* Todo lo de la derecha alineado PERFECTO en Y */
 .headerRight {
-  display: flex;
-  align-items: center;   /* alinea Y de los 3 botones */
+  display: inline-flex;
+  align-items: center;
   gap: 10px;
+  height: 40px;            /* altura común */
 }
 
+/* Los hijos heredan centramiento vertical y altura */
+.headerRight > * {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+}
+
+/* Selector de motivo con la misma altura que los botones */
 .select {
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid #fbcfe8;
-  border-radius: 10px;
-  background: #fff;
-}
-
-.navBtn {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #fbcfe8;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #f472b6;
   background: #fff;
   color: #9d174d;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.12);
-}
-.navBtnDisabled {
-  opacity: .45;
-  cursor: not-allowed;
+  border-radius: 12px;
+  line-height: 40px;        /* asegura centrado del texto */
 }
 
-/* ===== Grid semana ===== */
-.gridWrap {
-  margin-top: 10px;
-  overflow: hidden; /* se controla con media queries */
+/* Botones semana */
+.navBtn {
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #ec4899;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #fff;
+  color: #9d174d;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
 }
+.navBtn:hover { background: #fff6fa; }
+.navBtnDisabled { opacity: .45; pointer-events: none; }
+
+/* ===== Grilla L–V ===== */
+.gridWrap { margin-top: 8px; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 
 .dayCol {
   border: 1px dashed #f9a8d4;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.98);
-  padding: 8px;
-  min-height: 520px;           /* altura consistente */
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  min-height: 520px;
+  box-shadow: 0 4px 10px rgba(244, 114, 182, 0.12);
   display: flex;
   flex-direction: column;
 }
 
 .dayHeader {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   color: #9d174d;
-  text-transform: capitalize;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* ===== Filas de hora ===== */
+/* ===== Fila de hora ===== */
 .hourRow {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* hora | acción */
+  grid-template-columns: 1fr 1fr; /* hora izq / acciones der */
   align-items: center;
-  gap: 8px;
   border: 1px solid #fbcfe8;
   border-radius: 12px;
-  background: #fff;
-  padding: 8px;
+  background: linear-gradient(180deg, #fff, #ffeaf5 100%);
   margin-bottom: 8px;
-  min-height: 74px;            /* tamaño fijo en todas las semanas */
+  padding: 8px;
+  min-height: 64px; /* alto estable */
 }
 
 .hourLeft {
   font-weight: 800;
   color: #831843;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .hourRight {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 8px;
+}
+
+.reserveBtn, .cancelBtn {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
 }
+.reserveBtn { background: #ec4899; color: #fff; border-color: #ec4899; }
+.cancelBtn  { background: #fff; color: #ef4444; border-color: #ef4444; }
 
-.reserveBtn,
-.cancelBtn {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 10px;
-  border: 1px solid #ec4899;
-  background: #ec4899;
-  color: #fff;
-  cursor: pointer;
-}
-.cancelBtn {
-  border-color: #ef4444;
-  background: #ef4444;
-}
-.occupied {
-  opacity: 0.60;
-}
-.pastSlot {
-  opacity: 0.45;
-}
-
-/* área de notas: siempre reserva el espacio, input solo al reservar */
+/* Área de notas: mantiene el espacio SIEMPRE, pero el input es opcional */
 .noteSpace {
   grid-column: 1 / -1;
   margin-top: 6px;
-  min-height: 40px;            /* mantiene altura estable */
-  display: flex;
-  align-items: center;
+  min-height: 30px;              /* evita “saltos” */
+  display: block;
 }
 
 .noteInput {
-  flex: 1;
-  height: 30px;
-  padding: 0 10px;
+  width: 100%;
+  height: 28px;
   border: 1px solid #fbcfe8;
-  border-radius: 8px;
-  outline: none;
+  border-radius: 10px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #374151;
+  background: #fff;
 }
+
 .noteHelp {
-  font-size: 11px;
+  margin-top: 4px;
+  font-size: 10px;
   color: #6b7280;
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
 }
 
-/* ===== Scrollbars (opcionales) ===== */
-.gridWrap::-webkit-scrollbar { height: 8px; }
-.gridWrap::-webkit-scrollbar-thumb {
-  background: #f9a8d4;
-  border-radius: 999px;
-}
-
-/* ====== Responsivo ====== */
-
-/* <= 1024px: columnas más angostas */
-@media (max-width: 1024px) {
-  .grid { grid-template-columns: repeat(5, minmax(180px, 1fr)); }
-}
-
-/* <= 820px: scroll horizontal por días, buen uso mobile landscape */
-@media (max-width: 820px) {
-  .header { gap: 8px; }
-  .title { font-size: 16px; }
-  .weekRange { font-size: 11px; }
-
-  .headerRight {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .gridWrap {
-    overflow-x: auto;         /* habilita swipe horizontal */
-    padding-bottom: 8px;
-  }
-  .grid {
-    display: grid;
-    grid-auto-flow: column;   /* días en fila */
-    grid-auto-columns: 82vw;  /* un día ocupa ~82% del ancho */
-    gap: 12px;
-    grid-template-columns: unset; /* lo maneja auto-columns */
-  }
-
-  .dayCol { min-width: 82vw; }
-}
-
-/* <= 480px: controles más altos y targets táctiles */
-@media (max-width: 480px) {
-  .cont { padding: 12px; }
-  .select, .navBtn { height: 40px; }
-  .reserveBtn, .cancelBtn { height: 36px; }
-  .hourRow { min-height: 78px; }
-  .noteInput { height: 34px; }
-}
+.occupied { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+.pastSlot { opacity: .45; pointer-events: none; }
