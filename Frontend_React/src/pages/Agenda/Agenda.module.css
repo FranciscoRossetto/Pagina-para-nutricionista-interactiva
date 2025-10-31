@@ -24,7 +24,6 @@
   padding: 12px;
 }
 
-/* Header */
 .header {
   display: flex;
   align-items: center;
@@ -87,12 +86,11 @@
 .navBtn:hover { background: #fff6fa; }
 .navBtnDisabled { opacity: .45; pointer-events: none; }
 
-/* Grid L–V responsive */
 .gridWrap { margin-top: 8px; }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr; /* móvil */
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
@@ -122,7 +120,6 @@
   gap: 8px;
 }
 
-/* Slot row */
 .hourRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -150,7 +147,6 @@
   gap: 8px;
 }
 
-/* Botones */
 .reserveBtn, .cancelBtn, .pastBtn {
   height: 32px;
   padding: 0 10px;
@@ -189,10 +185,8 @@
   color: #6b7280;
 }
 
-/* Visual pasado */
 .pastSlot { opacity: .6; }
 
-/* Tacto móvil */
 @media (max-width: 639px) {
   .hourRow { min-height: 56px; padding: 8px; }
   .reserveBtn, .cancelBtn, .pastBtn { height: 36px; padding: 0 12px; }

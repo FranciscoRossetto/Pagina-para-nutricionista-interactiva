@@ -1,20 +1,17 @@
 // src/pages/Agenda/Agenda.tsx
-// @ts-nocheck
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Agenda.module.css";
 import { useUser } from "../../contexts/UserContext";
 
-/* Config */
-const API = "http://localhost:4000";
+const API = import.meta.env.VITE_API_URL;
 const SLOTS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
 
-/* Helpers locales (sin UTC) */
 const pad2 = (n:number) => String(n).padStart(2,"0");
 const toISODate = (d:Date) => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 
 function localDateFromISO(iso:string): Date {
   const [y,m,d] = iso.split("-").map(Number);
-  return new Date(y, m-1, d, 0, 0, 0, 0); // local
+  return new Date(y, m-1, d, 0, 0, 0, 0);
 }
 function addDaysISO(iso:string, delta:number):string {
   const dt = localDateFromISO(iso);
@@ -23,7 +20,7 @@ function addDaysISO(iso:string, delta:number):string {
 }
 function startOfMonday(d:Date):Date {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const day = x.getDay();              // 0=Dom
+  const day = x.getDay();
   const diff = day === 0 ? -6 : 1 - day;
   x.setDate(x.getDate()+diff);
   x.setHours(0,0,0,0);
@@ -34,7 +31,6 @@ function formatWeekRange(mondayISO:string){ return `${mondayISO} — ${addDaysIS
 function hoyISO(): string { const n=new Date(); n.setHours(0,0,0,0); return toISODate(n); }
 function nowHHMM():string { const n=new Date(); return `${pad2(n.getHours())}:${pad2(n.getMinutes())}`; }
 
-/* Pasado: fecha<today o fecha=today y hora<=ahora */
 function isPastDateTime(iso:string, hhmm:string, todayISO:string):boolean {
   if (iso < todayISO) return true;
   if (iso > todayISO) return false;
@@ -46,11 +42,9 @@ function labelFromISO(iso:string): string {
   return d.toLocaleDateString(undefined, { weekday:"long", day:"2-digit", month:"2-digit" });
 }
 
-/* Tipos mínimos */
 type Motivo = "consulta" | "control" | "plan" | "otro";
 type ApiAppointment = { _id:string; fecha:string; inicio:string; fin:string; motivo:Motivo; notas?:string };
 
-/* Componente */
 export default function Agenda(): React.ReactElement {
   const { token, user } = useUser();
 
@@ -65,10 +59,8 @@ export default function Agenda(): React.ReactElement {
   const [editingKey, setEditingKey] = useState<string|null>(null);
   const [notaTmp, setNotaTmp] = useState<string>("");
 
-  /* L–V fijo */
   const daysISO = useMemo(() => Array.from({length:5},(_,i)=>addDaysISO(weekMondayISO,i)), [weekMondayISO]);
 
-  /* Carga ocupación */
   useEffect(() => {
     const from = weekMondayISO, to = addDaysISO(weekMondayISO,4);
     (async () => {
@@ -83,7 +75,6 @@ export default function Agenda(): React.ReactElement {
     })();
   }, [weekMondayISO]);
 
-  /* Carga mis turnos */
   useEffect(() => {
     if (!token) { setMyAppointments({}); return; }
     const from = weekMondayISO, to = addDaysISO(weekMondayISO,4);
@@ -99,7 +90,6 @@ export default function Agenda(): React.ReactElement {
     })();
   }, [token, weekMondayISO]);
 
-  /* Acciones */
   function onPrevWeek(){
     const prev = addDaysISO(weekMondayISO,-7);
     if (prev < currentMondayISO) return;
@@ -160,7 +150,6 @@ export default function Agenda(): React.ReactElement {
     } catch { alert("Error de conexión al cancelar."); }
   }
 
-  /* Render */
   const weekLabel = formatWeekRange(weekMondayISO);
   const prevDisabled = addDaysISO(weekMondayISO,-7) < currentMondayISO;
 
